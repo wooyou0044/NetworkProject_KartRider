@@ -22,17 +22,18 @@ public class WheelController : MonoBehaviour
     {
         steerInput = Input.GetAxis("Horizontal");
         motorInput = Input.GetAxis("Vertical");
-        SteerAndRotateWheels();
-        TestSteerAndRotateWheels();
-        Move();
+        SteerAndRotateWheels(steerInput, motorInput);
+        Move(steerInput, motorInput);
 
     }
 
-    void Move()
+    public void Move(float steerInput, float motorInput)
+    //public void Move()
     {
         if (rb.velocity.magnitude < maxSpeed)
         {
-            Vector3 forwardForce = transform.forward * motorInput * maxTorque;
+            Vector3 forwardDirection = rb.transform.forward;
+            Vector3 forwardForce = forwardDirection * motorInput *maxTorque;
             rb.AddForce(forwardForce);
         }
         else
@@ -43,53 +44,21 @@ public class WheelController : MonoBehaviour
         Vector3 turnTorque = transform.up * steerInput * maxTorque * AnglePow;
         rb.AddTorque(turnTorque);
     }
-    
-    void TestSteerAndRotateWheels()
-    {
-        float steerAngle = maxSteerAngle * steerInput;
-        //앞바퀴 바퀴 각도 제한 
-        float rotationAngle = motorInput * maxTorque * Time.deltaTime * 50f;//지금 중력과 얼추맞는 힘
-    
-        Vector3 leftRotation = Vector3.left * rotationAngle;
-        Vector3 rightRotation = Vector3.right * rotationAngle;
-    
-        //왼쪽 앞바퀴 로컬로테이션 포지션Y = 0
-        Vector3 wheelEulerAngles0 = wheels[0].localEulerAngles;
-        float clampLY = Mathf.Clamp(steerAngle, -30, 30);
-        wheels[0].localEulerAngles = new Vector3(wheels[0].localEulerAngles.x + wheelEulerAngles0.x, clampLY, 0);
-    
-        //오른쪽 앞바퀴 로컬로테이션 포지션Y = 180
-        Vector3 wheelEulerAngles1 = wheels[2].localEulerAngles;
-        float clampRY = Mathf.Clamp(180 + steerAngle, 150, 210);
-        wheels[2].localEulerAngles = new Vector3(wheels[2].localEulerAngles.x + wheelEulerAngles1.x, clampRY, 0);
-    
-        //좌측 바퀴 +
-        wheels[0].Rotate(rightRotation);
-        wheels[1].Rotate(rightRotation);
-        //우측 바퀴 -
-        wheels[2].Rotate(leftRotation);
-        wheels[3].Rotate(leftRotation);
-    
-        //wheels[0].localEulerAngles = new Vector3(wheels[0].localEulerAngles.x + rightRotation.x, clampLY, 0);
-        //wheels[2].localEulerAngles = new Vector3(wheels[2].localEulerAngles.x + rightRotation.x, clampRY, 0);
-    
-    }
 
-    void SteerAndRotateWheels()
+    public void SteerAndRotateWheels(float steerInput, float motorInput)
     {
         float steerAngle = maxSteerAngle * steerInput;
         float rotationAngle = motorInput * maxTorque * Time.deltaTime * 50f; // 회전 각도 계산
-    
+
         // 왼쪽 앞바퀴 (wheels[0]) 로컬 로테이션 포지션 Y = 0
-        float clampLY = Mathf.Clamp(steerAngle, -maxSteerAngle, maxSteerAngle);
+        float clamp = Mathf.Clamp(steerAngle, -maxSteerAngle, maxSteerAngle) + 90;
         Vector3 wheelEulerAngles0 = wheels[0].localEulerAngles;
-        wheels[0].localEulerAngles = new Vector3(wheelEulerAngles0.x, clampLY, 0);
-    
+        wheels[0].localRotation = Quaternion.Euler(0, clamp, wheelEulerAngles0.z);
+
         // 오른쪽 앞바퀴 (wheels[2]) 로컬 로테이션 포지션 Y = 180
-        float clampRY = Mathf.Clamp(180 + steerAngle, 150, 210);
         Vector3 wheelEulerAngles2 = wheels[2].localEulerAngles;
-        wheels[2].localEulerAngles = new Vector3(wheelEulerAngles2.x, clampRY, 0);
-    
+        wheels[2].localRotation = Quaternion.Euler(0, clamp, wheelEulerAngles2.z);
+
         // 바퀴의 시각적 요소 회전
         Vector3 leftRotation = Vector3.forward * rotationAngle;
         Vector3 rightRotation = Vector3.back * rotationAngle;
@@ -102,12 +71,12 @@ public class WheelController : MonoBehaviour
         wheels[3].Rotate(leftRotation);
     }
 
-    void FixedUpdate()
-    {
-        ApplyAntiRollBar();
-    }
+    //void FixedUpdate()
+    //{
+    //    ApplyAntiRollBar();
+    //}
 
-    void ApplyAntiRollBar()
+    public void ApplyAntiRollBar()
     {
         for (int i = 0; i < wheels.Length / 2; i++)
         {
