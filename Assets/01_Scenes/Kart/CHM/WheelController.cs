@@ -18,31 +18,23 @@ public class WheelController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
-    void Update()
-    {
-        steerInput = Input.GetAxis("Horizontal");
-        motorInput = Input.GetAxis("Vertical");
-        SteerAndRotateWheels(steerInput, motorInput);
-        Move(steerInput, motorInput);
-
-    }
-
     public void Move(float steerInput, float motorInput)
-    //public void Move()
     {
         if (rb.velocity.magnitude < maxSpeed)
         {
-            Vector3 forwardDirection = rb.transform.forward;
-            Vector3 forwardForce = forwardDirection * motorInput *maxTorque;
+            //Vector3 forwardDirection = rb.transform.forward;
+            Vector3 forwardForce = transform.forward * motorInput * maxSpeed;
             rb.AddForce(forwardForce);
         }
         else
         {
             rb.velocity = rb.velocity.normalized * maxSpeed;
+            //rb.velocity = Vector3.Lerp(rb.velocity, rb.velocity.normalized * maxSpeed, Time.deltaTime * 5f);
         }
 
         Vector3 turnTorque = transform.up * steerInput * maxTorque * AnglePow;
         rb.AddTorque(turnTorque);
+
     }
 
     public void SteerAndRotateWheels(float steerInput, float motorInput)
@@ -53,7 +45,7 @@ public class WheelController : MonoBehaviour
         // 왼쪽 앞바퀴 (wheels[0]) 로컬 로테이션 포지션 Y = 0
         float clamp = Mathf.Clamp(steerAngle, -maxSteerAngle, maxSteerAngle) + 90;
         Vector3 wheelEulerAngles0 = wheels[0].localEulerAngles;
-        wheels[0].localRotation = Quaternion.Euler(0, clamp, wheelEulerAngles0.z);
+        wheels[0].localRotation = Quaternion.Euler(180, clamp, wheelEulerAngles0.z);
 
         // 오른쪽 앞바퀴 (wheels[2]) 로컬 로테이션 포지션 Y = 180
         Vector3 wheelEulerAngles2 = wheels[2].localEulerAngles;
@@ -61,7 +53,9 @@ public class WheelController : MonoBehaviour
 
         // 바퀴의 시각적 요소 회전
         Vector3 leftRotation = Vector3.forward * rotationAngle;
+        
         Vector3 rightRotation = Vector3.back * rotationAngle;
+
         //좌측
         wheels[0].Rotate(rightRotation);
         wheels[1].Rotate(rightRotation);
@@ -70,11 +64,6 @@ public class WheelController : MonoBehaviour
         wheels[2].Rotate(leftRotation);
         wheels[3].Rotate(leftRotation);
     }
-
-    //void FixedUpdate()
-    //{
-    //    ApplyAntiRollBar();
-    //}
 
     public void ApplyAntiRollBar()
     {
