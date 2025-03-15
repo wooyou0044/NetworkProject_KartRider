@@ -11,6 +11,8 @@ public class FirebaseDBManager : MonoBehaviour
     [SerializeField] private FirebaseUser user;
     [SerializeField] private FirebaseAuth auth;
     [SerializeField] private DatabaseReference dbRef;
+
+
     public static FirebaseDBManager Instance 
     { 
         get => instance; 
