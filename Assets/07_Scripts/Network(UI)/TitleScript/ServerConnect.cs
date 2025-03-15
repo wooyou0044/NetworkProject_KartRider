@@ -11,16 +11,11 @@ public class ServerConnect : MonoBehaviourPunCallbacks
         PhotonNetwork.AutomaticallySyncScene = true;
     }
     public void ConnectToServer()
-    {
-        PhotonNetwork.ConnectUsingSettings();
-        if(FirebaseDBManager.Instance.User.DisplayName == null)
-        {
+    {       
+        PhotonNetwork.ConnectUsingSettings();//유저 세팅값으로 서버연결
+        //파이어베이스의 유저네임과 포톤의 닉네임을 연결시킴
+        //이제 파이어베이스의 닉네임과 유저의 닉네임이 같아짐
+        PhotonNetwork.NickName = FirebaseDBManager.Instance.User.DisplayName;
 
-        }
-        //서버 접속 시도, 저장된 닉네임 확인, 저장된 닉네임이 없다면
-        //user.DisplayName이 없다면 만들어야지 
-        //인풋필드 생성
-        
-        //PhotonNetwork.NickName = FirebaseDBManager.Instance.User.DisplayName;
     }
 }
