@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Firebase;
 using Firebase.Auth;
-using System.Threading.Tasks;
 using Firebase.Database;
-using OpenCover.Framework.Model;
 using System;
-using UnityEngine.Rendering;
 
 public class AuthManager : MonoBehaviour
 {
@@ -94,12 +91,50 @@ public class AuthManager : MonoBehaviour
         //로그인 성공 후 닉네임 확인, 닉네임이 없다면 생성될 때 까지 대기
         //닉네임이 있다면 통과
         titleUI.ResetField(titleUI.loginEmailField, titleUI.loginpasswordField);
-        titleUI.ToggleCreateNickNamePanel(true);        
+        titleUI.ToggleCreateNickNamePanel(true);
         yield return new WaitUntil(predicate: () => !string.IsNullOrEmpty(user.DisplayName));
         titleUI.ToggleCreateNickNamePanel(false);
         titleUI.ShowMessage(titleUI.successMessage, "Login Successful!", true);
-        serverCon.ConnectToServer();
+        serverCon.ConnectToServer(); //서버 연결 시도
+
+
+        yield return new WaitUntil(() => serverCon.Connect());
+
+        if (!serverCon.Connect())
+        {
+            titleUI.ShowMessage(titleUI.errorMessage, "Server connection failed!", true);
+            yield return new WaitForSeconds(1f);
+            titleUI.InitializeLogin();//다시 로그인 하는 것 처럼
+            yield break;
+        }
+        SceneCont.Instance.Oper = SceneCont.Instance.SceneAsync("LobbyScene");
+        SceneCont.Instance.Oper.allowSceneActivation = false;
+        titleUI.lodingBar.gameObject.SetActive(true);
+
+        while (SceneCont.Instance.Oper.isDone == false)
+        {
+            if (SceneCont.Instance.Oper.progress < 0.9f)
+            {
+                titleUI.lodingBar.value = SceneCont.Instance.Oper.progress;
+            }
+            else
+            {
+                //페이크 로딩하려고 주석쳤음
+                //SceneCont.Instance.Oper.allowSceneActivation = true;
+                break;
+            }
+            //yield return null;
+        }//페이크 로딩
+        float time = 0;
+        while (time < 1f)
+        {
+            time += Time.deltaTime;
+            titleUI.lodingBar.value = time / 1f;
+            yield return null;
+        }
+        SceneCont.Instance.Oper.allowSceneActivation = true;
     }
+
     public void CreateNickNameBottenCon()
     {
         //닉네임 생성 버튼 클릭 시 닉네임 중복 검사 코루틴

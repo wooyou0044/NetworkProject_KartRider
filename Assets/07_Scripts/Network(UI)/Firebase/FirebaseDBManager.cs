@@ -12,10 +12,7 @@ public class FirebaseDBManager : MonoBehaviour
     [SerializeField] private FirebaseAuth auth;
     [SerializeField] private DatabaseReference dbRef;
 
-    public static FirebaseDBManager Instance 
-    { 
-        get => instance; 
-    }
+    public static FirebaseDBManager Instance { get => instance;}
     public FirebaseUser User { get => user; set => user = value; }
     public FirebaseAuth Auth { get => auth; set => auth = value; }
     public DatabaseReference DbRef { get => dbRef; set => dbRef = value; }
