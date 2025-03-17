@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEditor;
+using JetBrains.Annotations;
 
 public class TitleUI : MonoBehaviour
 {
@@ -32,13 +33,26 @@ public class TitleUI : MonoBehaviour
     public TMP_Text errorMessage;
     public TMP_Text successMessage;
 
+    [Header("로딩바")]
+    public Slider lodingBar;
+
     private void Start()
-    {//로그인 패널이외의 판넬 및 메세지 비활성
+    {
+        //최초 시작 시 로그인 패널이외의 판넬 및 메세지 비활성
+        InitializeLogin();
+    }
+
+    /// <summary>
+    /// 로그인 패널이외의 판넬 및 메세지 비활성
+    /// </summary>
+    public void InitializeLogin()
+    {
         loginPanel.SetActive(true);
         signUpPanel.SetActive(false);
         createNickNamePanel.SetActive(false);
         errorMessage.gameObject.SetActive(false);
         successMessage.gameObject.SetActive(false);
+        lodingBar.gameObject.SetActive(false);
     }
 
     /// <summary>
