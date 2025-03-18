@@ -23,6 +23,7 @@ public class SceneCont : MonoBehaviour
         }
     }
    
+    //씬 변경 시 로딩을 위한 AsyncOperation 리턴변수
     public AsyncOperation SceneAsync(string sceneName)
     {
         return SceneManager.LoadSceneAsync(sceneName);
