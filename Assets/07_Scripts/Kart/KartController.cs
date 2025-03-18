@@ -128,7 +128,6 @@ public class KartController : MonoBehaviour
         if (steerInput != 0 || motorInput != 0)
         {
             HandleSteering(steerInput);  // 조향 처리
-
             HandleMovement(motorInput); // 가속/감속 처리
             //ApplyAntiRoll();            // 안티롤 처리
             LimitSpeed();               // 최대 속도 제한
@@ -187,7 +186,7 @@ public class KartController : MonoBehaviour
             }
 
             // 스키드 마크 활성화
-            wheelCtrl.SetSkidMarkActive(true);
+            //wheelCtrl.SetSkidMarkActive(true);
             Debug.Log("드리프트 시작!");
         }
     }
@@ -205,7 +204,7 @@ public class KartController : MonoBehaviour
             rigid.angularDrag = normalAngularDrag;
 
             // 스키드마크 비활성화
-            wheelCtrl.SetSkidMarkActive(false);
+            //wheelCtrl.SetSkidMarkActive(false);
 
             Debug.Log("드리프트 종료!");
             StartCoroutine(BoostCheckCoroutine());
