@@ -187,7 +187,7 @@ public class KartController : MonoBehaviour
             }
 
             // 스키드 마크 활성화
-            wheelCtrl.SetSkidMarkActive(true);
+            //wheelCtrl.SetSkidMarkActive(true);
             Debug.Log("드리프트 시작!");
         }
     }
@@ -205,7 +205,7 @@ public class KartController : MonoBehaviour
             rigid.angularDrag = normalAngularDrag;
 
             // 스키드마크 비활성화
-            wheelCtrl.SetSkidMarkActive(false);
+            // wheelCtrl.SetSkidMarkActive(false);
 
             Debug.Log("드리프트 종료!");
             StartCoroutine(BoostCheckCoroutine());

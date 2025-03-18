@@ -12,22 +12,22 @@ public class WheelController : MonoBehaviour
     [Tooltip("최대 조향 각도")]
     public float steerAngleFrontMax = 45f;
 
-    [Tooltip("스키드 마크 효과")]
-    public GameObject[] skidMarks;
+    //[Tooltip("스키드 마크 효과")]
+    //public GameObject[] skidMarks;
 
     void Start()
     {
         // 스키드마크 초기 비활성화
-        SetSkidMarkActive(false);
+        //SetSkidMarkActive(false);
     }
 
-    public void SetSkidMarkActive(bool isActive)
-    {
-        foreach (GameObject skidMark in skidMarks)
-        {
-            skidMark.GetComponent<TrailRenderer>().emitting = isActive;
-        }
-    }
+    //public void SetSkidMarkActive(bool isActive)
+    //{
+    //    foreach (GameObject skidMark in skidMarks)
+    //    {
+    //        //skidMark.GetComponent<TrailRenderer>().emitting = isActive;
+    //    }
+    //}
 
     public void RotateWheel(float steerInput, float steeringSensitivity)
     {
