@@ -7,6 +7,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: EndLineMat
+    second: {fileID: 2100000, guid: b088befb029124ac990f1ccde5d3575c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: M_Cnsw_66_StartGate
     second: {fileID: 2100000, guid: b088befb029124ac990f1ccde5d3575c, type: 2}
   materials:
