@@ -13,6 +13,8 @@ public class MapManager : MonoBehaviour
         
     }
     
+    
+    // 결승선 닿았을때 호출하는 메서드
     public void OnTouchFinishLine(GameObject kart)
     {
         
@@ -20,11 +22,9 @@ public class MapManager : MonoBehaviour
 
     public void InitPlayer(int randomNum, Transform playerKartTr)
     {
-        Debug.Log(startPos[randomNum].name);
-        Debug.Log(startPos[randomNum].transform.position);
-        Debug.Log(startPos[randomNum].transform.localPosition);
-        Debug.Log("InitPlayer");
-        Vector3 startingPoint = startPos[randomNum].position;
-        playerKartTr.position = startingPoint;
+        Transform startingPoint = startPos[randomNum];
+        playerKartTr.position = startingPoint.position;
+        playerKartTr.rotation = startingPoint.rotation;
+        playerKartTr.Rotate(Vector3.up, 180);
     }
 }
