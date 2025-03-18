@@ -3,18 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Unity.VisualScripting;
-using UnityEditor;
-using JetBrains.Annotations;
 
 public class TitleUI : MonoBehaviour
 {
     [Header("로그인 파넬 모음")]
     public GameObject loginPanel;
     public TMP_InputField loginEmailField;
-    public TMP_InputField loginpasswordField;
-    public Button loginBtn;
-    public Button signUpBtn;
+    public TMP_InputField loginpasswordField;    
 
     [Header("회원가입 판넬 모음")]
     public GameObject signUpPanel;
@@ -26,8 +21,6 @@ public class TitleUI : MonoBehaviour
     [Header("닉네임 생성 신규 가입자만")]
     public GameObject createNickNamePanel;
     public TMP_InputField createNickNameField;
-    public Button createNickNameBtn;
-    public Button createNickNameCancelBtn;
 
     [Header("메세지 모음")]
     public TMP_Text errorMessage;

@@ -102,9 +102,10 @@ public class AuthManager : MonoBehaviour
 
         if (!serverCon.Connect())
         {
+            //커넥트 오류시
             titleUI.ShowMessage(titleUI.errorMessage, "Server connection failed!", true);
             yield return new WaitForSeconds(1f);
-            titleUI.InitializeLogin();//다시 로그인 하는 것 처럼
+            titleUI.InitializeLogin();//다시 로그인 하는 것 처럼 타이틀 창 초기화
             yield break;
         }
         SceneCont.Instance.Oper = SceneCont.Instance.SceneAsync("LobbyScene");
@@ -119,7 +120,8 @@ public class AuthManager : MonoBehaviour
             }
             else
             {
-                //페이크 로딩하려고 주석쳤음
+                //페이크 로딩하려고 주석침.
+                //빌드할 때는 페이크로딩 지우고 이걸로 해도 될듯.
                 //SceneCont.Instance.Oper.allowSceneActivation = true;
                 break;
             }

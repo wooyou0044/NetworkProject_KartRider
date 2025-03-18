@@ -5,14 +5,18 @@ using Photon.Pun;
 using Photon.Realtime;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
-{
+{    
+    [SerializeField] public LobbyUIManager lobbyUiMgr;
+
     private void Start()
     {
         PhotonNetwork.JoinLobby();
     }
 
-    public override void OnJoinedLobby()
+    public void CreateRoomBtnOnClick()
     {
-        
+
     }
+
+
 }
