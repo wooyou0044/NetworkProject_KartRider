@@ -10,16 +10,21 @@ public class TempCarScript : MonoBehaviour
     private Transform _playerParent;
     private Transform _tr;
     private PhotonView _photonView;
+    private Rigidbody _rigidbody;
     
     private float speed = 10f;
     private float rotate = 50f;
     
     public CinemachineVirtualCamera virtualCamera;
 
+    public Rigidbody Rigidbody => _rigidbody;
+
+
     void Awake()
     {
         _tr = gameObject.transform;
-        _photonView = GetComponent<PhotonView>();        
+        _photonView = GetComponent<PhotonView>();
+        _rigidbody = GetComponent<Rigidbody>();
     }
     
     void Start()
