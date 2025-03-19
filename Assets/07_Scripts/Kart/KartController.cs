@@ -10,6 +10,7 @@ public class KartController : MonoBehaviour
     public float maxSpeed = 50f; // 최대 속도
     public float antiRollPow;
     public float AnglePow;
+    public float speedKM { get; private set; }
 
     WheelController wheelCtrl;
     Rigidbody rigid;
@@ -119,8 +120,9 @@ public class KartController : MonoBehaviour
 
             float speed = rigid.velocity.magnitude;
             wheelCtrl.UpdateWheelRotation(motorInput, speed);
-            //DisplaySpeed();
         }
+
+        speedKM = rigid.velocity.magnitude * 3.6f; // m/s를 km/h로 변환
     }
 
     private void FixedUpdate()
@@ -280,9 +282,9 @@ public class KartController : MonoBehaviour
     private void DisplaySpeed()
     {
         float speed = rigid.velocity.magnitude * 3.6f; // m/s를 km/h로 변환
-        //if (speedText != null)
+        //if (speedtext != null)
         //{
-        //    speedText.text = "Speed: " + speed.ToString("F2") + " km/h";
+        //    speedtext.text = "speed: " + speed.tostring("f2") + " km/h";
         //}
     }
 
