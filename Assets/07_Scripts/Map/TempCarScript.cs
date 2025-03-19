@@ -5,6 +5,12 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 
+/*
+ ToDo 실제 카트에도 적용할 리스트
+ - Rigidbody Component 게터 : public Rigidbody Rigidbody => _rigidbody;
+ - PlayerParent : 플레이어 찾기 편하도록 _playerParent = GameObject.Find("Players").transform;
+ - 포톤 뷰 관련 컴포넌트들 달아주기, 뷰, 트랜스폼 뷰, 리지드 바디 뷰
+ */
 public class TempCarScript : MonoBehaviour
 {
     private Transform _playerParent;
