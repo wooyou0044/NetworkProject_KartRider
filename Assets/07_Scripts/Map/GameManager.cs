@@ -16,8 +16,6 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        _playerParent = GameObject.Find("Players").transform;
-        
         // To-Do 실제 네트워크 연결하면 네트워크 상 정보로 바꿀 것
         DefaultPool pool = PhotonNetwork.PrefabPool as DefaultPool;
         if (pool != null)
@@ -31,8 +29,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         GameObject kart = PhotonNetwork.Instantiate(kartPrefab.name, Vector3.zero, Quaternion.identity);
-        GameObject character = PhotonNetwork.Instantiate(characterPrefab.name, Vector3.zero, characterPrefab.transform.rotation);
-        StartCoroutine(PlaceToMap(kart, character));
+        PhotonNetwork.Instantiate(characterPrefab.name, Vector3.zero, characterPrefab.transform.rotation);
+        StartCoroutine(PlaceToMap(kart));
     }
     
     public override void OnJoinRoomFailed(short returnCode, string message)
@@ -40,11 +38,9 @@ public class GameManager : MonoBehaviourPunCallbacks
         Debug.Log("방 참여 실패, code : " + returnCode + " msg : " + message);
     }
 
-    IEnumerator PlaceToMap(GameObject kart, GameObject character)
+    IEnumerator PlaceToMap(GameObject kart)
     {
-        yield return new WaitUntil(() => kart && character != null);
-        character.transform.parent = kart.transform.GetChild(0).GetChild(0).GetChild(0);
-        kart.transform.parent = _playerParent;
+        yield return new WaitUntil(() => kart);
         mapManager.InitPlayer(0, kart.transform);
     }
 }
