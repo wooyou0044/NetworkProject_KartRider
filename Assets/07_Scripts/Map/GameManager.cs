@@ -1,5 +1,7 @@
 using System.Collections;
+using System.Collections.Generic;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 
 public class GameManager : MonoBehaviourPunCallbacks
@@ -11,8 +13,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     [Header("생성할 카트 & 캐릭터 프리팹 지정")] 
     public GameObject kartPrefab;
     public GameObject characterPrefab;
-
-    private GameObject _localPlayerObject;
 
     private void Start()
     {
@@ -30,17 +30,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     // To-Do 실제 네트워크 연결시 Intstantiate 어떻게 설정할지 체크 필요
     public override void OnJoinedRoom()
     {
-        Debug.Log("방 참여 성공");
-        
         GameObject kart = PhotonNetwork.Instantiate(kartPrefab.name, Vector3.zero, Quaternion.identity);
-        Transform characterPos = kart.transform.GetChild(0).GetChild(0).GetChild(0);
-        
-        GameObject character = PhotonNetwork.Instantiate(characterPrefab.name, characterPos.position, characterPrefab.transform.rotation);
-        character.transform.parent = characterPos;
-        kart.transform.parent = _playerParent;
-        _localPlayerObject = kart;
-
-        StartCoroutine(PlaceToMap());
+        GameObject character = PhotonNetwork.Instantiate(characterPrefab.name, Vector3.zero, characterPrefab.transform.rotation);
+        StartCoroutine(PlaceToMap(kart, character));
     }
     
     public override void OnJoinRoomFailed(short returnCode, string message)
@@ -48,10 +40,11 @@ public class GameManager : MonoBehaviourPunCallbacks
         Debug.Log("방 참여 실패, code : " + returnCode + " msg : " + message);
     }
 
-    public IEnumerator PlaceToMap()
+    IEnumerator PlaceToMap(GameObject kart, GameObject character)
     {
-        yield return new WaitUntil(() => _localPlayerObject != null);
-        Debug.Log("PlaceToMap : " + _localPlayerObject.name);
-        mapManager.InitPlayer(0, _localPlayerObject.transform);
+        yield return new WaitUntil(() => kart && character != null);
+        character.transform.parent = kart.transform.GetChild(0).GetChild(0).GetChild(0);
+        kart.transform.parent = _playerParent;
+        mapManager.InitPlayer(0, kart.transform);
     }
 }

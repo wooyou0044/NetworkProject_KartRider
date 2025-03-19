@@ -10,7 +10,7 @@ public class TempCarScript : MonoBehaviour
     private PhotonView _photonView;
     private float speed = 10f;
     private float rotate = 50f;
-
+    
     public CinemachineVirtualCamera virtualCamera;
 
     void Awake()
@@ -19,7 +19,6 @@ public class TempCarScript : MonoBehaviour
         _photonView = GetComponent<PhotonView>();        
     }
     
-    // Start is called before the first frame update
     void Start()
     {
         virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
@@ -31,9 +30,13 @@ public class TempCarScript : MonoBehaviour
         }        
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (!_photonView.IsMine)
+        {
+            return;
+        }
+        
         float h = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
 
