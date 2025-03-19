@@ -1,34 +1,63 @@
 using UnityEngine;
+using Cinemachine;
 
-public class TestCamera : MonoBehaviour
+public class DriftCameraController : MonoBehaviour
 {
-    [Header("Target Settings")]
-    [Tooltip("카메라가 따라갈 Kart 오브젝트입니다.")]
-    public Transform target; // 따라갈 대상 (Kart)
+    public CinemachineVirtualCamera virtualCamera; // Cinemachine Virtual Camera
+    public TestKartController kartController; // 드리프트 여부를 확인할 컨트롤러
 
-    [Header("Camera Offset Settings")]
-    [Tooltip("카메라와 Kart 간의 위치 오프셋입니다.")]
-    public Vector3 offset = new Vector3(0f, 5f, -10f); // 기본 오프셋 값
-    [Tooltip("카메라 이동 속도입니다.")]
-    public float followSpeed = 10f;
-    [Tooltip("카메라 회전 속도입니다.")]
-    public float rotationSmoothSpeed = 5f;
+    [Header("Drift Camera Settings")]
+    public float driftOffsetX = 5f; // 드리프트 시 X축 추가 오프셋
+    public float driftSmoothTime = 0.5f; // 드리프트 중 오프셋 전환 시간
+
+    private CinemachineTransposer transposer;
+    private float originalOffsetX; // 원래 X 오프셋
+    private float targetOffsetX; // 목표 X 오프셋
+    private float currentOffsetX; // 현재 X 오프셋 (보간)
+    private const float fixedOffsetZ = -10f; // Z 값을 항상 -10으로 고정
+
+    private void Start()
+    {
+        // Transposer 컴포넌트 가져오기
+        transposer = virtualCamera.GetCinemachineComponent<CinemachineTransposer>();
+        if (transposer != null)
+        {
+            originalOffsetX = transposer.m_FollowOffset.x;
+            currentOffsetX = originalOffsetX;
+
+            // Z 오프셋을 -10으로 고정
+            Vector3 followOffset = transposer.m_FollowOffset;
+            followOffset.z = fixedOffsetZ;
+            transposer.m_FollowOffset = followOffset;
+        }
+        else
+        {
+            Debug.LogWarning("Cinemachine Transposer가 설정되지 않았습니다!");
+        }
+    }
 
     private void LateUpdate()
     {
-        if (target == null)
+        if (kartController == null || transposer == null) return;
+
+        // 드리프트 중일 경우 X 오프셋 이동
+        if (kartController.isDrifting)
         {
-            Debug.LogWarning("FollowCamera: Target이 설정되지 않았습니다!");
-            return;
+            float driftDirection = kartController.currentDriftAngle > 0 ? 1f : -1f; // 드리프트 방향 감지
+            targetOffsetX = originalOffsetX + (driftDirection * driftOffsetX);
+        }
+        else
+        {
+            targetOffsetX = originalOffsetX; // 드리프트가 아닐 경우 복구
         }
 
-        // 위치 계산 (Kart의 위치 + 오프셋)
-        Vector3 desiredPosition = target.position + target.rotation * offset; // 대상 회전에 따라 오프셋 조정
-        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, followSpeed * Time.deltaTime);
-        transform.position = smoothedPosition;
+        // 부드럽게 X 오프셋 전환
+        currentOffsetX = Mathf.Lerp(currentOffsetX, targetOffsetX, driftSmoothTime * Time.deltaTime);
 
-        // 회전 계산 (대상의 회전 방향을 따름)
-        Quaternion desiredRotation = Quaternion.Euler(0, target.eulerAngles.y, 0); // Y축 중심 회전
-        transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, rotationSmoothSpeed * Time.deltaTime);
+        // Transposer의 Follow Offset 업데이트
+        Vector3 followOffset = transposer.m_FollowOffset;
+        followOffset.x = currentOffsetX;
+        followOffset.z = fixedOffsetZ; // Z 오프셋을 항상 -10으로 고정
+        transposer.m_FollowOffset = followOffset;
     }
 }
