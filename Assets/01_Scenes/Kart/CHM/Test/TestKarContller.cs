@@ -10,15 +10,15 @@ public class TestKartController : MonoBehaviour
     [Header("Movement Settings")]
     [SerializeField] public float maxSpeed = 200f; // 최대 속도 (m/s)
     [SerializeField] public float movementForce = 200; // 기본 이동 힘
-    [SerializeField] public float steerAngle = 500; // 조향 각도
+    [SerializeField] public float steerAngle = 800; // 조향 각도
 
     [Header("Drift Settings")]
     [SerializeField] public float minDriftAngle = 30f; // 최대 드리프트 각도
     [SerializeField] public float maxDriftAngle = 180f; // 최대 드리프트 각도
     [SerializeField] public float minDriftDuration = 0.2f; // 최소 드리프트 시간
     [SerializeField] public float maxDriftDuration = 2f; // 최대 드리프트 시간
-    [SerializeField] public float mindriftForceMultiplier = 1f; // 드리프트 시 최대 힘 배수
-    [SerializeField] public float maxdriftForceMultiplier = 5f; // 드리프트 시 최소 힘 배수
+    [SerializeField] public float mindriftForceMultiplier = 1f; // 드리프트 시 최소 힘 배수
+    [SerializeField] public float maxdriftForceMultiplier = 5f; // 드리프트 시 최대 힘 배수
     [SerializeField] public float driftForceMultiplier = 0f; // 드리프트 시 힘 배수
     [SerializeField] public float driftSpeedReduction = 0.7f; // 드리프트 중 속도 감소 배율
 
@@ -40,6 +40,7 @@ public class TestKartController : MonoBehaviour
     private bool isBoosting = false;
     public float currentDriftAngle = 0f;
     private float driftDuration;
+    private float driftAngle;
     private int boostGauge = 0;
     private float lockedYRotation = 0f; // 드리프트 중 고정된 Y 회전 값
 
@@ -57,7 +58,7 @@ public class TestKartController : MonoBehaviour
         // 드리프트 시작
         if (Input.GetKeyDown(KeyCode.LeftShift) && Mathf.Abs(steerInput) > 0)
         {
-            StartDrift(steerInput * maxDriftAngle);
+            StartDrift(steerInput * driftAngle);
         }      
 
         // 드리프트 중 추가 조작 처리
@@ -83,10 +84,10 @@ public class TestKartController : MonoBehaviour
     {
         // 현재 속도를 기준으로 비율 계산
         float currentSpeed = rigid.velocity.magnitude;
-        float speedFactor = currentSpeed / maxSpeed;
+        float speedFactor = currentSpeed / maxSpeed *2f;
 
         // maxDriftAngle 조정 (30 ~ 180도까지)
-        maxDriftAngle = Mathf.Lerp(minDriftAngle, maxDriftAngle, speedFactor);
+        driftAngle = Mathf.Lerp(minDriftAngle, maxDriftAngle, speedFactor);
 
         // driftForceMultiplier 조정 (1~ 5까지)
         driftForceMultiplier = Mathf.Lerp(mindriftForceMultiplier, maxdriftForceMultiplier, speedFactor);
@@ -118,7 +119,9 @@ public class TestKartController : MonoBehaviour
             // 드리프트 속도 감소
             float driftSpeed = initialDriftSpeed * driftSpeedReduction;
             rigid.velocity = rigid.velocity.normalized * driftSpeed;
-
+            // 드리프트 동안 steerInput 값 기반으로 즉각 회전
+            lockedYRotation = transform.eulerAngles.y + steerInput * steerAngle/2.5f * Time.deltaTime;
+            transform.rotation = Quaternion.Euler(0, lockedYRotation, 0);
             // 측면 힘 추가
             Vector3 lateralForce = transform.right * steerInput * driftForceMultiplier * movementForce;
             rigid.AddForce(lateralForce, ForceMode.Force);
@@ -148,16 +151,17 @@ public class TestKartController : MonoBehaviour
         isDrifting = true;
         currentDriftAngle = driftAngle;
 
-        // 속도와 조향 입력 기반 비례 계산
-        float currentSpeed = rigid.velocity.magnitude; // 현재 속력
-        float speedFactor = currentSpeed / maxSpeed;   // 속력 비율 (0 ~ 1)
-        float steerInputAbs = Mathf.Abs(driftAngle / maxDriftAngle); // 조향 입력 비율 (0 ~ 1)
+        // Y축 회전 값을 고정
+        lockedYRotation = transform.eulerAngles.y;
 
-        // 드리프트 시간 계산 (속도와 조향의 평균 비례값 사용)
-        float influenceFactor = (speedFactor + steerInputAbs) / 2f; // 속도와 조향의 평균
-        driftDuration = Mathf.Lerp(minDriftDuration, maxDriftDuration, influenceFactor); // 최소 0.2초 ~ 최대 2초
+        // 속도와 입력값 기반으로 드리프트 지속 시간 계산
+        float currentSpeed = rigid.velocity.magnitude; // 현재 속도
+        float speedFactor = currentSpeed / maxSpeed;   // 속도 비율 (0 ~ 1)
+        float steerInputAbs = Mathf.Abs(driftAngle / this.driftAngle); // 조향 입력 절댓값 (0 ~ 1)
+        float influenceFactor = (speedFactor + steerInputAbs) / 2f; // 속도와 입력값의 평균
+        driftDuration = Mathf.Lerp(minDriftDuration, maxDriftDuration, influenceFactor); // 드리프트 시간
 
-        Debug.Log($"드리프트 시작: 각도 = {driftAngle}, 속도 = {currentSpeed}, 조향 입력 = {steerInputAbs}, 지속 시간 = {driftDuration}초");
+        Debug.Log($"드리프트 시작: 각도 = {driftAngle}, 속도 = {currentSpeed}, 입력 = {steerInputAbs}, 시간 = {driftDuration}초");
 
         // 드리프트 종료 예약
         Invoke(nameof(EndDrift), driftDuration);

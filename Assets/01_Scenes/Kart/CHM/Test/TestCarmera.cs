@@ -4,17 +4,16 @@ using Cinemachine;
 public class DriftCameraController : MonoBehaviour
 {
     public CinemachineVirtualCamera virtualCamera; // Cinemachine Virtual Camera
-    public TestKartController kartController; // 드리프트 여부를 확인할 컨트롤러
+    public TestKartController kartController; // 카트 컨트롤러 참조
 
     [Header("Drift Camera Settings")]
-    public float driftOffsetX = 5f; // 드리프트 시 X축 추가 오프셋
-    public float driftSmoothTime = 0.5f; // 드리프트 중 오프셋 전환 시간
+    public float driftOffsetX = 5f; // 드리프트 시 X축 추가 이동량
+    public float driftSmoothTime = 0.5f; // 드리프트 시 전환 속도
 
     private CinemachineTransposer transposer;
-    private float originalOffsetX; // 원래 X 오프셋
+    private float originalOffsetX; // 기본 X 오프셋
     private float targetOffsetX; // 목표 X 오프셋
-    private float currentOffsetX; // 현재 X 오프셋 (보간)
-    private const float fixedOffsetZ = -10f; // Z 값을 항상 -10으로 고정
+    private float currentOffsetX; // 현재 X 오프셋 (가변)
 
     private void Start()
     {
@@ -24,15 +23,10 @@ public class DriftCameraController : MonoBehaviour
         {
             originalOffsetX = transposer.m_FollowOffset.x;
             currentOffsetX = originalOffsetX;
-
-            // Z 오프셋을 -10으로 고정
-            Vector3 followOffset = transposer.m_FollowOffset;
-            followOffset.z = fixedOffsetZ;
-            transposer.m_FollowOffset = followOffset;
         }
         else
         {
-            Debug.LogWarning("Cinemachine Transposer가 설정되지 않았습니다!");
+            Debug.LogWarning("Cinemachine Transposer를 찾을 수 없습니다!");
         }
     }
 
@@ -40,15 +34,15 @@ public class DriftCameraController : MonoBehaviour
     {
         if (kartController == null || transposer == null) return;
 
-        // 드리프트 중일 경우 X 오프셋 이동
+        // 드리프트 상태일 때 X 오프셋 이동
         if (kartController.isDrifting)
         {
-            float driftDirection = kartController.currentDriftAngle > 0 ? 1f : -1f; // 드리프트 방향 감지
+            float driftDirection = kartController.currentDriftAngle > 0 ? 1f : -1f; // 드리프트 방향
             targetOffsetX = originalOffsetX + (driftDirection * driftOffsetX);
         }
         else
         {
-            targetOffsetX = originalOffsetX; // 드리프트가 아닐 경우 복구
+            targetOffsetX = originalOffsetX; // 드리프트가 아닐 경우 기본값 복원
         }
 
         // 부드럽게 X 오프셋 전환
@@ -57,7 +51,6 @@ public class DriftCameraController : MonoBehaviour
         // Transposer의 Follow Offset 업데이트
         Vector3 followOffset = transposer.m_FollowOffset;
         followOffset.x = currentOffsetX;
-        followOffset.z = fixedOffsetZ; // Z 오프셋을 항상 -10으로 고정
         transposer.m_FollowOffset = followOffset;
     }
 }
