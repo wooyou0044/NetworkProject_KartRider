@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class MapManager : MonoBehaviour
 {
+    [SerializeField] private int totalLap = 3; 
+    
     [Header("맵 시작 / 종료 포지션 설정")]
     public Transform[] startPos;
     public GameObject endLine;
@@ -18,7 +20,12 @@ public class MapManager : MonoBehaviour
     public void OnTouchFinishLine(GameObject kart)
     {
         
-    }    
+    }
+
+    public void RespawnToLastPos(GameObject playerKart)
+    {
+        
+    }
     
     public void PlaceToStartPos(int randomNum, GameObject playerKart)
     {
