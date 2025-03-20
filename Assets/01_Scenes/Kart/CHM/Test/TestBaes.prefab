@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5720096707474743910}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Kart_SB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1594366795916565203}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -TailLampLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,7 +74,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2600448041906981594}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -118,7 +118,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 783995691212168782}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -BL_Sus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -150,7 +150,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7992151555537747580}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: AniObject001_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -181,7 +181,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4308553331082078925}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Wheel_BL_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -212,7 +212,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 523118245438446037}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: AniObject001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -244,7 +244,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8362129911928338945}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -SkidL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -277,7 +277,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6495626254940550757}
   - component: {fileID: 1318042412934477648}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Mesh_Solid2LE.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -397,7 +397,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2355958159339147086}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -SkidR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -429,7 +429,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2742044209747162593}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -CharacterPos_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -460,7 +460,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 709613794462666012}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -ExhaustPipe_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -492,7 +492,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4550694006861764366}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -ExhaustPipe_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -524,7 +524,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 97539145435992089}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Wheel_FL_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -555,7 +555,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8720784739661599554}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: AniObject002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -587,7 +587,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2423335812449943076}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Wheel0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -620,7 +620,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3978476886511846680}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Kart_All
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -653,7 +653,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5924718026764203355}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Ani
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -686,7 +686,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4341662851754894216}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -ExhaustPipe_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -718,7 +718,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2151064676127470833}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -SparkR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -750,7 +750,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 414234564219517955}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -FX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -782,7 +782,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6841650790053158957}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Handle_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -813,7 +813,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3890440744212281943}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Plate_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -844,7 +844,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 406361613905349042}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -ExhaustPipe_2_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -875,7 +875,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6166816633681059540}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -908,7 +908,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 929505761819232414}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -SkidR_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -939,7 +939,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 728585145691044171}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -COM
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -972,7 +972,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5136830482499784306}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: BodyDecal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1004,7 +1004,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7727286404478485952}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Seat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1036,7 +1036,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8792315923368378199}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -ExhaustPipe_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1068,7 +1068,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5558215834734196832}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -SparkL_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1099,7 +1099,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2649753213540484358}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Mesh_Solid2LE
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1131,7 +1131,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3846083248214206638}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -CharacterPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1163,7 +1163,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 767925937427111445}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Wheel1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1196,7 +1196,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 454139182163800564}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: BodyDecal_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1227,7 +1227,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 16544840344271672}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -ExhaustPipe_3_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1258,7 +1258,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8656358294685696023}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Body_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1289,7 +1289,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1117994824045697919}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Wheel3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1322,7 +1322,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4648512271276017353}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -SparkL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1354,7 +1354,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4114286203831882960}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Wheel2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1387,7 +1387,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6069802059143034991}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -SparkR_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1418,7 +1418,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2517256361489675296}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -TailLampRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1450,7 +1450,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7218257904895984830}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -FX_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1481,7 +1481,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 320339539107243558}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -SkidL_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1512,7 +1512,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7022958320753282881}
-  m_Layer: 0
+  - component: {fileID: 4860035020426197127}
+  m_Layer: 3
   m_Name: TestBaes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1536,6 +1537,33 @@ Transform:
   - {fileID: 6495626254940550757}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &4860035020426197127
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7655380283028395515}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &7832730258966009752
 GameObject:
   m_ObjectHideFlags: 0
@@ -1545,7 +1573,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6002603860463554672}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Plate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1577,7 +1605,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1895479417440143783}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Wheels
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1614,7 +1642,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3938879374979453197}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1646,7 +1674,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6748458857186691476}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -AniObject002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1678,7 +1706,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7199520402894912677}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Wheel_BR_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1709,7 +1737,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6932220599607133801}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -AniObject001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1741,7 +1769,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8337826939056054409}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -TailLampRight_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1772,7 +1800,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1143606015624751383}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -BR_Sus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1804,7 +1832,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6880798952092776800}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: AniObject002_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1835,7 +1863,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6845451179303312162}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -Wheel_FR_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1866,7 +1894,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1992219293766338177}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -TailLampLeft_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1897,7 +1925,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5793535802923166881}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -ExhaustPipe_1_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1928,7 +1956,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 101576940851394799}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: -ExhaustPipe_4_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1961,6 +1989,10 @@ PrefabInstance:
     - target: {fileID: 2509848229140156153, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
       propertyPath: m_Name
       value: TestWheel
+      objectReference: {fileID: 0}
+    - target: {fileID: 2509848229140156153, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2999138993183560771, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
       propertyPath: m_LocalScale.x
@@ -2018,16 +2050,61 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4192541798580398107, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5961149782509338356, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7804069673749452031, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8111922123756164435, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2509848229140156153, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 945166064893976832}
   m_SourcePrefab: {fileID: 100100000, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
 --- !u!4 &4007365005473687323 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2999138993183560771, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
   m_PrefabInstance: {fileID: 2162308619434832728}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &4383926106276199841 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2509848229140156153, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+  m_PrefabInstance: {fileID: 2162308619434832728}
+  m_PrefabAsset: {fileID: 0}
+--- !u!135 &945166064893976832
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4383926106276199841}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.25
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &5578833114834281032
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2036,6 +2113,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6166816633681059540}
     m_Modifications:
+    - target: {fileID: 2819594712542545119, guid: 5558449f5733da844b0a8002bdb2ec80, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5488430042790054247, guid: 5558449f5733da844b0a8002bdb2ec80, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5816383331634351755, guid: 5558449f5733da844b0a8002bdb2ec80, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.01
@@ -2092,9 +2177,21 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6141303558266898425, guid: 5558449f5733da844b0a8002bdb2ec80, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6628209577926186033, guid: 5558449f5733da844b0a8002bdb2ec80, type: 3}
       propertyPath: m_Name
       value: TestHandle
+      objectReference: {fileID: 0}
+    - target: {fileID: 6628209577926186033, guid: 5558449f5733da844b0a8002bdb2ec80, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6990461790424603403, guid: 5558449f5733da844b0a8002bdb2ec80, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2118,6 +2215,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestWheel
       objectReference: {fileID: 0}
+    - target: {fileID: 2509848229140156153, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2999138993183560771, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.012499999
@@ -2174,16 +2275,61 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4192541798580398107, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5961149782509338356, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7804069673749452031, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8111922123756164435, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2509848229140156153, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7431328701984627364}
   m_SourcePrefab: {fileID: 100100000, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
 --- !u!4 &8113655919351513791 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2999138993183560771, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
   m_PrefabInstance: {fileID: 6414931354006050556}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8922387044701902853 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2509848229140156153, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+  m_PrefabInstance: {fileID: 6414931354006050556}
+  m_PrefabAsset: {fileID: 0}
+--- !u!135 &7431328701984627364
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8922387044701902853}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.25
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &7890742433837470678
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2196,6 +2342,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestWheel
       objectReference: {fileID: 0}
+    - target: {fileID: 2509848229140156153, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2999138993183560771, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.012499999
@@ -2252,16 +2402,61 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4192541798580398107, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5961149782509338356, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7804069673749452031, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8111922123756164435, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2509848229140156153, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 51431454576477141}
   m_SourcePrefab: {fileID: 100100000, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
 --- !u!4 &4908529324262508437 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2999138993183560771, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
   m_PrefabInstance: {fileID: 7890742433837470678}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &5716556414301838639 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2509848229140156153, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+  m_PrefabInstance: {fileID: 7890742433837470678}
+  m_PrefabAsset: {fileID: 0}
+--- !u!135 &51431454576477141
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5716556414301838639}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.25
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &8132991547154395202
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2274,6 +2469,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestWheel
       objectReference: {fileID: 0}
+    - target: {fileID: 2509848229140156153, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2999138993183560771, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.01
@@ -2330,11 +2529,56 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4192541798580398107, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5961149782509338356, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7804069673749452031, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8111922123756164435, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2509848229140156153, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5873018627614633265}
   m_SourcePrefab: {fileID: 100100000, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+--- !u!1 &5911806920337833659 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2509848229140156153, guid: 71094503e3b67024d8e44c1744a11668, type: 3}
+  m_PrefabInstance: {fileID: 8132991547154395202}
+  m_PrefabAsset: {fileID: 0}
+--- !u!135 &5873018627614633265
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5911806920337833659}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.25
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &6431463244893709313 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2999138993183560771, guid: 71094503e3b67024d8e44c1744a11668, type: 3}

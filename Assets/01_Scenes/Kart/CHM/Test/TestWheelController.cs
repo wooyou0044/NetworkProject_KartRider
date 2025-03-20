@@ -65,4 +65,5 @@ public class TestWheelController : MonoBehaviour
             skidMarks[i].emitting = isDrifting; // 드리프트 상태에 따라 스키드 마크 활성화
         }
     }
+
 }
