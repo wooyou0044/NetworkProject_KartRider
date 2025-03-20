@@ -30,7 +30,7 @@ public class TestKartController : MonoBehaviour
     [SerializeField] public float driftBoostChargeRate = 5f; // 드리프트 시 부스트 충전 속도
     [SerializeField] public float boostMaxSpeed = 280f; // 부스터 시 최대 속도
 
-    private TestWheelController wheelCtrl;
+    private WheelController wheelCtrl;
     private Rigidbody rigid;
 
 
@@ -46,7 +46,7 @@ public class TestKartController : MonoBehaviour
 
     private void Awake()
     {
-        wheelCtrl = wheels.GetComponent<TestWheelController>();
+        wheelCtrl = wheels.GetComponent<WheelController>();
         rigid = GetComponent<Rigidbody>();
     }
 
@@ -142,7 +142,7 @@ public class TestKartController : MonoBehaviour
         // 바퀴 컨트롤러 처리
         if (wheelCtrl != null)
         {
-            wheelCtrl.UpdateAndRotateWheels(steerInput, motorInput, rigid.velocity.magnitude, isDrifting);
+            //wheelCtrl.UpdateAndRotateWheels(steerInput, motorInput, rigid.velocity.magnitude, isDrifting);
         }
     }
 
