@@ -97,8 +97,7 @@ public class AuthManager : MonoBehaviour
         titleUI.ShowMessage(titleUI.successMessage, "Login Successful!", true);
         serverCon.ConnectToServer(); //서버 연결 시도
 
-
-        yield return new WaitUntil(() => serverCon.Connect());
+        yield return new WaitUntil(predicate: () => serverCon.Connect());
 
         if (!serverCon.Connect())
         {
@@ -122,19 +121,20 @@ public class AuthManager : MonoBehaviour
             {
                 //페이크 로딩하려고 주석침.
                 //빌드할 때는 페이크로딩 지우고 이걸로 해도 될듯.
-                //SceneCont.Instance.Oper.allowSceneActivation = true;
+                SceneCont.Instance.Oper.allowSceneActivation = true;
                 break;
             }
-            //yield return null;
-        }//페이크 로딩
-        float time = 0;
-        while (time < 1f)
-        {
-            time += Time.deltaTime;
-            titleUI.lodingBar.value = time / 1f;
             yield return null;
         }
-        SceneCont.Instance.Oper.allowSceneActivation = true;
+        //페이크 로딩
+        //float time = 0;
+        //while (time < 2f)
+        //{
+        //    time += Time.deltaTime;
+        //    titleUI.lodingBar.value = time / 2f;
+        //    yield return null;
+        //}
+        //SceneCont.Instance.Oper.allowSceneActivation = true;
     }
 
     public void CreateNickNameBottenCon()
