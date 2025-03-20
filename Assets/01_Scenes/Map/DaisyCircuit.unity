@@ -891,7 +891,7 @@ MonoBehaviour:
   - {fileID: 196604569}
   - {fileID: 2069239504}
   - {fileID: 293883644}
-  endLine: {fileID: 1548248866}
+  endLine: {fileID: 2069754423}
   deadZone: {fileID: 0}
 --- !u!1 &1508638635
 GameObject:
@@ -1065,11 +1065,6 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
---- !u!1 &1548248866 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9156330830341065638, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
-  m_PrefabInstance: {fileID: 1653789468}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1653789468
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1088,7 +1083,7 @@ PrefabInstance:
       objectReference: {fileID: 2115155582}
     - target: {fileID: 689451565449407139, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_VersionIndex
-      value: 1231
+      value: 1240
       objectReference: {fileID: 0}
     - target: {fileID: 857291875012570169, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh

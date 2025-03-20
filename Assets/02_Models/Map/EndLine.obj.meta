@@ -8,7 +8,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: EndLineMat
-    second: {fileID: 2100000, guid: b088befb029124ac990f1ccde5d3575c, type: 2}
+    second: {fileID: 2100000, guid: 234eb39e19dc54d8a83cbe4f68702cbe, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
