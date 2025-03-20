@@ -10,8 +10,15 @@ public class MapManager : MonoBehaviour
     [Header("맵 시작 / 종료 포지션 설정")]
     public Transform[] startPos;
     public GameObject endLine;
+    public GameObject deadZone;
     
     public void Start()
+    {
+        deadZone.GetComponent<Collider>();
+    }
+
+    // 바닥으로 떨어졌을때
+    public void OnTouchDeadZone()
     {
         
     }
