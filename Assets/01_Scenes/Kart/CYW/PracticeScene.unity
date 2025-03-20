@@ -393,6 +393,16 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &544280152 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3136916283792798052, guid: 5f3457a0eb689304bab65e1dfd0667f0, type: 3}
+  m_PrefabInstance: {fileID: 8910442206913556638}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &704153532 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8303360623486469736, guid: 5f3457a0eb689304bab65e1dfd0667f0, type: 3}
+  m_PrefabInstance: {fileID: 8910442206913556638}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &902860316
 GameObject:
   m_ObjectHideFlags: 0
@@ -769,6 +779,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1292487714 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8254397825659389256, guid: 5f3457a0eb689304bab65e1dfd0667f0, type: 3}
+  m_PrefabInstance: {fileID: 8910442206913556638}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1318850056
 GameObject:
   m_ObjectHideFlags: 0
@@ -927,6 +942,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1492246052}
   m_CullTransparentMesh: 1
+--- !u!1 &1674102898 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1203655456523541529, guid: 5f3457a0eb689304bab65e1dfd0667f0, type: 3}
+  m_PrefabInstance: {fileID: 8910442206913556638}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1763304832
 GameObject:
   m_ObjectHideFlags: 0
@@ -1216,7 +1236,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kart: {fileID: 847525828106804294}
+  needle: {fileID: 544280152}
+  circleBack: {fileID: 1292487714}
+  boostChangeUI:
+  - {fileID: 1674102898}
+  - {fileID: 704153532}
+  - {fileID: 1926511034}
+  boostColor: {r: 1, g: 0.3254902, b: 0, a: 1}
+  originColor: {r: 1, g: 1, b: 1, a: 1}
+  colorAlpha:
+  - 0.8
+  - 0.6
+  - 1
   speedTxt: {fileID: 406243864}
+--- !u!1 &1926511034 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7510075183008803195, guid: 5f3457a0eb689304bab65e1dfd0667f0, type: 3}
+  m_PrefabInstance: {fileID: 8910442206913556638}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2044911404
 GameObject:
   m_ObjectHideFlags: 0
@@ -1461,9 +1498,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1835453277}
     m_Modifications:
+    - target: {fileID: 1156319143325163161, guid: 5f3457a0eb689304bab65e1dfd0667f0, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1156319143325163161, guid: 5f3457a0eb689304bab65e1dfd0667f0, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 3706023765644367189, guid: 5f3457a0eb689304bab65e1dfd0667f0, type: 3}
       propertyPath: m_Name
       value: Speed Gauge
+      objectReference: {fileID: 0}
+    - target: {fileID: 5624794903490339171, guid: 5f3457a0eb689304bab65e1dfd0667f0, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8831265630031299715, guid: 5f3457a0eb689304bab65e1dfd0667f0, type: 3}
       propertyPath: m_Pivot.x
