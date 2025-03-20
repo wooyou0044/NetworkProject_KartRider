@@ -10,6 +10,7 @@ public class KartController : MonoBehaviour
     public float maxSpeed = 50f; // 최대 속도
     public float antiRollPow;
     public float AnglePow;
+    public float speedKM { get; private set; }
 
     WheelController wheelCtrl;
     Rigidbody rigid;
@@ -119,8 +120,9 @@ public class KartController : MonoBehaviour
 
             float speed = rigid.velocity.magnitude;
             wheelCtrl.UpdateWheelRotation(motorInput, speed);
-            //DisplaySpeed();
         }
+
+        speedKM = rigid.velocity.magnitude * 3.6f; // m/s를 km/h로 변환
     }
 
     private void FixedUpdate()
@@ -128,7 +130,6 @@ public class KartController : MonoBehaviour
         if (steerInput != 0 || motorInput != 0)
         {
             HandleSteering(steerInput);  // 조향 처리
-
             HandleMovement(motorInput); // 가속/감속 처리
             //ApplyAntiRoll();            // 안티롤 처리
             LimitSpeed();               // 최대 속도 제한
@@ -187,7 +188,7 @@ public class KartController : MonoBehaviour
             }
 
             // 스키드 마크 활성화
-            wheelCtrl.SetSkidMarkActive(true);
+            //wheelCtrl.SetSkidMarkActive(true);
             Debug.Log("드리프트 시작!");
         }
     }
@@ -205,7 +206,7 @@ public class KartController : MonoBehaviour
             rigid.angularDrag = normalAngularDrag;
 
             // 스키드마크 비활성화
-            wheelCtrl.SetSkidMarkActive(false);
+            //wheelCtrl.SetSkidMarkActive(false);
 
             Debug.Log("드리프트 종료!");
             StartCoroutine(BoostCheckCoroutine());
@@ -281,9 +282,9 @@ public class KartController : MonoBehaviour
     private void DisplaySpeed()
     {
         float speed = rigid.velocity.magnitude * 3.6f; // m/s를 km/h로 변환
-        //if (speedText != null)
+        //if (speedtext != null)
         //{
-        //    speedText.text = "Speed: " + speed.ToString("F2") + " km/h";
+        //    speedtext.text = "speed: " + speed.tostring("f2") + " km/h";
         //}
     }
 

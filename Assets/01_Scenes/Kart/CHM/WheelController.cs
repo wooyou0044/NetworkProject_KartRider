@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class WheelController : MonoBehaviour
@@ -13,17 +14,27 @@ public class WheelController : MonoBehaviour
     public float steerAngleFrontMax = 45f;
 
     [Tooltip("스키드 마크 효과")]
-    public GameObject[] skidMarks;
+    public Transform[] skidMarks;
+    public Material skidMarkMat;
+
+    Mesh skidMarkMesh;
+    MeshFilter skidMeshFilter;
+    MeshRenderer skidMeshRender;
+    List<Vector3> vertices;
+    List<int> triangles;
+    List<Vector2> uvs;
 
     void Start()
     {
         // 스키드마크 초기 비활성화
-        SetSkidMarkActive(false);
+        //SetSkidMarkActive(false);
+
+        
     }
 
     public void SetSkidMarkActive(bool isActive)
     {
-        foreach (GameObject skidMark in skidMarks)
+        foreach (Transform skidMark in skidMarks)
         {
             skidMark.GetComponent<TrailRenderer>().emitting = isActive;
         }

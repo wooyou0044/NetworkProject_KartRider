@@ -1,6 +1,7 @@
 # NetworkProject_KartRider
  차원의 정시 퇴근 혁명_네트워크 프로젝트
 
+# 맵 변동 사항 공유
 --- 
 3/12 공유 사항
 
@@ -11,3 +12,10 @@
 # 깃 전략 설명 자료 정리
 * https://dduckchul.github.io/2025-03-12-NetworkGameProject/
 * 애매하거나 이해 안가는 부분 있으면 이야기해주세요
+
+---
+
+3/20 
+
+Feature_Map -> 디벨롭 머지 후 삭제
+Feature_MapCheckPoint 생성
