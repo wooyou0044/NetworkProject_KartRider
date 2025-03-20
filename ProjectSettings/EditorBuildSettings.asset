@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/01_Scenes/Map/DaisyCircuit.unity
+    guid: a9c132bccc23c4dbd938fc352852f6f2
   m_configObjects: {}
