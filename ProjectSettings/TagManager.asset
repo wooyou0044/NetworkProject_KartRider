@@ -4,16 +4,18 @@
 TagManager:
   serializedVersion: 2
   tags:
+  - Bullet
+  - Wall
   - Deadzone
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
-  - 
-  - 
+  - Ground
+  - Wheel
   - 
   - 
   - 
