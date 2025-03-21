@@ -330,4 +330,12 @@ public class KartController : MonoBehaviour
         }
         return 0;
     }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("ItemBox"))
+        {
+            other.GetComponent<ItemBoxController>().GetItem();
+        }
+    }
 }

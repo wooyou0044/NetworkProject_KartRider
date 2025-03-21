@@ -94,7 +94,6 @@ public class InventoryUI : MonoBehaviour
     {
         while(isItemUseNotYet)
         {
-            Debug.Log("ÇÏ´Â Áß");
             Color color = itemInventImg[0].GetComponent<Image>().color;
             color = (color.r == 1) ? new Color(0.6f, 0.6f, 0.6f, 0.3686275f) : new Color(1, 1, 1, 0.3686275f);
             itemInventImg[0].GetComponent<Image>().color = color;
