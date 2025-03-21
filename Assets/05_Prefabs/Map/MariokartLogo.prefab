@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2549289258296137630}
   - component: {fileID: 8782429053230219612}
   m_Layer: 0
-  m_Name: MariokartLogo1__M_Cnsw_66_StartGate
+  m_Name: MariokartLogo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
