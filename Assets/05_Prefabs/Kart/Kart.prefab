@@ -172,9 +172,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 302393527494943182}
-  - component: {fileID: 7871701251335430782}
   - component: {fileID: 2500947064826906266}
   - component: {fileID: 3023475996743232829}
+  - component: {fileID: 7871701251335430782}
   m_Layer: 0
   m_Name: Kart
   m_TagString: Untagged
@@ -200,41 +200,6 @@ Transform:
   - {fileID: 4972333647507423249}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7871701251335430782
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 722961180922001123}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecdfd303e5c9b54eb4acf0dbd491a8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wheels: {fileID: 6400696216051332152}
-  carBody: {fileID: 1759979185611698601}
-  maxSpeed: 280
-  antiRollPow: 10
-  AnglePow: 1.5
-  steeringForce: 200
-  motorForce: 500
-  maxSpeedKPH: 280
-  antiRollForce: 5000
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  driftKey: 304
-  driftFactor: 0.5
-  driftForceSide: 200
-  maxDriftDuration: 2
-  currentDriftForce: 20
-  normalDrag: 0.5
-  driftDrag: 0.01
-  normalAngularDrag: 0.05
-  driftAngularDrag: 0.01
-  boostForce: 1.1
-  boostDuration: 1.5
 --- !u!54 &2500947064826906266
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -283,6 +248,41 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.36, y: 1.49, z: 3.32}
   m_Center: {x: 0, y: 0.75, z: 0}
+--- !u!114 &7871701251335430782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722961180922001123}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecdfd303e5c9b54eb4acf0dbd491a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheels: {fileID: 6400696216051332152}
+  carBody: {fileID: 1759979185611698601}
+  maxSpeed: 280
+  antiRollPow: 10
+  AnglePow: 1.5
+  steeringForce: 200
+  motorForce: 500
+  maxSpeedKPH: 280
+  antiRollForce: 5000
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  driftKey: 304
+  driftFactor: 0.5
+  driftForceSide: 200
+  maxDriftDuration: 2
+  currentDriftForce: 20
+  normalDrag: 0.5
+  driftDrag: 0.01
+  normalAngularDrag: 0.05
+  driftAngularDrag: 0.01
+  boostForce: 1.1
+  boostDuration: 1.5
 --- !u!1 &725461052474521042
 GameObject:
   m_ObjectHideFlags: 0
@@ -627,8 +627,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1687080534569877881}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.21061361, y: 1e-45, z: -0, w: 0.9775694}
-  m_LocalPosition: {x: 0, y: 2.3, z: -5.0899963}
+  m_LocalRotation: {x: 0.21061343, y: 0.00000008940697, z: -0.000000007450581, w: 0.97756946}
+  m_LocalPosition: {x: -0.0000023841858, y: 4.6000004, z: -10.180003}
   m_LocalScale: {x: 1.5000001, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -656,7 +656,7 @@ MonoBehaviour:
   m_LookAt: {fileID: 4663800860277706416}
   m_Follow: {fileID: 4663800860277706416}
   m_Lens:
-    FieldOfView: 61.222614
+    FieldOfView: 60
     OrthographicSize: 5
     NearClipPlane: 0.3
     FarClipPlane: 1000
@@ -2074,8 +2074,8 @@ MonoBehaviour:
   m_ScreenY: 0.5
   m_DeadZoneWidth: 0
   m_DeadZoneHeight: 0
-  m_SoftZoneWidth: 0.8
-  m_SoftZoneHeight: 0.8
+  m_SoftZoneWidth: 0.1
+  m_SoftZoneHeight: 0.1
   m_BiasX: 0
   m_BiasY: 0
   m_CenterOnActivate: 1
@@ -2093,9 +2093,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_BindingMode: 1
   m_FollowOffset: {x: 5.09, y: 2.3, z: 0}
-  m_XDamping: 1
-  m_YDamping: 1
-  m_ZDamping: 1
+  m_XDamping: 0
+  m_YDamping: 0
+  m_ZDamping: 0
   m_AngularDampingMode: 0
   m_PitchDamping: 0
   m_YawDamping: 0
@@ -2178,7 +2178,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6400696216051332152}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94bd618a2cce9da40ab29399de6d9922, type: 3}
+  m_Script: {fileID: 11500000, guid: cf28073ceb02016448d321dd09b95e80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   maxTorque: 100
@@ -2190,9 +2190,6 @@ MonoBehaviour:
   - {fileID: 1366393256283414938}
   steerAngleFrontMin: -45
   steerAngleFrontMax: 45
-  skidMarks:
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!1 &6549287036298331685
 GameObject:
   m_ObjectHideFlags: 0
