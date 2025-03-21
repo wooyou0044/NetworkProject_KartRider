@@ -1,4 +1,5 @@
 using System.Collections;
+using Cinemachine;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
@@ -6,6 +7,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviourPunCallbacks
 {
     private Transform _playerParent;
+    [Header("인게임 관련 UI, 카메라, 매니저")] 
+    public CinemachineVirtualCamera virtualCamera;
     public KartUIController kartUIController;
     public InventoryUI inventoryUI;
     public MapManager mapManager;
@@ -44,6 +47,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     IEnumerator PlaceToMap(GameObject kart)
     {
         yield return new WaitUntil(() => kart);
+        
+        virtualCamera.LookAt = kart.transform;
+        virtualCamera.Follow = kart.transform;
         
         kartUIController.SetKart(kart);
         inventoryUI.SetKart(kart);
