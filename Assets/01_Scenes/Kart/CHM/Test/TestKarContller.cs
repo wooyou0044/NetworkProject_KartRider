@@ -167,8 +167,6 @@ public class TestKartController : MonoBehaviour
         Invoke(nameof(EndDrift), driftDuration);
     }
 
-
-
     // 드리프트 종료 시 코루틴으로 부스터 관리
     private void EndDrift()
     {

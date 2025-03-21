@@ -24,7 +24,7 @@ public class KartUIController : MonoBehaviour
         {
             kartSpeed = 300;
         }
-        kartSpeed = kartCtrl.speedKM * 3;
+        kartSpeed = kartCtrl.speedKM * 2;
         speedTxt.text = kartSpeed.ToString("f0");
     }
 }
