@@ -10,6 +10,7 @@ public class AuthManager : MonoBehaviour
 {
     public TitleUI titleUI;
     public ServerConnect serverCon;
+    public bool isLogin = false;
 
     private bool nickNameCheck = false;
 
@@ -29,7 +30,7 @@ public class AuthManager : MonoBehaviour
             }
         });
     }
-    
+
     /// <summary>
     /// 로그인 정보를 입력 받아 로그인 코루틴 실행
     /// </summary>
@@ -37,25 +38,36 @@ public class AuthManager : MonoBehaviour
     {
         string email = titleUI.loginEmailField.text;
         string password = titleUI.loginpasswordField.text;
-        StartCoroutine(LoginCoroutine(email, password));        
+        StartCoroutine(LoginCoroutine(email, password));
     }
-
     IEnumerator LoginCoroutine(string email, string password)
     {
-        // Firebase 인증을 통해 이메일과 비밀번호 로그인 요청 처리
+
         var loginTask = FirebaseDBManager.Instance.Auth.SignInWithEmailAndPasswordAsync(email, password);
+        // Firebase 인증을 통해 이메일과 비밀번호 로그인 요청 처리
         // 로그인 요청이 완료될 때 까지 대기
         yield return new WaitUntil(predicate: () => loginTask.IsCompleted);
-
         if (loginTask.Exception != null)
         {
             //로그인 실패 에러 처리
             LoginError(loginTask.Exception);
             yield break;
         }
-        // 로그인 성공 처리
+        FirebaseDBManager.Instance.User = loginTask.Result.User;
+
+        var userRef = FirebaseDBManager.Instance.DbRef.Child("users")
+            .Child(FirebaseDBManager.Instance.User.UserId)
+            .Child("isLoggedIn").SetValueAsync(true);
+
+        yield return new WaitUntil(() => userRef.IsCompleted);
+        if (userRef.Exception != null)
+        {
+            titleUI.ShowMessage(titleUI.errorMessage, "로그인 상태 확인 실패 다시 로그인하세요.", true);
+            yield return new WaitForSeconds(1f);
+            titleUI.ShowMessage(titleUI.errorMessage, "", false);
+        }
+        // 로그인 성공 처리                
         LoginSuccess(loginTask.Result.User);
-        
     }
     private void LoginError(AggregateException exception)
     {
@@ -66,13 +78,13 @@ public class AuthManager : MonoBehaviour
         switch (errorCode)
         {
             case AuthError.MissingEmail:
-                message = "MissingEmail";
+                message = "이메일을 입력해 주세요.";
                 break;
             case AuthError.MissingPassword:
-                message = "MissingPassword";
+                message = "패스워드를 입력해 주세요.";
                 break;
             default:
-                message = "Email or Password or UserNotFound";
+                message = "이메일 혹은 비밀번호를 잘못 입력하셨거나\n 등록되지 않은 이메일 입니다.";
                 break;
         }
         titleUI.ShowMessage(titleUI.errorMessage, message, true);
@@ -81,7 +93,7 @@ public class AuthManager : MonoBehaviour
     void LoginSuccess(FirebaseUser user)
     {
         //로그인 성공 시 유저 정보 저장 및 처리
-        FirebaseDBManager.Instance.User = user;
+        isLogin = false;
         titleUI.HideMessages();
         titleUI.ToggleLoginPanel(false);  
         StartCoroutine(PostLogin(user));        
@@ -94,7 +106,7 @@ public class AuthManager : MonoBehaviour
         titleUI.ToggleCreateNickNamePanel(true);
         yield return new WaitUntil(predicate: () => !string.IsNullOrEmpty(user.DisplayName));
         titleUI.ToggleCreateNickNamePanel(false);
-        titleUI.ShowMessage(titleUI.successMessage, "Login Successful!", true);
+        titleUI.ShowMessage(titleUI.successMessage, "로그인 성공!", true);
         serverCon.ConnectToServer(); //서버 연결 시도
 
         SceneCont.Instance.Oper = SceneCont.Instance.SceneAsync("LobbyScene");
@@ -114,7 +126,7 @@ public class AuthManager : MonoBehaviour
                 if (!serverCon.Connect())
                 {
                     //커넥트 오류시
-                    titleUI.ShowMessage(titleUI.errorMessage, "Server connection failed!", true);
+                    titleUI.ShowMessage(titleUI.errorMessage, "서버 접속 실패 다시 로그인해주세요.", true);
                     yield return new WaitForSeconds(1f);
                     titleUI.InitializeLogin();//다시 로그인 하는 것 처럼 타이틀 창 초기화
                     yield break;
@@ -136,8 +148,8 @@ public class AuthManager : MonoBehaviour
     IEnumerator CreateNickNameCor(string nickName)
     {
         if (string.IsNullOrEmpty(nickName))
-        {//닉네임 생성창이 비어있다면 메세지: "닉네임을 생성하세요"
-            titleUI.ShowMessage(titleUI.errorMessage, "CreateNickName!", true);
+        {
+            titleUI.ShowMessage(titleUI.errorMessage, "닉네임을 생성하세요!", true);
             yield break;
         }
         
@@ -154,14 +166,14 @@ public class AuthManager : MonoBehaviour
         /// <param name="nickName">중복 여부를 확인할 닉네임</param>
         /// <returns>Task를 통해 필터링된 데이터를 반환합니다.</returns>
         var nickNameCheckingTask = FirebaseDBManager.Instance.DbRef.Child("users")
-            .OrderByChild("UserNickName")
+            .OrderByChild("userNickName")
             .EqualTo(nickName).GetValueAsync();
 
         yield return new WaitUntil(predicate: () => nickNameCheckingTask.IsCompleted);
         if (nickNameCheckingTask.Exception != null)
         {//닉네임 유효성 검사 실패 메세지: 사용할 수 없는 닉네임입니다.
             Debug.Log("중복닉네임검사 오류!");
-            titleUI.ShowMessage(titleUI.errorMessage, "This username is not available", true);
+            titleUI.ShowMessage(titleUI.errorMessage, "사용할 수 없는 닉네임입니다.", true);
             yield break;
         }
 
@@ -177,7 +189,7 @@ public class AuthManager : MonoBehaviour
         DataSnapshot nickNameSnapshot = nickNameCheckingTask.Result;
         if (nickNameSnapshot.Exists)
         {//메세지: 이미 사용중인 닉네임입니다.
-            titleUI.ShowMessage(titleUI.errorMessage, "Nickname is already in use!", true);
+            titleUI.ShowMessage(titleUI.errorMessage, "이미 사용중인 닉네임 입니다!", true);
             yield break;
         }
 
@@ -192,7 +204,7 @@ public class AuthManager : MonoBehaviour
         /// <param name="nickName"> 저장할 닉네임 </param>            
         var nickNameTask = FirebaseDBManager.Instance.DbRef.Child("users")
             .Child(FirebaseDBManager.Instance.User.UserId)
-            .Child("UserNickName")
+            .Child("userNickName")
             .SetValueAsync(nickName);
 
         yield return new WaitUntil(predicate: () => nickNameTask.IsCompleted);
@@ -200,22 +212,24 @@ public class AuthManager : MonoBehaviour
         {
             //파이어베이스 닉네임 저장 실패 메세지: 사용할 수 없는 닉네임입니다
             Debug.Log("파이어베이스 저장실패!");
-            titleUI.errorMessage.text = "This username is not available";
+            titleUI.errorMessage.text = "사용할 수 없는 닉네임입니다.";
             yield break;
         }
 
         Debug.Log("유저 정보 저장");
         FirebaseDBManager.Instance.User.UpdateUserProfileAsync(new UserProfile { DisplayName = nickName });
         titleUI.HideMessages();
-        titleUI.ShowMessage(titleUI.successMessage, "Creation complete!", true);
+        titleUI.ShowMessage(titleUI.successMessage, "닉네임 생성 성공!", true);
         titleUI.ToggleCreateNickNamePanel(false);
     }
 
 
     //유저프로파일 삭제하는 버튼 테스트 때만 사용하기 서버 커넥트 연결할 때 삭제하기
     public void DeletuserProfile()
-    {//프로파일에 저장한 유저 닉네임 초기화하기        
-        var nickNameTask = FirebaseDBManager.Instance.DbRef.Child("users").Child(FirebaseDBManager.Instance.User.UserId).Child("UserNickName").SetValueAsync(null);
+    {//프로파일에 저장한 유저 닉네임 초기화하기
+        var nickNameTask = FirebaseDBManager.Instance.DbRef.Child("users")
+            .Child(FirebaseDBManager.Instance.User.UserId)
+            .Child("userNickName").SetValueAsync(null);
         UserProfile userProfile = new UserProfile { DisplayName = null };
         var user = FirebaseDBManager.Instance.User.UpdateUserProfileAsync(userProfile);
     }
@@ -236,7 +250,7 @@ public class AuthManager : MonoBehaviour
             yield break;
         }
 
-        SignUpSuccess(signUpTask.Result.User);        
+        SignUpSuccess(signUpTask.Result.User);
     }
     private void SignUpError(AggregateException exception)
     {
@@ -247,43 +261,70 @@ public class AuthManager : MonoBehaviour
         switch (errorCode)
         {
             case AuthError.MissingEmail:
-                message = "MissingEmail";
+                message = "이메일을 입력해 주세요.";
                 break;
             case AuthError.MissingPassword:
-                message = "MissingPassword";
+                message = "패스워드를 입력해 주세요.";
                 break;
             case AuthError.WeakPassword:
-                message = "Kindly use at least 6 characters.";
+                message = "패스워드는 최소 6자 이상 입력해 주세요.";
                 break;
             case AuthError.EmailAlreadyInUse:
-                message = "This email is already in use.";
+                message = "이미 존재하는 이메일 입니다.";
                 break;
             default:
-                message = "Please contact the administrator";
+                message = "계정 생성 실패! 관리자에게 문의하세요.";
                 break;
         }
         titleUI.ShowMessage(titleUI.errorMessage, message, true);
     }
     private void SignUpSuccess(FirebaseUser user)
     {
-        FirebaseDBManager.Instance.User = user;//유저 정보 연결하고
+        FirebaseDBManager.Instance.User = user;//유저 정보 연결하고               
         titleUI.HideMessages();
-        titleUI.ShowMessage(titleUI.successMessage, "Please Wait", true);
+        titleUI.ShowMessage(titleUI.successMessage, "계정 생성중.", true);
         //버튼 비활성화
         titleUI.SetButtonsInteractable(false);
-
         StartCoroutine(FinishSignUp());
     }
     IEnumerator FinishSignUp()
-    {
-        yield return new WaitForSeconds(1); //1초 대기
+    {        
+        var setPrfileTask = FirebaseDBManager.Instance.DbRef.Child("users")
+            .Child(FirebaseDBManager.Instance.User.UserId).Child("isLoggedIn")
+            .SetValueAsync(false);
+        
+        float timer = 5f;
+        float elapsedTime = 0;
+        bool toggle = true;
+        WaitForSeconds wait = new WaitForSeconds(1f);
+        while (!setPrfileTask.IsCompleted)
+        {            
+            elapsedTime += 1f;
+            if (elapsedTime >= timer)
+            {
+                titleUI.ShowMessage(titleUI.errorMessage, "유저 데이터 생성 실패 관리자에게 문의하세요.", true);
+                yield break;
+            }
+            string message = toggle ? "계정 생성중." : "계정 생성중..";
+            titleUI.ShowMessage(titleUI.successMessage, message, true);
+            toggle = !toggle;
+            yield return wait;            
+        }
+        yield return new WaitUntil(() => setPrfileTask.IsCompleted);
+        if(setPrfileTask.Exception != null)
+        {
+            titleUI.ShowMessage(titleUI.errorMessage, "유저 데이터 생성 실패 관리자에게 문의하세요.", true);
+            yield return new WaitForSeconds(2);
+            yield break;
+        }
         titleUI.ToggleSignUpPanel(false);
         //회원가입 완료 메세지
-        titleUI.ShowMessage(titleUI.successMessage, "SignUp Successful!", true);
+        titleUI.ShowMessage(titleUI.successMessage, "회원가입 완료!", true);
         yield return new WaitForSeconds(1f); //1초 대기
-        titleUI.SetButtonsInteractable(true);
-        titleUI.HideMessages();
+        titleUI.SetButtonsInteractable(true); //버튼 잠금 풀고
+        titleUI.HideMessages(); //메세지 가리고
+                                //텍스트 초기화 하고
         titleUI.ResetField(titleUI.signUpEmailField, titleUI.signUpPasswordField);
-        titleUI.ToggleLoginPanel(true);
+        titleUI.ToggleLoginPanel(true);//로그인 화면으로 이동
     }
 }
