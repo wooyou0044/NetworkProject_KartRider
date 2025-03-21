@@ -22,6 +22,8 @@ public class MapTriggerEventScript : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
+        Debug.Log(other);
+        
         if(_checkPoint != null)
         {
             _checkPoint.OnEnterCheckPoint();

@@ -128,7 +128,7 @@ public class MapManager : MonoBehaviourPunCallbacks
             playerKart.transform.position = myLastcheckPoint.position + penalty;
             playerKart.transform.rotation = myLastcheckPoint.rotation;
             // 카트가 돌아가있으므로 일단 보정
-//            playerKart.transform.rotation = Quaternion.LookRotation(Vector3.right);
+            // playerKart.transform.rotation = Quaternion.LookRotation(Vector3.right);
         }
         
         kartRigid.isKinematic = false;        

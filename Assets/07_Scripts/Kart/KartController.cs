@@ -163,7 +163,7 @@ public class KartController : MonoBehaviour
         if (!_photonView.IsMine)
         {
             return;
-        }        
+        }
         
         if (steerInput != 0 || motorInput != 0)
         {
