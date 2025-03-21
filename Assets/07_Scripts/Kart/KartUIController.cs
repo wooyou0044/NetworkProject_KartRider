@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class KartUIController : MonoBehaviour
 {
     [SerializeField] GameObject kart;
-    [SerializeField] GameObject needle;
+    [SerializeField] GameObject speedDashBoard;
+    [SerializeField] Transform needle;
     [SerializeField] GameObject circleBack;
+    [SerializeField] Image speedCircle;
     [SerializeField] GameObject[] boostChangeUI;
     [SerializeField] Color boostColor;
     [SerializeField] Color originColor;
@@ -16,6 +19,7 @@ public class KartUIController : MonoBehaviour
     public Text speedTxt;
 
     KartController kartCtrl;
+    Animator speedAni;
 
     float kartSpeed;
 
@@ -27,12 +31,23 @@ public class KartUIController : MonoBehaviour
 
         isChange = false;
         circleBack.SetActive(false);
+        speedAni = speedDashBoard.GetComponent<Animator>();
+        speedAni.enabled = false;
     }
 
     void Update()
     {
+        if(kartCtrl == null)
+        {
+            kartCtrl = GameObject.FindGameObjectWithTag("Player").GetComponent<KartController>();
+        }
         kartSpeed = kartCtrl.speedKM * 2;
         speedTxt.text = kartSpeed.ToString("f0");
+        speedCircle.fillAmount = kartSpeed * 0.0025f;
+        if(kartSpeed < 300.0f)
+        {
+            needle.rotation = Quaternion.Euler(0, 0, 135 - kartSpeed * 0.9f);
+        }
 
         if (kartCtrl.isBoostTriggered)
         {
@@ -68,6 +83,7 @@ public class KartUIController : MonoBehaviour
             }
         }
         circleBack.SetActive(isBoost);
+        speedAni.enabled = isBoost;
     }
 
     IEnumerator ChangeSpeedUIOff()
@@ -76,17 +92,10 @@ public class KartUIController : MonoBehaviour
         isChange = false;
     }
 
-    // 속도계 움직이기
-    void ShakeUI()
-    {
-
-    }
-
     // needle 돌리기
     void RotateSpeedNeedle()
     {
 
     }
 
-    // 원 속도에 따라 조절
 }
