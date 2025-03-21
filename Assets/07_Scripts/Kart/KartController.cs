@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 
 public class KartController : MonoBehaviour
@@ -71,11 +72,22 @@ public class KartController : MonoBehaviour
 
     public float driftDuration { get; private set; }
     public bool isBoostCreate { get; set; }
-
+    
+    /* MapTest */
+    private Transform _playerParent;
+    private Transform _tr;
+    private PhotonView _photonView;    
+    
     private void Awake()
     {
         wheelCtrl = wheels.GetComponent<WheelController>();
         rigid = GetComponent<Rigidbody>();
+        
+        /* TODO : 포톤 붙일때 수정해주기 */
+        _tr = gameObject.transform;
+        _photonView = GetComponent<PhotonView>();
+        _playerParent = GameObject.Find("Players").transform;
+        transform.parent = _playerParent;                
     }
 
     void Start()
@@ -96,6 +108,11 @@ public class KartController : MonoBehaviour
 
     void Update()
     {
+        if (!_photonView.IsMine)
+        {
+            return;
+        }        
+        
         steerInput = Input.GetAxis("Horizontal");
         motorInput = Input.GetAxis("Vertical");
 
@@ -143,6 +160,11 @@ public class KartController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!_photonView.IsMine)
+        {
+            return;
+        }        
+        
         if (steerInput != 0 || motorInput != 0)
         {
             HandleSteering(steerInput);  // 조향 처리

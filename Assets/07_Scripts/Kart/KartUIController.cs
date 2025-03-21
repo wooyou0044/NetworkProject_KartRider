@@ -27,7 +27,7 @@ public class KartUIController : MonoBehaviour
 
     void Start()
     {
-        kartCtrl = kart.GetComponent<KartController>();
+
 
         isChange = false;
         circleBack.SetActive(false);
@@ -37,25 +37,26 @@ public class KartUIController : MonoBehaviour
 
     void Update()
     {
-        if(kartCtrl == null)
+
+        if (kartCtrl != null)
         {
-            kartCtrl = GameObject.FindGameObjectWithTag("Player").GetComponent<KartController>();
+            kartSpeed = kartCtrl.speedKM * 2;
+            speedTxt.text = kartSpeed.ToString("f0");
+            speedCircle.fillAmount = kartSpeed * 0.0025f;            
         }
-        kartSpeed = kartCtrl.speedKM * 2;
-        speedTxt.text = kartSpeed.ToString("f0");
-        speedCircle.fillAmount = kartSpeed * 0.0025f;
+
         if(kartSpeed < 300.0f)
         {
             needle.rotation = Quaternion.Euler(0, 0, 135 - kartSpeed * 0.9f);
         }
 
-        if (kartCtrl.isBoostTriggered)
+        if (kartCtrl != null && kartCtrl.isBoostTriggered)
         {
             isChange = false;
             StartCoroutine(ChangeSpeedUIOff());
         }
 
-        if (isChange == false)
+        if (kartCtrl != null && isChange == false)
         {
             ChangeSpeedUIToBoost(kartCtrl.isBoostTriggered);
             isChange = true;
@@ -98,4 +99,9 @@ public class KartUIController : MonoBehaviour
 
     }
 
+    public void SetKart(GameObject instance)
+    {
+        kart = instance;
+        kartCtrl = kart.GetComponent<KartController>();
+    }
 }

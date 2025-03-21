@@ -34,9 +34,10 @@ public class MapManager : MonoBehaviourPunCallbacks
         sceneName = SceneManager.GetActiveScene().name;
         
         MapEnum mapRotation = (MapEnum) Enum.Parse(typeof(MapEnum), sceneName);
+        Quaternion kartRotation = Quaternion.Euler(0,90,0);
         switch (mapRotation)
         {
-            case MapEnum.DaisyCircuit: 
+            case MapEnum.DaisyCircuit:
                 defaultRotation = Quaternion.Euler(0, 180, 0); break;
             case MapEnum.Default: 
                 defaultRotation = Quaternion.Euler(0, 0, 0); break;
@@ -45,6 +46,8 @@ public class MapManager : MonoBehaviourPunCallbacks
                 defaultRotation = Quaternion.Euler(0, 0, 0);
                 break;
         }
+
+        defaultRotation = Quaternion.LookRotation(Vector3.left);
         
         _allCheckPoints = FindObjectsOfType<CheckPoint>();
     }
@@ -106,7 +109,7 @@ public class MapManager : MonoBehaviourPunCallbacks
     // 리스폰시 실행 (카트의 R키 누를때 혹은 바닥으로 떨어졌을떄)
     public void RespawnToPos(GameObject playerKart, Transform somePoint)
     {
-        Rigidbody kartRigid = playerKart.GetComponent<TempCarScript>().Rigidbody;
+        Rigidbody kartRigid = playerKart.GetComponent<Rigidbody>();
 
         Vector3 penalty = Vector3.up * 2.5f;
         
@@ -124,6 +127,8 @@ public class MapManager : MonoBehaviourPunCallbacks
         {
             playerKart.transform.position = myLastcheckPoint.position + penalty;
             playerKart.transform.rotation = myLastcheckPoint.rotation;
+            // 카트가 돌아가있으므로 일단 보정
+//            playerKart.transform.rotation = Quaternion.LookRotation(Vector3.right);
         }
         
         kartRigid.isKinematic = false;        
@@ -132,7 +137,7 @@ public class MapManager : MonoBehaviourPunCallbacks
     /* ToDo: 플레이어 카트의 리지드 바디 찾아서 설정해주기 */ 
     public void PlaceToStartPos(int randomNum, GameObject playerKart)
     {
-        Rigidbody kartRigid = playerKart.GetComponent<TempCarScript>().Rigidbody;
+        Rigidbody kartRigid = playerKart.GetComponent<Rigidbody>();
         Transform startingPoint = startPos[randomNum];
         myLastcheckPoint = startingPoint;
 
