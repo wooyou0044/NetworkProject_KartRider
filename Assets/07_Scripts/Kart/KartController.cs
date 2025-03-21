@@ -21,7 +21,7 @@ public class KartController : MonoBehaviour
     private float driftTime = 0f;
 
     private bool isDrifting = false;
-    private bool isBoostTriggered = false;
+    public bool isBoostTriggered = false;
     private bool isUpArrowKeyPressed = false; // 현재 키가 눌려있는 상태
     private bool wasUpArrowKeyReleased = true; // 이전에 키가 떼어진 상태
 
@@ -69,6 +69,9 @@ public class KartController : MonoBehaviour
     [Tooltip("부스트 지속 시간")]
     public float boostDuration = 1.5f;
 
+    public float driftDuration { get; private set; }
+    public bool isBoostCreate { get; set; }
+
     private void Awake()
     {
         wheelCtrl = wheels.GetComponent<WheelController>();
@@ -77,6 +80,8 @@ public class KartController : MonoBehaviour
 
     void Start()
     {
+        isBoostTriggered = false;
+
         wheelTrans = new Transform[wheels.transform.childCount];
         for (int i = 0; i < wheelTrans.Length; i++)
         {
@@ -123,6 +128,17 @@ public class KartController : MonoBehaviour
         }
 
         speedKM = rigid.velocity.magnitude * 3.6f; // m/s를 km/h로 변환
+
+        // 드리프트 아이템 생성
+        if(isDrifting == true)
+        {
+            driftDuration += Time.fixedDeltaTime;
+        }
+        if (driftDuration >= 1)
+        {
+            isBoostCreate = true;
+            driftDuration = 0;
+        }
     }
 
     private void FixedUpdate()
