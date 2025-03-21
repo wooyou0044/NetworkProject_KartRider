@@ -37,8 +37,8 @@ public class DriftCameraController : MonoBehaviour
         // 드리프트 상태일 때 X 오프셋 이동
         if (kartController.isDrifting)
         {
-            float driftDirection = kartController.currentDriftAngle > 0 ? 1f : -1f; // 드리프트 방향
-            targetOffsetX = originalOffsetX + (driftDirection * driftOffsetX);
+           float driftDirection = kartController.currentDriftAngle > 0 ? 1f : -1f; // 드리프트 방향
+           targetOffsetX = originalOffsetX + (driftDirection * driftOffsetX);
         }
         else
         {
