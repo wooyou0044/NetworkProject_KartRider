@@ -46,11 +46,9 @@ public class PhotonConnectManager : MonoBehaviourPunCallbacks
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        int i = 0;
         foreach (var player in PhotonNetwork.PlayerList)
         {
-            i++;
-            Debug.Log("player" + i + " : " + player.NickName);
+            Debug.Log("player" + player.ActorNumber + " : " + player.NickName);
         }
         
         Debug.Log("roomName : " + PhotonNetwork.CurrentRoom.Name);
