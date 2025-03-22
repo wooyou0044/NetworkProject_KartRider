@@ -9,6 +9,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
+        
         Player[] players = PhotonNetwork.PlayerList;
 
         foreach (var player in players)
@@ -22,8 +23,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             //만약 마스터가 아니라면 스타트 버튼이 아니라 준비완료 버튼으로 띄우기
         }
-    }
-
+    }    
     public void StartGame()
     {
         if(PhotonNetwork.IsMasterClient == true)

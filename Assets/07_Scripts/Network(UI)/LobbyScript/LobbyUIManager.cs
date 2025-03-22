@@ -3,71 +3,84 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Photon.Realtime;
 
 public class LobbyUIManager : MonoBehaviour
 {
-    [SerializeField]public LobbyManager lobbyManager;
+    [SerializeField] public LobbyManager lobbyManager;
 
     [Header("방 만들기 판넬")]
-    [SerializeField]public GameObject createRoomPanel;
-    [SerializeField]public TMP_InputField roomNameInputField;
-    [SerializeField]public TMP_InputField roomPasswordInputField;
+    [SerializeField] public GameObject createRoomPanel;
+    [SerializeField] public TMP_InputField roomNameInputField;
+    [SerializeField] public TMP_InputField roomPasswordInputField;
 
     [Header("대기방 입장 판넬")]
-    [SerializeField]public GameObject roomNumberJoinPanel;
+    [SerializeField] public GameObject roomNumberJoinPanel;
     [SerializeField] public TMP_InputField roomNumberInputField;
 
-    [Header("룸 옵션")]
-    [SerializeField]public GameObject roomListPanel;
-    [SerializeField]public Button roomPrefab;
+    [Header("룸 리스트 옵션")]
+    [SerializeField] public GameObject roomListPanel;
+    [SerializeField] public Button roomPrefab;
 
-    [Header("룸 옵션")]
+    [Header("룸 연결 옵션")]
     [SerializeField] public GameObject roomJoinFaildePanel;
     [SerializeField] public TMP_Text roomJoinFaildeText;
+
+    [Header("비밀방 옵션")]
+    [SerializeField] public GameObject lockRoomPanel;
+    [SerializeField] public TMP_InputField lockRoomPasswordInputField;
+    [SerializeField] public Button lockRoomConnectBtn;
+    
+
     private void Start()
     {
-        createRoomPanel.SetActive(false);
-        roomNumberJoinPanel.SetActive(false);
+        InitializeLobby();
     }
-
+    public void InitializeLobby()
+    {//로비 초기화
+        createRoomPanel.SetActive(false);
+        roomNumberJoinPanel.SetActive(false);        
+        roomJoinFaildePanel.SetActive(false);
+        lockRoomPanel.SetActive(false);
+    }
     public void CreateRoomPanleCon()
-    {
+    {//방 생성 버튼 클릭시 활성화
         createRoomPanel.SetActive(true);
     }
     public void RoomNumberJoinPanelCon()
-    {
+    {//대기방 입장 클릭시 활성화
         roomNumberJoinPanel.SetActive(true);
     }
     public void CreateRoomPanleCancelCon()
-    {
+    {//방 만들기 취소 클릭시 비활성화
         createRoomPanel.SetActive(false);
     }
     public void RoomNumberJoinPanelCancelCon()
-    {
+    {//대기방 입장 취소 클릭시 비활성화
         roomNumberJoinPanel.SetActive(false);
     }
+    public void LockRoomPasswrodPanelActive(bool active)
+    {//비밀번호가 걸린 방 입장시 
+        lockRoomPanel.SetActive(active);
+    }
     public void RoomJoinFaildeText(string message)
-    {
-        // UI 패널 또는 팝업 활성화
+    {//UI 패널 또는 팝업 활성화
         roomJoinFaildePanel.SetActive(true);
-        roomJoinFaildeText.text = message; // Feedback 텍스트 설정
+        roomJoinFaildeText.text = message; //텍스트 설정
     }
     public void RoomJoinFaildeBtn()
     {
         roomJoinFaildePanel.SetActive(false);
     }
-    public void AddRoomToList(RoomInfo roomInfo)
+    public void LockRoomPanelCancelBtn()
     {
-        // 방 리스트 프리팹 생성
-        var roomEntry = Instantiate(roomPrefab, roomListPanel.transform);
-        var roomEntryScript = roomEntry.GetComponent<RoomEntry>();
-        var roomButton = roomEntry.GetComponent<Button>();
-
-        if (roomEntryScript != null)
+        lockRoomPanel.SetActive(false);
+    }
+    public void ClearRoomList()
+    {
+        foreach (Transform child in roomListPanel.transform)
         {
-            roomEntryScript.SetRoomInfo(roomInfo);
+            Destroy(child.gameObject);
         }
-        roomEntry.onClick.AddListener(() => lobbyManager.JoinRoom(roomInfo.Name));
     }
 }
+
