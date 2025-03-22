@@ -11,6 +11,7 @@ public class FirebaseDBManager : MonoBehaviour
     [SerializeField] private FirebaseUser user;
     [SerializeField] private FirebaseAuth auth;
     [SerializeField] private DatabaseReference dbRef;
+    public string CurrentSessionId { get; set; } // 현재 세션 ID 저장
 
     public static FirebaseDBManager Instance { get => instance;}
     public FirebaseUser User { get => user; set => user = value; }
@@ -29,6 +30,7 @@ public class FirebaseDBManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
     public void OnApplicationQuit()
     {
         //로그아웃 감지되면 파이어베이스 로그인 상태 false로 변환

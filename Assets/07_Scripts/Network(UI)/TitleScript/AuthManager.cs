@@ -10,8 +10,6 @@ public class AuthManager : MonoBehaviour
 {
     public TitleUI titleUI;
     public ServerConnect serverCon;
-    public bool isLogin = false;
-
     private bool nickNameCheck = false;
 
     private void Awake()
@@ -42,9 +40,8 @@ public class AuthManager : MonoBehaviour
     }
     IEnumerator LoginCoroutine(string email, string password)
     {
-
-        var loginTask = FirebaseDBManager.Instance.Auth.SignInWithEmailAndPasswordAsync(email, password);
         // Firebase 인증을 통해 이메일과 비밀번호 로그인 요청 처리
+        var loginTask = FirebaseDBManager.Instance.Auth.SignInWithEmailAndPasswordAsync(email, password);
         // 로그인 요청이 완료될 때 까지 대기
         yield return new WaitUntil(predicate: () => loginTask.IsCompleted);
         if (loginTask.Exception != null)
@@ -55,26 +52,46 @@ public class AuthManager : MonoBehaviour
         }
         FirebaseDBManager.Instance.User = loginTask.Result.User;
 
-        var userRef = FirebaseDBManager.Instance.DbRef.Child("users")
+        var userLoginTask = FirebaseDBManager.Instance.DbRef.Child("users")
             .Child(FirebaseDBManager.Instance.User.UserId)
-            .Child("isLoggedIn").SetValueAsync(true);
-
-        yield return new WaitUntil(() => userRef.IsCompleted);
-        if (userRef.Exception != null)
+            .Child("isLoggedIn").GetValueAsync();
+        yield return new WaitUntil(() => userLoginTask.IsCompleted);
+        if (userLoginTask.Exception != null)
         {
             titleUI.ShowMessage(titleUI.errorMessage, "로그인 상태 확인 실패 다시 로그인하세요.", true);
-            yield return new WaitForSeconds(1f);
-            titleUI.ShowMessage(titleUI.errorMessage, "", false);
+            yield break;
         }
-        // 로그인 성공 처리                
-        LoginSuccess(loginTask.Result.User);
+        bool? isLoggedIn = userLoginTask.Result.Value as bool?;
+        if (isLoggedIn.HasValue && isLoggedIn.Value)
+        {
+            // 이미 로그인 상태라면 로그인 차단
+            titleUI.ShowMessage(titleUI.errorMessage, "이미 로그인된 계정입니다. \n다른 기기에서 로그아웃 후 다시 시도하세요.", true);
+            yield break; // 로그인 시도를 중단
+        }
+        else
+        {         
+            var userRef = FirebaseDBManager.Instance.DbRef.Child("users")
+                .Child(FirebaseDBManager.Instance.User.UserId)
+                .Child("isLoggedIn").SetValueAsync(true);
+
+            yield return new WaitUntil(() => userRef.IsCompleted);
+            if (userRef.Exception != null)
+            {
+                titleUI.ShowMessage(titleUI.errorMessage, "로그인 상태 확인 실패 다시 로그인하세요.", true);
+                yield return new WaitForSeconds(1f);
+                titleUI.ShowMessage(titleUI.errorMessage, "", false);
+                yield break;
+            }
+            // 로그인 성공 처리
+            LoginSuccess(loginTask.Result.User);
+        }
     }
     private void LoginError(AggregateException exception)
     {
         // Firebase 로그인 실패 시 발생한 에러 처리, 메세지 출력
         FirebaseException firebasEx = exception.GetBaseException() as FirebaseException;
         AuthError errorCode = (AuthError)firebasEx.ErrorCode;
-        string message = "";        
+        string message = "";
         switch (errorCode)
         {
             case AuthError.MissingEmail:
@@ -92,11 +109,10 @@ public class AuthManager : MonoBehaviour
 
     void LoginSuccess(FirebaseUser user)
     {
-        //로그인 성공 시 유저 정보 저장 및 처리
-        isLogin = false;
+        //로그인 성공 시 유저 정보 저장 및 처리        
         titleUI.HideMessages();
         titleUI.ToggleLoginPanel(false);  
-        StartCoroutine(PostLogin(user));        
+        StartCoroutine(PostLogin(user));
     }
     IEnumerator PostLogin(FirebaseUser user)
     {
@@ -323,8 +339,7 @@ public class AuthManager : MonoBehaviour
         yield return new WaitForSeconds(1f); //1초 대기
         titleUI.SetButtonsInteractable(true); //버튼 잠금 풀고
         titleUI.HideMessages(); //메세지 가리고
-                                //텍스트 초기화 하고
-        titleUI.ResetField(titleUI.signUpEmailField, titleUI.signUpPasswordField);
-        titleUI.ToggleLoginPanel(true);//로그인 화면으로 이동
+                                //텍스트 초기화 하고        
+        titleUI.LoginToButtonCon(); //회원가입 완료 후 로그인 화면으로 이동
     }
 }

@@ -98,8 +98,7 @@ public class TitleUI : MonoBehaviour
     /// </summary>
     /// <param name="isActive">활성화 여부</param>
     public void ToggleCreateNickNamePanel(bool isActive)
-    {
-        
+    {        
         createNickNamePanel.SetActive(isActive);
     }
     /// <summary>
@@ -109,8 +108,8 @@ public class TitleUI : MonoBehaviour
     /// <param name="isInteractable"> 버튼 활성화 여부</param>
     public void SetButtonsInteractable(bool isInteractable)
     {
-        signUpCompleteBtn.interactable = isInteractable; //잠시 버튼 비활성화
-        signUpLoingToBtn.interactable = isInteractable; //잠시 버튼 비활성화
+        signUpCompleteBtn.interactable = isInteractable; 
+        signUpLoingToBtn.interactable = isInteractable;
     }
     /// <summary>
     /// 회원가입 패널 활성화 상태 설정
@@ -118,7 +117,7 @@ public class TitleUI : MonoBehaviour
     /// <param name="isActive">활성화 여부</param>
     public void ToggleSignUpPanel(bool isActive)
     {
-        loginPanel.SetActive(isActive);
+        signUpPanel.SetActive(isActive);
     }
     /// <summary>
     /// 로그인 화면에서 회원가입으로 이동
