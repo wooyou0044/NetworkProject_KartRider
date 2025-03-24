@@ -18,13 +18,14 @@ public class RoomEntry : MonoBehaviour
     public void SetRoomInfo(RoomInfo roomInfo)
     {
         //방 정보 업데이트
-        //roomNumberText.text = roomInfo.CustomProperties.ContainsKey("RoomNumber")
-        //    ? (string)roomInfo.CustomProperties["RoomNumber"]
-        //    : "방넘버?";
-
         roomNameText.text = roomInfo.CustomProperties.ContainsKey("RoomName")
             ? (string)roomInfo.CustomProperties["RoomName"]
             : "방이름?";
+        
+        roomNumberText.text = roomInfo.CustomProperties.ContainsKey("RoomNumber")
+            ? (string)roomInfo.CustomProperties["RoomNumber"].ToString()
+            : "방넘버?";
+
         playerCountText.text = $"{roomInfo.PlayerCount}";
         MaxPlayersText.text = $"/ {roomInfo.MaxPlayers}";
         
@@ -60,6 +61,5 @@ public class RoomEntry : MonoBehaviour
             lockIcon.gameObject.SetActive(isPassword);
         }
     }
-
 }
 

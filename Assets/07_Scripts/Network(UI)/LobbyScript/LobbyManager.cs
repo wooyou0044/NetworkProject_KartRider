@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
+
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
@@ -12,22 +12,18 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     [SerializeField] private RoomEntry roomEntry;
 
     private List<RoomInfo> currentRoomList = new List<RoomInfo>();
+    private List<RoomEntry> roomEntryList = new List<RoomEntry>();
+    private Dictionary<string, RoomEntry> roomEntryMap = new Dictionary<string, RoomEntry>();
+
     private Queue<string> availableRoomNumbers = new Queue<string>(); // 방 번호 관리 Queue
     private HashSet<string> usedRoomNumbers = new HashSet<string>(); // 사용 중인 방 번호 추적
 
-    private void Start()
+    IEnumerator Start()
     {
+        yield return new WaitUntil(() => PhotonNetwork.IsConnectedAndReady);
         PhotonNetwork.JoinLobby();
         InitializeRoomNumbers(); //방 번호 초기화
-        lobbyUiMgr.roomReSetBtn.onClick.AddListener(() => OnRoomListUpdate(currentRoomList)); // 버튼 이벤트 연결
-    }
-    public void ConnectedOn()
-    {
-        Debug.Log(PhotonNetwork.IsConnected +"마스터");
-        Debug.Log(PhotonNetwork.InLobby+"로비");
-        Debug.Log(PhotonNetwork.InRoom+"룸");
-    }
-
+    }    
     private void InitializeRoomNumbers()
     {
         HashSet<string> uniqueNumbers = new HashSet<string>();
@@ -43,6 +39,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         {
             availableRoomNumbers.Enqueue(number);
         }
+        Debug.Log($"현재 큐 상태: {availableRoomNumbers.Count}");
     }
 
     private string GetUniqueRoomNumber()
@@ -67,9 +64,36 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         //}
         PhotonNetwork.JoinRoom(roomName);
     }
-    
+    public void JoinRandomRoomBtn()
+    {
+        PhotonNetwork.JoinRandomRoom();
+    }
+    public override void OnJoinRandomFailed(short returnCode, string message)
+    {
+
+        string[] roomNames = { "다함께 카트라이더", "메타플밍9기 모여라", "방 제목을 할게 없네요" };
+        int randomName = Random.Range(0, roomNames.Length);
+        string randomRoomName = roomNames[randomName];
+        string roomNumber = GetUniqueRoomNumber();
+        Hashtable custom = new Hashtable
+        {
+            { "RoomName", randomRoomName },
+            { "RoomNumber", roomNumber }
+        };
+
+        RoomOptions roomOptions = new RoomOptions
+        {
+            MaxPlayers = 8,
+            EmptyRoomTtl = 0,
+            CustomRoomProperties = custom,
+            CustomRoomPropertiesForLobby = new string[] { "RoomName", "RoomNumber" }
+        };
+        
+        PhotonNetwork.JoinRandomOrCreateRoom(custom, 8, MatchmakingMode.FillRoom, null, null, roomNumber, roomOptions, null);
+    }
     public override void OnJoinedRoom()
     {
+        PhotonNetwork.PlayerList[0].SetCustomProperties(new Hashtable() { { "키1", "문자열" }, { "키2", 1 } });        
         StartCoroutine(LoadJoinRoom("RoomScene"));
     }
     IEnumerator LoadJoinRoom(string sceneName)
@@ -122,10 +146,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if (string.IsNullOrEmpty(roomNumber))
             return;
 
-        CreateRoom(roomName, password, int.Parse(roomNumber));
+        
+        CreateRoom(roomName, password, roomNumber);
     }
 
-    public void CreateRoom(string roomName, string password, int roomNumber)
+    public void CreateRoom(string roomName, string password, string roomNumber)
     {
         Hashtable custom = new Hashtable
         {
@@ -137,69 +162,73 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         RoomOptions roomOptions = new RoomOptions
         {
             MaxPlayers = 8,
+            EmptyRoomTtl = 0,            
             CustomRoomProperties = custom,
             CustomRoomPropertiesForLobby = new string[] { "RoomName", "Password", "RoomNumber" }
         };
-
-        PhotonNetwork.CreateRoom(roomName, roomOptions, TypedLobby.Default);
+        
+        PhotonNetwork.CreateRoom(roomNumber, roomOptions, TypedLobby.Default);
     }
-
+    
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {        
+        RoomListUpdate(roomList);
+    }
+    public void RoomListUpdateBtn()
     {
-        UpdateCurrentRoomList(roomList);
-
-        Dictionary<string, RoomEntry> existingRoomEntries = new Dictionary<string, RoomEntry>();
-        foreach (Transform child in lobbyUiMgr.roomListPanel.transform)
-        {
-            var roomEntry = child.GetComponent<RoomEntry>();
-            if (roomEntry != null)
-            {
-                existingRoomEntries[roomEntry.roomNameText.text] = roomEntry;
-            }
-        }
-
-        //HashSet<string> updatedRoomNames = new HashSet<string>(roomList.Select(room => room.Name));
-        List<RoomEntry> entriesToRemove = new List<RoomEntry>();
-
-        //foreach (var entry in existingRoomEntries)
-        //{
-        //    if (!updatedRoomNames.Contains(entry.Key))
-        //    {
-        //        entriesToRemove.Add(entry.Value);
-        //    }
-        //}
-
-        foreach (var entryToRemove in entriesToRemove)
-        {
-            Destroy(entryToRemove.gameObject);
-        }
-
+        RoomListUpdate(currentRoomList);
+    }
+    public void RoomListUpdate(List<RoomInfo> roomList)
+    {
         foreach (RoomInfo roomInfo in roomList)
         {
-            if (existingRoomEntries.ContainsKey(roomInfo.Name))
+            if (roomInfo.RemovedFromList) // 방 삭제 처리
             {
-                existingRoomEntries[roomInfo.Name].SetRoomInfo(roomInfo);
+                RemoveRoomEntry(roomInfo.Name);
             }
             else
             {
-                AddRoomToList(roomInfo);
+                if (!roomEntryMap.ContainsKey(roomInfo.Name)) // 새로운 방 추가
+                {
+                    AddRoomToList(roomInfo);
+                }
+                else
+                {
+                    UpdateRoomEntry(roomInfo); // 기존 방 업데이트
+                }
             }
         }
     }
-    public void ResetBtn()
+    private void RemoveRoomEntry(string roomName)
     {
+        if (roomEntryMap.ContainsKey(roomName))
+        {
+            RoomEntry entryToRemove = roomEntryMap[roomName];
 
+            // UI 오브젝트 삭제
+            Destroy(entryToRemove.gameObject);
+
+            // 리스트와 매핑에서 제거
+            roomEntryList.Remove(entryToRemove);
+            roomEntryMap.Remove(roomName);
+        }
     }
-    public void UpdateCurrentRoomList(List<RoomInfo> roomList)
+    private void UpdateRoomEntry(RoomInfo roomInfo)
     {
-        currentRoomList.Clear();
-        currentRoomList.AddRange(roomList);
+        if (roomEntryMap.ContainsKey(roomInfo.Name))
+        {
+            RoomEntry existingEntry = roomEntryMap[roomInfo.Name];
+            existingEntry.SetRoomInfo(roomInfo); // 최신 RoomInfo로 업데이트
+        }
     }
-
     public void AddRoomToList(RoomInfo roomInfo)
     {
         var roomEntry = Instantiate(lobbyUiMgr.roomPrefab, lobbyUiMgr.roomListPanel.transform);
         var roomEntryScript = roomEntry.GetComponent<RoomEntry>();
+        roomEntryScript.SetRoomInfo(roomInfo); // RoomInfo에서 정보 설정
+        roomEntryList.Add(roomEntryScript); // 리스트에 추가
+        roomEntryMap.Add(roomInfo.Name, roomEntryScript);
+
         if (roomEntryScript != null)
         {
             roomEntryScript.SetRoomInfo(roomInfo);
@@ -229,7 +258,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             });
         }
     }
-
     public void ShowPasswordPrompt(string roomName, string correctPassword)
     {
         lobbyUiMgr.LockRoomPasswrodPanelActive(true);
