@@ -29,26 +29,6 @@ public class TestCHMCamer : MonoBehaviour
             Debug.LogError("Virtual Camera 참조가 없습니다!");
             return;
         }
-
-        transposer = virtualCamera.GetCinemachineComponent<CinemachineTransposer>();
-        if (transposer != null)
-        {
-            initialOffset = transposer.m_FollowOffset;
-            Vector2 horiz = new Vector2(initialOffset.x, initialOffset.z);
-            baseDistance = horiz.magnitude;
-            // Convention: x = r*sin(theta), z = r*cos(theta)
-            baseAngle = Mathf.Atan2(initialOffset.x, initialOffset.z);
-        }
-        else
-        {
-            Debug.LogWarning("Cinemachine Transposer 컴포넌트를 찾을 수 없습니다!");
-        }
-
-        // target이나 kartController가 누락되었으면 자동 할당 시도
-        if (target == null && kartController != null)
-            target = kartController.transform;
-        if (kartController == null && target != null)
-            kartController = target.GetComponent<TestCHMKart>();
     }
 
     private void LateUpdate()
@@ -80,5 +60,33 @@ public class TestCHMCamer : MonoBehaviour
 
         // 부드러운 전환
         transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, Time.deltaTime / smoothTime);
+    }
+
+    public void SetKart(GameObject kart)
+    {
+        Debug.Log("SetKart 호출!");
+        
+        if(kart == null)
+        {
+            Debug.LogWarning("카트 참조가 없습니다!");
+            return;
+        }
+        
+        target = kart.transform;
+        kartController = kart.GetComponent<TestCHMKart>();
+        
+        transposer = virtualCamera.GetCinemachineComponent<CinemachineTransposer>();
+        if (transposer != null)
+        {
+            initialOffset = transposer.m_FollowOffset;
+            Vector2 horiz = new Vector2(initialOffset.x, initialOffset.z);
+            baseDistance = horiz.magnitude;
+            // Convention: x = r*sin(theta), z = r*cos(theta)
+            baseAngle = Mathf.Atan2(initialOffset.x, initialOffset.z);
+        }
+        else
+        {
+            Debug.LogWarning("Cinemachine Transposer 컴포넌트를 찾을 수 없습니다!");
+        }        
     }
 }

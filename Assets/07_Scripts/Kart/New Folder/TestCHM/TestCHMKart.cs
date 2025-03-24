@@ -1,4 +1,5 @@
 using System.Collections;
+using Photon.Pun;
 using UnityEngine;
 
 public class TestCHMKart : MonoBehaviour
@@ -69,15 +70,33 @@ public class TestCHMKart : MonoBehaviour
 
     #endregion
 
+    #region
+    /* Network Instantiate */
+    private Transform _playerParent;
+    private Transform _tr;
+    private PhotonView _photonView;    
+    #endregion
+    
     #region Unity Methods
 
     private void Awake()
     {
         wheelCtrl = wheels.GetComponent<CHMTestWheelController>(); // 바퀴 컨트롤러 참조
         rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
+        
+        /* TODO : 포톤 붙일때 수정해주기 */
+        _tr = gameObject.transform;
+        _photonView = GetComponent<PhotonView>();
+        _playerParent = GameObject.Find("Players").transform;
+        transform.parent = _playerParent;                
     }
     private void FixedUpdate()
     {
+        if (!_photonView.IsMine)
+        {
+            return;
+        }        
+        
         maxSpeed = maxSpeedKmh / 3.6f;
         boostMaxSpeed = boostMaxSpeedKmh / 3.6f;
         float currentMaxSpeed = isBoostTriggered ? boostMaxSpeed : maxSpeed;
@@ -91,6 +110,11 @@ public class TestCHMKart : MonoBehaviour
 
     private void Update()
     {
+        if (!_photonView.IsMine)
+        {
+            return;
+        }        
+        
         // 입력값 읽어오기
         currentSteerInput = Input.GetAxis("Horizontal");
         currentMotorInput = Input.GetAxis("Vertical");
@@ -125,7 +149,6 @@ public class TestCHMKart : MonoBehaviour
         // 카트 이동 처리 (이동/회전)
         //HandleKartMovement(currentMotorInput, currentSteerInput);
     }
-
     #endregion
 
     #region Input Handling

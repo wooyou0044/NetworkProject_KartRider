@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 91cb65ceec688489281dd14ff40593d6
+guid: 98e0914c680ab46b3b1185aeafc96d9c
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -7,8 +7,13 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: M_Cnsw_66_StartGate
-    second: {fileID: 2100000, guid: b088befb029124ac990f1ccde5d3575c, type: 2}
+      name: CheckPointMat
+    second: {fileID: 2100000, guid: a14f2356c689f48e7bb9cc70f68c61bc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Transparent_unlit
+    second: {fileID: 2100000, guid: e8de0946f3f6148fbb9a59768462f484, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
