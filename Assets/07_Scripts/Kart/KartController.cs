@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 
 public class KartController : MonoBehaviour
@@ -21,7 +22,7 @@ public class KartController : MonoBehaviour
     private float driftTime = 0f;
 
     private bool isDrifting = false;
-    private bool isBoostTriggered = false;
+    public bool isBoostTriggered = false;
     private bool isUpArrowKeyPressed = false; // 현재 키가 눌려있는 상태
     private bool wasUpArrowKeyReleased = true; // 이전에 키가 떼어진 상태
 
@@ -69,14 +70,30 @@ public class KartController : MonoBehaviour
     [Tooltip("부스트 지속 시간")]
     public float boostDuration = 1.5f;
 
+    public float driftDuration { get; private set; }
+    public bool isBoostCreate { get; set; }
+    
+    /* MapTest */
+    private Transform _playerParent;
+    private Transform _tr;
+    private PhotonView _photonView;    
+    
     private void Awake()
     {
         wheelCtrl = wheels.GetComponent<WheelController>();
         rigid = GetComponent<Rigidbody>();
+        
+        /* TODO : 포톤 붙일때 수정해주기 */
+        _tr = gameObject.transform;
+        _photonView = GetComponent<PhotonView>();
+        _playerParent = GameObject.Find("Players").transform;
+        transform.parent = _playerParent;                
     }
 
     void Start()
     {
+        isBoostTriggered = false;
+
         wheelTrans = new Transform[wheels.transform.childCount];
         for (int i = 0; i < wheelTrans.Length; i++)
         {
@@ -91,6 +108,11 @@ public class KartController : MonoBehaviour
 
     void Update()
     {
+        if (!_photonView.IsMine)
+        {
+            return;
+        }        
+        
         steerInput = Input.GetAxis("Horizontal");
         motorInput = Input.GetAxis("Vertical");
 
@@ -123,10 +145,26 @@ public class KartController : MonoBehaviour
         }
 
         speedKM = rigid.velocity.magnitude * 3.6f; // m/s를 km/h로 변환
+
+        // 드리프트 아이템 생성
+        if(isDrifting == true)
+        {
+            driftDuration += Time.fixedDeltaTime;
+        }
+        if (driftDuration >= 1)
+        {
+            isBoostCreate = true;
+            driftDuration = 0;
+        }
     }
 
     private void FixedUpdate()
     {
+        if (!_photonView.IsMine)
+        {
+            return;
+        }
+        
         if (steerInput != 0 || motorInput != 0)
         {
             HandleSteering(steerInput);  // 조향 처리
@@ -188,7 +226,7 @@ public class KartController : MonoBehaviour
             }
 
             // 스키드 마크 활성화
-            //wheelCtrl.SetSkidMarkActive(true);
+            wheelCtrl.SetSkidMarkActive(true);
             Debug.Log("드리프트 시작!");
         }
     }
@@ -206,7 +244,7 @@ public class KartController : MonoBehaviour
             rigid.angularDrag = normalAngularDrag;
 
             // 스키드마크 비활성화
-            //wheelCtrl.SetSkidMarkActive(false);
+            wheelCtrl.SetSkidMarkActive(false);
 
             Debug.Log("드리프트 종료!");
             StartCoroutine(BoostCheckCoroutine());
@@ -313,5 +351,13 @@ public class KartController : MonoBehaviour
             return 1 - hit.distance;
         }
         return 0;
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("ItemBox"))
+        {
+            other.GetComponent<ItemBoxController>().GetItem();
+        }
     }
 }

@@ -16,7 +16,7 @@ public class CharacterManager : MonoBehaviour
     void Start()
     {
         Player owner = _photonView.Owner;
-        TempCarScript[] karts = PhotonView.FindObjectsOfType<TempCarScript>();
+        TestCHMKart[] karts = FindObjectsOfType<TestCHMKart>();
         
         foreach (var kart in karts)
         {
@@ -25,6 +25,9 @@ public class CharacterManager : MonoBehaviour
                 Transform characterTr = kart.transform.GetChild(0).GetChild(0).GetChild(0);
                 transform.parent = characterTr;
                 transform.position = characterTr.position;
+                
+                Quaternion characterDeafultRot = Quaternion.Euler(-90, 90, 0);
+                transform.rotation = characterDeafultRot;
                 break;
             }
         }

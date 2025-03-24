@@ -59,7 +59,7 @@ public class TestKartController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift) && Mathf.Abs(steerInput) > 0)
         {
             StartDrift(steerInput * driftAngle);
-        }      
+        }
 
         // 드리프트 중 추가 조작 처리
         if (isDrifting && Input.GetKey(KeyCode.LeftShift))
@@ -84,7 +84,7 @@ public class TestKartController : MonoBehaviour
     {
         // 현재 속도를 기준으로 비율 계산
         float currentSpeed = rigid.velocity.magnitude;
-        float speedFactor = currentSpeed / maxSpeed *2f;
+        float speedFactor = currentSpeed / maxSpeed * 2f;
 
         // maxDriftAngle 조정 (30 ~ 180도까지)
         driftAngle = Mathf.Lerp(minDriftAngle, maxDriftAngle, speedFactor);
@@ -108,7 +108,7 @@ public class TestKartController : MonoBehaviour
         Vector3 forwardForce = transform.forward * motorInput * movementForce;
 
         if (isDrifting)
-        {          
+        {
 
             // 드리프트 초기 속도 저장
             if (initialDriftSpeed == 0f)
@@ -120,7 +120,7 @@ public class TestKartController : MonoBehaviour
             float driftSpeed = initialDriftSpeed * driftSpeedReduction;
             rigid.velocity = rigid.velocity.normalized * driftSpeed;
             // 드리프트 동안 steerInput 값 기반으로 즉각 회전
-            lockedYRotation = transform.eulerAngles.y + steerInput * steerAngle/2.5f * Time.deltaTime;
+            lockedYRotation = transform.eulerAngles.y + steerInput * steerAngle / 2.5f * Time.deltaTime;
             transform.rotation = Quaternion.Euler(0, lockedYRotation, 0);
             // 측면 힘 추가
             Vector3 lateralForce = transform.right * steerInput * driftForceMultiplier * movementForce;
@@ -166,8 +166,6 @@ public class TestKartController : MonoBehaviour
         // 드리프트 종료 예약
         Invoke(nameof(EndDrift), driftDuration);
     }
-
-
 
     // 드리프트 종료 시 코루틴으로 부스터 관리
     private void EndDrift()
