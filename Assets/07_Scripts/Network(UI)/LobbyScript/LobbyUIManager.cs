@@ -29,8 +29,8 @@ public class LobbyUIManager : MonoBehaviour
     [SerializeField] public GameObject lockRoomPanel;
     [SerializeField] public TMP_InputField lockRoomPasswordInputField;
     [SerializeField] public Button lockRoomConnectBtn;
-    
 
+    [SerializeField] public Button roomReSetBtn;
     private void Start()
     {
         InitializeLobby();
