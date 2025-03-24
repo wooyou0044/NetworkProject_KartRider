@@ -69,6 +69,11 @@ public class MapManager : MonoBehaviourPunCallbacks
     // 바닥으로 떨어졌을때
     public void OnTouchDeadZone(Collider kart, GameObject deadZone)
     {
+        if (!kart.gameObject.GetPhotonView().IsMine)
+        {
+            return;
+        }
+        
         Debug.Log("OnTouchDeadZone");
         RespawnToPos(kart.gameObject);
     }
@@ -77,6 +82,11 @@ public class MapManager : MonoBehaviourPunCallbacks
     // 완전 종료 필요할 경우에 게임 매니저 호출.
     public void OnTouchFinishLine(Collider kart, GameObject line)
     {
+        if (!kart.gameObject.GetPhotonView().IsMine)
+        {
+            return;
+        }
+        
         Debug.Log("OnTouchFinishLine");
         
         if (MyCurrentLap > 0 && !IsEssentialCheckPointsPassed())
@@ -102,6 +112,11 @@ public class MapManager : MonoBehaviourPunCallbacks
     /* 체크 포인트 닿았을때 호출하는 메서드 */
     public void OnTouchCheckPoint(Collider kart, GameObject checkPoint)
     {
+        if (!kart.gameObject.GetPhotonView().IsMine)
+        {
+            return;
+        }
+        
         Debug.Log("OnTouchCheckPoint, name : " + checkPoint.name);
         myLastcheckPoint = checkPoint.transform.parent;
     }

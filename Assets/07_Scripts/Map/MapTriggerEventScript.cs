@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -23,6 +24,12 @@ public class MapTriggerEventScript : MonoBehaviour
     public void OnTriggerEnter(Collider other)
     {
         Debug.Log(other);
+
+        // 일단 다른사람이 충돌했으면 무시
+        if (!other.gameObject.GetPhotonView().IsMine)
+        {
+            return;
+        }
         
         if(_checkPoint != null)
         {
