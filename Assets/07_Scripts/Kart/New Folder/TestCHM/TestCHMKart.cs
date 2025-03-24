@@ -66,7 +66,7 @@ public class TestCHMKart : MonoBehaviour
     private void FixedUpdate()
     {
         // 기존 이동 처리 후에 공중 회전 보정 처리
-        CorrectAirborneRotation();
+        //CorrectAirborneRotation();
     }
     private void Update()
     {
@@ -241,7 +241,8 @@ public class TestCHMKart : MonoBehaviour
             // 평상시(드리프트 아닐 때): 이동은 velocity 할당으로 처리
             initialDriftSpeed = 0f;
             Vector3 targetVelocity = transform.forward * motorInput * movementForce;
-            rigid.velocity = Vector3.Lerp(rigid.velocity, targetVelocity, Time.deltaTime * 5f);
+            Vector3 velocity = Vector3.Lerp(rigid.velocity, targetVelocity, Time.deltaTime * 5f);
+            rigid.velocity = new Vector3(velocity.x, rigid.velocity.y, velocity.z);
 
             // 드리프트가 아닌 경우엔 회전은 일반적으로 처리
             lockedYRotation = transform.eulerAngles.y; // 보정
@@ -275,13 +276,13 @@ public class TestCHMKart : MonoBehaviour
             float correctedZ = Mathf.LerpAngle(currentEuler.z, 0f, Time.deltaTime * rotationCorrectionSpeed);
 
             transform.rotation = Quaternion.Euler(correctedX, currentEuler.y, correctedZ);
-
+             
             // 필요 시 아래쪽으로 힘을 추가하여 떨어지도록 할 수 있음.
             rigid.AddForce(Vector3.down * downwardForce, ForceMode.Acceleration);
         }
     }
 
-    private bool IsGrounded()
+    public bool IsGrounded()
     {
         // 간단한 Raycast를 사용하여 kart의 하단이 지면에 닿았는지 확인합니다.
         float rayDistance = 0.8f; // 필요에 따라 조정 가능
