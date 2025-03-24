@@ -17,7 +17,7 @@ public class KartUIController : MonoBehaviour
 
     public Text speedTxt;
 
-    KartController kartCtrl;
+    TestCHMKart kartCtrl;
     Animator speedAni;
 
     float kartSpeed;
@@ -26,8 +26,6 @@ public class KartUIController : MonoBehaviour
 
     void Start()
     {
-
-
         isChange = false;
         circleBack.SetActive(false);
         speedAni = speedDashBoard.GetComponent<Animator>();
@@ -36,10 +34,10 @@ public class KartUIController : MonoBehaviour
 
     void Update()
     {
-
         if (kartCtrl != null)
         {
             kartSpeed = kartCtrl.speedKM * 2;
+            kartSpeed = Mathf.FloorToInt(kartSpeed);
             speedTxt.text = kartSpeed.ToString("f0");
             speedCircle.fillAmount = kartSpeed * 0.0025f;            
         }

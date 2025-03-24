@@ -13,7 +13,7 @@ public class InventoryUI : MonoBehaviour
     // 슬롯에 들어갈 아이템 이미지
     [SerializeField] Sprite itemImg;
 
-    KartController kartCtrl;
+    TestCHMKart kartCtrl;
 
     public int itemCount { get; set; }
 
@@ -90,7 +90,6 @@ public class InventoryUI : MonoBehaviour
     {
         while(isItemUseNotYet)
         {
-            Debug.Log("하는 중");
             Color color = itemInventImg[0].GetComponent<Image>().color;
             color = (color.r == 1) ? new Color(0.6f, 0.6f, 0.6f, 0.3686275f) : new Color(1, 1, 1, 0.3686275f);
             itemInventImg[0].GetComponent<Image>().color = color;
