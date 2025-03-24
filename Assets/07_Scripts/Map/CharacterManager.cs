@@ -16,7 +16,7 @@ public class CharacterManager : MonoBehaviour
     void Start()
     {
         Player owner = _photonView.Owner;
-        KartController[] karts = FindObjectsOfType<KartController>();
+        TestCHMKart[] karts = FindObjectsOfType<TestCHMKart>();
         
         foreach (var kart in karts)
         {

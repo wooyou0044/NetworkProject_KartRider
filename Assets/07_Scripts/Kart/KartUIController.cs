@@ -99,6 +99,6 @@ public class KartUIController : MonoBehaviour
     public void SetKart(GameObject instance)
     {
         kart = instance;
-        kartCtrl = kart.GetComponent<KartController>();
+        kartCtrl = kart.GetComponent<TestCHMKart>();
     }
 }

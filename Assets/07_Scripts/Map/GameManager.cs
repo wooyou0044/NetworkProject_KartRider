@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         
         virtualCamera.LookAt = kart.transform;
         virtualCamera.Follow = kart.transform;
-        
+        virtualCamera.gameObject.GetComponent<TestCHMCamer>().SetKart(kart);
         kartUIController.SetKart(kart);
         inventoryUI.SetKart(kart);
         
