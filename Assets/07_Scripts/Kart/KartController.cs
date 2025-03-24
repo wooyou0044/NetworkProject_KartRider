@@ -72,6 +72,8 @@ public class KartController : MonoBehaviour
     public float driftDuration { get; private set; }
     public bool isBoostCreate { get; set; }
 
+    SkidMark skidMarkCtrl;
+
     private void Awake()
     {
         wheelCtrl = wheels.GetComponent<WheelController>();

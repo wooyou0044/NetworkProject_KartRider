@@ -41,7 +41,9 @@ public class KartUIController : MonoBehaviour
         {
             kartCtrl = GameObject.FindGameObjectWithTag("Player").GetComponent<KartController>();
         }
+
         kartSpeed = kartCtrl.speedKM * 2;
+        kartSpeed = Mathf.FloorToInt(kartSpeed);
         speedTxt.text = kartSpeed.ToString("f0");
         speedCircle.fillAmount = kartSpeed * 0.0025f;
         if(kartSpeed < 300.0f)

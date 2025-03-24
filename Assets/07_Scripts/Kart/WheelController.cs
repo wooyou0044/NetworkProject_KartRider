@@ -14,11 +14,17 @@ public class WheelController : MonoBehaviour
 
     [Tooltip("스키드 마크 효과")]
     public GameObject[] skidMarks;
+    public GameObject skidMark;
 
     void Start()
     {
         // 스키드마크 초기 비활성화
         SetSkidMarkActive(false);
+    }
+
+    void Update()
+    {
+
     }
 
     public void SetSkidMarkActive(bool isActive)
