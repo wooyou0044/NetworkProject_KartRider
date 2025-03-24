@@ -11,7 +11,7 @@ public enum MapEnum {
 public class MapManager : MonoBehaviourPunCallbacks
 {
     private string sceneName;
-    private Quaternion defaultRotation;
+    private Vector3 defaultRotationVector;
 
     /* 게임 종료 및 결과 전달 위한 게임 매니저, 종료시에만 호출하자. */
     private GameManager gameManager;
@@ -33,22 +33,23 @@ public class MapManager : MonoBehaviourPunCallbacks
     {
         sceneName = SceneManager.GetActiveScene().name;
         
-        MapEnum mapRotation = (MapEnum) Enum.Parse(typeof(MapEnum), sceneName);
-        Quaternion kartRotation = Quaternion.Euler(0,90,0);
-        switch (mapRotation)
+        MapEnum mapEnum = (MapEnum) Enum.Parse(typeof(MapEnum), sceneName);
+        Vector3 kartRotationVector = new Vector3(0, -90, 0);
+        switch (mapEnum)
         {
-            case MapEnum.DaisyCircuit:
-                defaultRotation = Quaternion.Euler(0, 180, 0); break;
-            case MapEnum.Default: 
-                defaultRotation = Quaternion.Euler(0, 0, 0); break;
+            case MapEnum.DaisyCircuit :
+                defaultRotationVector = kartRotationVector + Vector3.zero;
+                break;
+            case MapEnum.Default:
+                defaultRotationVector = kartRotationVector + Vector3.zero;
+                break;
             default: 
                 Debug.Log("설정된 맵이 없습니다");
-                defaultRotation = Quaternion.Euler(0, 0, 0);
+                defaultRotationVector = kartRotationVector + Vector3.zero;
                 break;
         }
 
-        defaultRotation = Quaternion.LookRotation(Vector3.left);
-        
+        // 차가 기본으로 돌아가있으므로 수정
         _allCheckPoints = FindObjectsOfType<CheckPoint>();
     }
 
@@ -121,14 +122,14 @@ public class MapManager : MonoBehaviourPunCallbacks
         if (somePoint != null)
         {
             playerKart.transform.position = somePoint.position + penalty;
-            playerKart.transform.rotation = defaultRotation;
+            playerKart.transform.rotation = somePoint.transform.rotation;
+            playerKart.transform.Rotate(defaultRotationVector);
         }
         else
         {
             playerKart.transform.position = myLastcheckPoint.position + penalty;
-            playerKart.transform.rotation = myLastcheckPoint.rotation;
-            // 카트가 돌아가있으므로 일단 보정
-            // playerKart.transform.rotation = Quaternion.LookRotation(Vector3.right);
+            playerKart.transform.rotation = myLastcheckPoint.transform.rotation;
+            playerKart.transform.Rotate(defaultRotationVector);
         }
         
         kartRigid.isKinematic = false;        
