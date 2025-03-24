@@ -46,11 +46,11 @@ public class CHMTestWheelController : MonoBehaviour
         {
             // 왼쪽 앞바퀴
             float leftSteerAngle = Mathf.Lerp(steerAngleFrontMin, steerAngleFrontMax, (steerInput + 1f) / 2f) * steeringSensitivity;
-            wheels[0].localRotation = Quaternion.Euler(90f, leftSteerAngle, wheels[0].localRotation.eulerAngles.z);
+            wheels[0].localRotation = Quaternion.Euler(0, leftSteerAngle-90, wheels[0].localRotation.eulerAngles.z);
 
             // 오른쪽 앞바퀴
             float rightSteerAngle = Mathf.Lerp(steerAngleFrontMin, steerAngleFrontMax, (steerInput + 1f) / 2f) * steeringSensitivity;
-            wheels[1].localRotation = Quaternion.Euler(90f, rightSteerAngle, wheels[1].localRotation.eulerAngles.z);
+            wheels[1].localRotation = Quaternion.Euler(0, rightSteerAngle-90, wheels[1].localRotation.eulerAngles.z);
         }
 
         // 전체 바퀴에 대해 회전(회전축은 로컬 X축)을 적용합니다.

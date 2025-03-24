@@ -68,6 +68,10 @@ PrefabInstance:
       propertyPath: m_Center.z
       value: 0.17
       objectReference: {fileID: 0}
+    - target: {fileID: 1327599218726025444, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
     - target: {fileID: 2680623755718992227, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: m_Drag
       value: 0.1
@@ -123,6 +127,10 @@ PrefabInstance:
     - target: {fileID: 4848290750487293163, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: m_Name
       value: TestCHMKart Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 4848290750487293163, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 5547222066591562683, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[0].time
@@ -200,8 +208,13 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedComponents:
+    - {fileID: 6719161959094539880, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+    - {fileID: 3559450436498715099, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+    - {fileID: 618260685719900477, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+    - {fileID: 8808873220282798768, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+    m_RemovedGameObjects:
+    - {fileID: 6165037171512218186, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4848290750487293163, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
@@ -210,9 +223,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1257477183685040292, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7241914928548689806}
-    - targetCorrespondingSourceObject: {fileID: 6165037171512218186, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8370806281428499603}
   m_SourcePrefab: {fileID: 100100000, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
 --- !u!1 &1123137743284241616 stripped
 GameObject:
@@ -232,41 +242,14 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 2.2, y: 0.5, z: 2}
-  m_Center: {x: 0.12, y: 0.21, z: 0}
---- !u!4 &1970668893956742497 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 413315142395756821, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
-  m_PrefabInstance: {fileID: 2226285670538550388}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &5434656871467093566 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6165037171512218186, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
-  m_PrefabInstance: {fileID: 2226285670538550388}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &8370806281428499603
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5434656871467093566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06a748a825ae5ad4290cb2730252f429, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  virtualCamera: {fileID: 7172198344966462513}
-  target: {fileID: 1970668893956742497}
-  kartController: {fileID: 4902261966647448000}
-  maxPanAngleDelta: 15
-  smoothTime: 0.3
+  m_Center: {x: 0.12, y: 0.3, z: 0}
 --- !u!1 &6175401843098960883 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5428583868909936519, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
@@ -289,8 +272,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43634f710fbcb074c91554ff99b28390, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wheels: {fileID: 6750277665416376479}
-  carBody: {fileID: 8764957354587669828}
+  wheels: {fileID: 8764957354587669828}
   maxSpeed: 200
   movementForce: 20
   steerAngle: 150
@@ -311,17 +293,6 @@ MonoBehaviour:
   downwardForce: 10
   isDrifting: 0
   currentDriftAngle: 0
---- !u!114 &7172198344966462513 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 9038055264865009733, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
-  m_PrefabInstance: {fileID: 2226285670538550388}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5434656871467093566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45e653bab7fb20e499bda25e1b646fea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &7909417058560826372 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8297530388290519152, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
