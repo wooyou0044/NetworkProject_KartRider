@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 327607da7a663439d872fe7d62c54005
+guid: 2853443a6fdd343d0bdae2f7293de072
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -7,13 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: EndLineMat
-    second: {fileID: 2100000, guid: b088befb029124ac990f1ccde5d3575c, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_Cnsw_66_StartGate
-    second: {fileID: 2100000, guid: b088befb029124ac990f1ccde5d3575c, type: 2}
+      name: StartEndMat
+    second: {fileID: 2100000, guid: 234eb39e19dc54d8a83cbe4f68702cbe, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
