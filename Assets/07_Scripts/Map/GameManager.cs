@@ -6,11 +6,11 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
-    private Transform _playerParent;
     [Header("인게임 관련 UI, 카메라, 매니저")] 
     public CinemachineVirtualCamera virtualCamera;
     public KartUIController kartUIController;
     public InventoryUI inventoryUI;
+    public TimeUIController timeUIController;
     public MapManager mapManager;
     
     // ToDo 실제 네트워크 연결하면 네트워크 상 정보로 바꿀 것
@@ -18,11 +18,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     public GameObject kartPrefab;
     public GameObject characterPrefab;
 
+    private PhotonView _gameManagerView;
     private Player _winner;
     
     private void Start()
     {
         // ToDo 실제 네트워크 연결하면 네트워크 상 정보로 바꿀 것
+        _gameManagerView = GetComponent<PhotonView>();
         DefaultPool pool = PhotonNetwork.PrefabPool as DefaultPool;
         if (pool != null)
         {
@@ -53,12 +55,13 @@ public class GameManager : MonoBehaviourPunCallbacks
         
         kartUIController.SetKart(kart);
         inventoryUI.SetKart(kart);
-
+        
         // ToDo : 랜덤으로 설정해줄거면 actorNumber 대신 다른걸로 [0~7 숫자]
         Player kartOwner = kart.GetPhotonView().Owner;
         int num = kartOwner.ActorNumber - 1;
         
         mapManager.PlaceToStartPos(num, kart);
+        timeUIController.StartTimer();
     }
     
     /* 누군가 피니시 라인에 들어왔다 (최종 골인) */
@@ -70,8 +73,9 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (_winner == null)
         {
             _winner = player;
-            Debug.Log(player + "플레이어가 골인했습니다.");
         }
+        
+        Debug.Log(_winner + "플레이어가 골인했습니다.");
     }
 
     // 들어왔을떄 전달
@@ -80,7 +84,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (_winner == null)
         {
             _winner = PhotonNetwork.LocalPlayer;
-            photonView.RPC("OnSomePlayerFinish", RpcTarget.All, _winner);
+            _gameManagerView.RPC("OnSomePlayerFinish", RpcTarget.AllViaServer, _winner);
         }
     }
 }
