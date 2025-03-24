@@ -61,6 +61,7 @@ public class MapManager : MonoBehaviourPunCallbacks
     // 바닥으로 떨어졌을때
     public void OnTouchDeadZone(Collider kart, GameObject deadZone)
     {
+        Debug.Log("OnTouchDeadZone");
         RespawnToPos(kart.gameObject);
     }
 

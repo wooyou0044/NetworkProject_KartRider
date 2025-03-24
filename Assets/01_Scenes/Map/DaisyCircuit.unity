@@ -2408,6 +2408,18 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 466337162}
+    - target: {fileID: 3589623424376574843, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 10000
+      objectReference: {fileID: 0}
+    - target: {fileID: 3589623424376574843, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 10000
+      objectReference: {fileID: 0}
+    - target: {fileID: 3589623424376574843, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -50
+      objectReference: {fileID: 0}
     - target: {fileID: 3633789702436142855, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_TagString
       value: Wall
@@ -2420,6 +2432,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Wall
       objectReference: {fileID: 0}
+    - target: {fileID: 3821347428694954540, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a14f2356c689f48e7bb9cc70f68c61bc, type: 2}
     - target: {fileID: 3873291996710719743, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_TagString
       value: Wall
