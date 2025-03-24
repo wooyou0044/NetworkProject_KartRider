@@ -205,7 +205,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 155580046}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1143283374}
+        m_TargetAssemblyTypeName: RoomManager, Assembly-CSharp
+        m_MethodName: OutRoomBtn
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &155580046
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -748,6 +760,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 258271263}
+  - component: {fileID: 258271264}
   m_Layer: 0
   m_Name: RoomUIManger
   m_TagString: Untagged
@@ -770,6 +783,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &258271264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 258271262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f54f59960517d14fa7c7f66046f76d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startBtn: {fileID: 847903221}
+  readyBtn: {fileID: 1675644028}
+  readyCanCelBtn: {fileID: 838409755}
+  MapChangeBtn: {fileID: 1248030002}
+  roomTitleChangeBtn: {fileID: 1667155152}
+  exitBtn: {fileID: 155580045}
 --- !u!1 &332465492
 GameObject:
   m_ObjectHideFlags: 0
@@ -3496,6 +3527,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db4d191e45e1cf443b481374d75db63b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  roomUIManger: {fileID: 258271264}
 --- !u!4 &1143283375
 Transform:
   m_ObjectHideFlags: 0
@@ -5428,7 +5460,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 250.22, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1583099226
@@ -5581,7 +5613,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 409.07, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1667155151

@@ -4,60 +4,67 @@ using System.Collections;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Linq;
+using System;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] private LobbyUIManager lobbyUiMgr;
     [SerializeField] private RoomEntry roomEntry;
+
     private List<RoomInfo> currentRoomList = new List<RoomInfo>();
+    private Queue<string> availableRoomNumbers = new Queue<string>(); // 방 번호 관리 Queue
+    private HashSet<string> usedRoomNumbers = new HashSet<string>(); // 사용 중인 방 번호 추적
+
     private void Start()
     {
-        PhotonNetwork.JoinLobby();
-    }
-    public void JoinRandomRoom()
-    {
-        PhotonNetwork.JoinRandomOrCreateRoom();
-    }
-    public void CreateRoomBtnClick()
-    {
-        string roomName = lobbyUiMgr.roomNameInputField.text;
-        string passwrod = lobbyUiMgr.roomPasswordInputField.text;
-        int roomIndex = GetNextRoomIndex();
-        //if(string.IsNullOrEmpty(roomName) )
-        //{
-        //방 이름이 비어있다면 리스트에 저장된 것들 중 하나로 띄워주기 나중에
-        //}
-        if (string.IsNullOrEmpty(passwrod))
+        if(!PhotonNetwork.IsConnected)
         {
-            passwrod = null;
+            Debug.Log("마스터 연결 끊겨서 다시 시도함.");
+            PhotonNetwork.ConnectUsingSettings();
         }
-        CreateRoom(roomName, passwrod, roomIndex);
+        if(!PhotonNetwork.InLobby)
+        {
+            Debug.Log("로비접속");
+            PhotonNetwork.JoinLobby();
+        }
+        
+        InitializeRoomNumbers(); // 방 번호 초기화
+        lobbyUiMgr.roomReSetBtn.onClick.AddListener(() => OnRoomListUpdate(currentRoomList)); // 버튼 이벤트 연결
     }
-    private int GetNextRoomIndex()
+    public void ConnectedOn()
     {
-        return currentRoomList.Count + 1;
+        Debug.Log(PhotonNetwork.IsConnected+"연결상태 확인");
     }
-    public void JoinRoom()
-    {
-        PhotonNetwork.JoinRoom(roomEntry.roomNameText.text);
-    }
-    public override void OnJoinedRoom()
-    {
-        StartCoroutine(LoadJoinRoom("RoomScene"));
-    }    
-    IEnumerator LoadJoinRoom(string sceneName)
-    {
-        SceneCont.Instance.Oper = SceneCont.Instance.SceneAsync(sceneName);
-        SceneCont.Instance.Oper.allowSceneActivation = false;
 
-        while (SceneCont.Instance.Oper.isDone == false)
+    private void InitializeRoomNumbers()
+    {
+        HashSet<string> uniqueNumbers = new HashSet<string>();
+        System.Random random = new System.Random();
+
+        while (uniqueNumbers.Count < 100) // 100개의 고유한 방 번호 생성
         {
-            if (SceneCont.Instance.Oper.progress < 0.9f)
-            {
-                SceneCont.Instance.Oper.allowSceneActivation = true;
-            }
-            yield return null;
+            string roomNumber = random.Next(100000, 999999).ToString();
+            uniqueNumbers.Add(roomNumber);
         }
+
+        foreach (var number in uniqueNumbers)
+        {
+            availableRoomNumbers.Enqueue(number);
+        }
+    }
+
+    private string GetUniqueRoomNumber()
+    {
+        if (availableRoomNumbers.Count > 0)
+        {
+            string roomNumber = availableRoomNumbers.Dequeue();
+            usedRoomNumbers.Add(roomNumber); //사용 중인 번호에 추가
+            return roomNumber;
+        }
+        //큐에 남아있는 방 번호가 없을 경우, UI로 오류 메시지 표시
+        lobbyUiMgr.RoomJoinFaildeText("남아있는 방 번호가 없습니다");
+        return null; //오류 상황을 처리할 수 있도록 null 반환
     }
 
     public void JoinRoom(string roomName)
@@ -69,52 +76,87 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         }
         PhotonNetwork.JoinRoom(roomName);
     }
-    public void CreateRoom(string roomName, string password, int roomNumber)
-    {//크리에이트 룸 커스텀 하는 곳
-        Hashtable custom = new Hashtable
+    
+    public override void OnJoinedRoom()
+    {
+        PhotonNetwork.LeaveLobby();
+        StartCoroutine(LoadJoinRoom("RoomScene"));
+    }
+    IEnumerator LoadJoinRoom(string sceneName)
+    {
+        SceneCont.Instance.Oper = SceneCont.Instance.SceneAsync(sceneName);
+        SceneCont.Instance.Oper.allowSceneActivation = false;
+        while (SceneCont.Instance.Oper.isDone == false)
         {
-            { "RoomName", roomName },//룸 이름과
-            { "Password", password },//패스워드를 확인하여 초기화
-            { "RoomNumber", roomNumber }
-        };
-
-        RoomOptions roomOptions = new RoomOptions
+            if (SceneCont.Instance.Oper.progress < 0.9f)
+            {
+            }
+            else
+            {
+                break;
+            }
+            yield return null;
+        }
+        SceneCont.Instance.Oper.allowSceneActivation = true;
+    }
+    public override void OnJoinedLobby()
+    {
+        Debug.Log("로비 입장");
+    }
+    public override void OnLeftLobby()
+    {
+        Debug.Log("로비 퇴장");
+    }
+    private void ReleaseRoomNumber(string roomNumber)
+    {
+        if (usedRoomNumbers.Contains(roomNumber))
         {
-            MaxPlayers = 8,
-            //초기 설정 내장 된 커스텀 프러퍼티에 custom 내용 저장
-            CustomRoomProperties = custom,
-            //커스텀 된 프러퍼티를 가져와서 세팅
-            CustomRoomPropertiesForLobby = new string[] { "RoomName", "Password","RoomNumber" },            
-        };
-        //커스텀 된 정보를 토대로 진짜 룸을 생성함.
-        PhotonNetwork.CreateRoom(roomName, roomOptions, TypedLobby.Default);
+            usedRoomNumbers.Remove(roomNumber);
+            availableRoomNumbers.Enqueue(roomNumber); // 재활용
+        }
+        else
+        {
+            Debug.LogWarning($"해당 방 번호({roomNumber})는 사용 중이 아닙니다.");
+        }
     }
 
-    public void RandomCreateRoom(string roomName, string password, int roomNumber)
-    {//크리에이트 룸 커스텀 하는 곳
+    
+    public void CreateRoomBtnClick()
+    {
+        string roomName = lobbyUiMgr.roomNameInputField.text;
+        string password = string.IsNullOrEmpty(lobbyUiMgr.roomPasswordInputField.text) ? null : lobbyUiMgr.roomPasswordInputField.text;
+        string roomNumber = GetUniqueRoomNumber();
+
+        if (string.IsNullOrEmpty(roomNumber))
+            return;
+
+        CreateRoom(roomName, password, int.Parse(roomNumber));
+    }
+
+    public void CreateRoom(string roomName, string password, int roomNumber)
+    {
         Hashtable custom = new Hashtable
         {
-            { "RoomName", roomName },//룸 이름과            
+            { "RoomName", roomName },
+            { "Password", password },
             { "RoomNumber", roomNumber }
         };
 
         RoomOptions roomOptions = new RoomOptions
         {
             MaxPlayers = 8,
-            //초기 설정 내장 된 커스텀 프러퍼티에 custom 내용 저장
             CustomRoomProperties = custom,
-            //커스텀 된 프러퍼티를 가져와서 세팅
-            CustomRoomPropertiesForLobby = new string[] { "RoomName", "RoomNumber" },
+            CustomRoomPropertiesForLobby = new string[] { "RoomName", "Password", "RoomNumber" }
         };
-        //룸을 찾거나 없을 경우 조건에 따라 방을 만듬
-        PhotonNetwork.JoinRandomOrCreateRoom(custom, 8, MatchmakingMode.RandomMatching,TypedLobby.Default, null, roomName, roomOptions, null);
+
+        PhotonNetwork.CreateRoom(roomName, roomOptions, TypedLobby.Default);
     }
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
         UpdateCurrentRoomList(roomList);
+
         Dictionary<string, RoomEntry> existingRoomEntries = new Dictionary<string, RoomEntry>();
-        // 기존 UI에서 RoomEntry들을 매핑
         foreach (Transform child in lobbyUiMgr.roomListPanel.transform)
         {
             var roomEntry = child.GetComponent<RoomEntry>();
@@ -124,96 +166,94 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             }
         }
 
-        // 업데이트된 방 리스트 처리
+        HashSet<string> updatedRoomNames = new HashSet<string>(roomList.Select(room => room.Name));
+        List<RoomEntry> entriesToRemove = new List<RoomEntry>();
+
+        foreach (var entry in existingRoomEntries)
+        {
+            if (!updatedRoomNames.Contains(entry.Key))
+            {
+                entriesToRemove.Add(entry.Value);
+            }
+        }
+
+        foreach (var entryToRemove in entriesToRemove)
+        {
+            Destroy(entryToRemove.gameObject);
+        }
+
         foreach (RoomInfo roomInfo in roomList)
         {
             if (existingRoomEntries.ContainsKey(roomInfo.Name))
             {
-                // 방이 이미 존재하면 UI 업데이트
                 existingRoomEntries[roomInfo.Name].SetRoomInfo(roomInfo);
             }
             else
             {
-                // 새로 추가된 방만 UI 생성
                 AddRoomToList(roomInfo);
             }
-            // 기존 목록에서 처리된 방 제거 (추가된 방 남기기 위해)
-            existingRoomEntries.Remove(roomInfo.Name);
         }
-        // 삭제된 방 UI 제거
-        foreach (var remainingEntry in existingRoomEntries.Values)
-        {
-            Destroy(remainingEntry.gameObject);
-        }
+    }
+    public void ResetBtn()
+    {
+
     }
     public void UpdateCurrentRoomList(List<RoomInfo> roomList)
     {
         currentRoomList.Clear();
         currentRoomList.AddRange(roomList);
     }
-    public void RoomResetBtnClick()
-    {
-        OnRoomListUpdate(currentRoomList);
-    }
+
     public void AddRoomToList(RoomInfo roomInfo)
     {
-        // 방 리스트 프리팹 생성
         var roomEntry = Instantiate(lobbyUiMgr.roomPrefab, lobbyUiMgr.roomListPanel.transform);
         var roomEntryScript = roomEntry.GetComponent<RoomEntry>();
         if (roomEntryScript != null)
         {
-            //방의 세팅 정보를 넘김
             roomEntryScript.SetRoomInfo(roomInfo);
 
-        }
-        roomEntry.onClick.AddListener(() =>
-        {
-            // 방 상태 체크
-            bool hasPassword = roomEntryScript.IsPasswrod(roomInfo);
-            bool isGameStart = roomEntryScript.IsGameStarted(roomInfo);
-            bool isRoomFull = roomEntryScript.IsRoomFull(roomInfo);
+            roomEntry.onClick.AddListener(() =>
+            {
+                bool hasPassword = roomEntryScript.IsPasswrod(roomInfo);
+                bool isGameStart = roomEntryScript.IsGameStarted(roomInfo);
+                bool isRoomFull = roomEntryScript.IsRoomFull(roomInfo);
 
-            if (hasPassword)
-            {
-                ShowPasswordPrompt(roomInfo.Name, roomInfo.CustomProperties["Password"] as string);
-                return;
-            }
-            else if (isGameStart)
-            {
-                lobbyUiMgr.RoomJoinFaildeText("게임이 이미 진행중이라 입장할 수 없습니다.");
-                return;
-            }
-            else if (isRoomFull)
-            {
-                lobbyUiMgr.RoomJoinFaildeText("자리가 없어 입장할 수 없습니다.");
-                return;
-            }
-            else if (roomInfo == null)
-            {
-                lobbyUiMgr.RoomJoinFaildeText("입장하려는 방이 없습니다.");
-                return;
-            }
-            JoinRoom(roomInfo.Name);
-        });
+                if (hasPassword)
+                {
+                    ShowPasswordPrompt(roomInfo.Name, roomInfo.CustomProperties["Password"] as string);
+                }
+                else if (isGameStart)
+                {
+                    lobbyUiMgr.RoomJoinFaildeText("게임이 이미 진행 중입니다.");
+                }
+                else if (isRoomFull)
+                {
+                    lobbyUiMgr.RoomJoinFaildeText("방이 가득 찼습니다.");
+                }
+                else
+                {
+                    JoinRoom(roomInfo.Name);
+                }
+            });
+        }
     }
+
     public void ShowPasswordPrompt(string roomName, string correctPassword)
     {
-        // 비밀번호 입력창을 활성화
         lobbyUiMgr.LockRoomPasswrodPanelActive(true);
 
-        // 확인 버튼 동작 설정
         lobbyUiMgr.lockRoomConnectBtn.onClick.AddListener(() =>
         {
             string enteredPassword = lobbyUiMgr.lockRoomPasswordInputField.text;
-            //비밀번호 입력 후 입장을 했다면
             lobbyUiMgr.LockRoomPasswrodPanelActive(false);
+
             if (enteredPassword == correctPassword)
-            {                
-                JoinRoom(roomName); // 비밀번호 일치 시 방 입장
+            {
+                JoinRoom(roomName);
             }
             else
             {
-                lobbyUiMgr.RoomJoinFaildeText("입력하신 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.");
+                lobbyUiMgr.RoomJoinFaildeText("입력한 비밀번호가 일치하지 않습니다.");
             }
         });
     }
