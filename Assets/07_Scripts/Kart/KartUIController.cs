@@ -18,7 +18,7 @@ public class KartUIController : MonoBehaviour
 
     public Text speedTxt;
 
-    KartController kartCtrl;
+    TestCHMKart kartCtrl;
     Animator speedAni;
 
     float kartSpeed;
@@ -27,7 +27,7 @@ public class KartUIController : MonoBehaviour
 
     void Start()
     {
-        kartCtrl = kart.GetComponent<KartController>();
+        kartCtrl = kart.GetComponent<TestCHMKart>();
 
         isChange = false;
         circleBack.SetActive(false);
@@ -39,7 +39,7 @@ public class KartUIController : MonoBehaviour
     {
         if(kartCtrl == null)
         {
-            kartCtrl = GameObject.FindGameObjectWithTag("Player").GetComponent<KartController>();
+            kartCtrl = GameObject.FindGameObjectWithTag("Player").GetComponent<TestCHMKart>();
         }
         kartSpeed = kartCtrl.speedKM * 2;
         speedTxt.text = kartSpeed.ToString("f0");

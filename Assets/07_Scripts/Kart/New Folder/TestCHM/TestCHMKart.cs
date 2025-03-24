@@ -6,8 +6,7 @@ public class TestCHMKart : MonoBehaviour
     #region Serialized Fields
 
     [Header("Kart Components")]
-    [SerializeField] private GameObject wheels;
-    [SerializeField] private GameObject carBody;
+    [SerializeField] private GameObject wheels;   
 
     [Header("Movement Settings")]
     [SerializeField] private float maxSpeed = 200f;
@@ -25,7 +24,7 @@ public class TestCHMKart : MonoBehaviour
 
     [Header("Boost Settings")]
     [SerializeField] private float boostSpeed = 280f;
-    [SerializeField] private float boostDuration = 1.2f;
+    [SerializeField] public float boostDuration = 1.2f;
     [SerializeField] private int maxBoostGauge = 100;
     [SerializeField] private float boostChargeRate = 1f;
     [SerializeField] private float driftBoostChargeRate = 5f;
@@ -41,19 +40,20 @@ public class TestCHMKart : MonoBehaviour
 
     private CHMTestWheelController wheelCtrl;
     private Rigidbody rigid;
+    public float speedKM { get; private set; } //현재 속력 측정
+    public bool isBoostTriggered { get; private set; }//부스터 가능 판단
+    public float driftDuration { get; private set; }
+    public bool isBoostCreate { get; set; }
 
     // Drift and Boost related state
     private Coroutine postDriftBoostCoroutine;
     private float initialDriftSpeed;
-    private bool isBoosting = false;
     public bool isDrifting = false;
     public float currentDriftAngle = 0f;
-    private float driftDuration;
     private float currentDriftThreshold;   // 속도에 따른 드리프트 입력 기준 값
     private float driftForceMultiplier;     // 동적으로 계산된 드리프트 힘 배수
     private int boostGauge = 0;
     private float lockedYRotation = 0f;     // 드리프트 중 고정된 Y 회전 값
-
     #endregion
 
     #region Unity Methods
@@ -72,7 +72,7 @@ public class TestCHMKart : MonoBehaviour
     {
         float steerInput = Input.GetAxis("Horizontal");
         float motorInput = Input.GetAxis("Vertical");
-
+        speedKM = rigid.velocity.magnitude * 3.6f; // m/s를 km/h로 변환
         // 속도에 따른 드리프트 관련 파라미터 갱신
         AdjustDriftParameters();
 
@@ -93,6 +93,16 @@ public class TestCHMKart : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftControl) && boostGauge >= maxBoostGauge)
         {
             StartBoost(boostDuration);
+        }
+        // 드리프트 아이템 생성
+        if (isDrifting == true)
+        {
+            driftDuration += Time.fixedDeltaTime;
+        }
+        if (driftDuration >= 1)
+        {
+            isBoostCreate = true;
+            driftDuration = 0;
         }
 
         ChargeBoostGauge();
@@ -178,7 +188,7 @@ public class TestCHMKart : MonoBehaviour
 
     private void StartBoost(float duration)
     {
-        isBoosting = true;
+        isBoostTriggered = true;
         boostGauge = 0;
         rigid.velocity = transform.forward * boostSpeed;
         Debug.Log("Boost Activated.");
@@ -187,7 +197,7 @@ public class TestCHMKart : MonoBehaviour
 
     private void EndBoost()
     {
-        isBoosting = false;
+        isBoostTriggered = false;
         Debug.Log("Boost Ended.");
     }
 
@@ -210,7 +220,7 @@ public class TestCHMKart : MonoBehaviour
 
     private void HandleKartMovement(float motorInput, float steerInput)
     {
-        float currentMaxSpeed = isBoosting ? boostMaxSpeed : maxSpeed;
+        float currentMaxSpeed = isBoostTriggered ? boostMaxSpeed : maxSpeed;
 
         if (isDrifting)
         {
