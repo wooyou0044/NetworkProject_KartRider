@@ -29,8 +29,8 @@ public class TestCHMKart : MonoBehaviour
     [Header("부스트 설정")]
     [SerializeField] public float boostDuration = 1.2f;         // 부스트 지속시간
     [SerializeField] private int maxBoostGauge = 100;           // 최대 부스트 게이지
-    [SerializeField] private float boostChargeRate = 1f;        // 기본 부스트 충전 속도
-    [SerializeField] private float driftBoostChargeRate = 2f;   // 드리프트 중 부스트 충전 속도
+    [SerializeField] private float boostChargeRate = 5f;        // 기본 부스트 충전 속도
+    [SerializeField] private float driftBoostChargeRate = 10f;   // 드리프트 중 부스트 충전 속도
     [SerializeField] private float boostMaxSpeedKmh = 280f;        // 부스트 상태의 최대 속도
                      private float boostSpeed;         // 부스트 활성화 시 속도
 
@@ -47,7 +47,7 @@ public class TestCHMKart : MonoBehaviour
     private Rigidbody rigid;                     // 리지드바디 (물리 처리)
     public float speedKM { get; private set; }     // 현재 속력 (km/h 단위)
     public bool isBoostTriggered { get; private set; } // 부스트 활성화 여부
-    public float driftDuration { get; private set; }   // 드리프트 진행 누적시간
+    private float driftDuration;  // 드리프트 진행 누적시간
     public bool isBoostCreate { get; set; }            // 드리프트 아이템 생성 가능 여부
 
     private Coroutine postDriftBoostCoroutine; // 드리프트 종료 후 부스트 처리를 위한 코루틴 변수
@@ -56,7 +56,7 @@ public class TestCHMKart : MonoBehaviour
     public float currentDriftAngle = 0f;       // 현재 누적 드리프트 각도
     private float currentDriftThreshold;       // 속도에 따른 드리프트 입력 기준 값
     private float driftForceMultiplier;        // 동적으로 계산된 드리프트 힘 배수
-    private int boostGauge = 0;                // 현재 부스트 게이지
+    public float boostGauge { get; private set; }                // 현재 부스트 게이지
     private float lockedYRotation = 0f;        // 드리프트 시 고정되는 Y 회전값
     private float currentMotorInput;
     private float currentSteerInput;
@@ -67,6 +67,7 @@ public class TestCHMKart : MonoBehaviour
 
 
     private Vector3 speed;                     // 현재 속도 벡터
+    private float chargeAmount;
 
     #endregion
 
@@ -133,18 +134,28 @@ public class TestCHMKart : MonoBehaviour
         HandleBoostInput();
 
         // 드리프트 중 지속시간 누적 및 조건 체크
-        if (isDrifting)
-        {
-            driftDuration += Time.deltaTime;
-            if (driftDuration >= 1f)
-            {
-                isBoostCreate = true;
-                driftDuration = 0f;
-            }
-        }
+        //if (isDrifting)
+        //{
+        //    driftDuration += Time.deltaTime;
+        //    if (driftDuration >= 1f)
+        //    {
+        //        isBoostCreate = true;
+        //        driftDuration = 0f;
+        //    }
+        //}
 
         // 부스트 게이지 충전
-        ChargeBoostGauge();
+        if(currentMotorInput != 0 || isDrifting)
+        {
+            ChargeBoostGauge();
+        }
+
+        if(boostGauge >= maxBoostGauge)
+        {
+            isBoostCreate = true;
+            boostGauge = 0;
+            chargeAmount = 0;
+        }
 
         // 카트 이동 처리 (이동/회전)
         //HandleKartMovement(currentMotorInput, currentSteerInput);
@@ -283,11 +294,12 @@ public class TestCHMKart : MonoBehaviour
 
     private void ChargeBoostGauge()
     {
-        int chargeAmount = isDrifting
-            ? Mathf.RoundToInt(driftBoostChargeRate * Time.deltaTime)  // 드리프트 중 충전 속도
-            : Mathf.RoundToInt(boostChargeRate * Time.deltaTime);       // 일반 충전 속도
+        chargeAmount += isDrifting
+            ? driftBoostChargeRate * Time.fixedDeltaTime  // 드리프트 중 충전 속도
+            : boostChargeRate * Time.fixedDeltaTime;       // 일반 충전 속도
 
-        boostGauge = Mathf.Clamp(boostGauge + chargeAmount, 0, maxBoostGauge);
+        boostGauge = Mathf.Clamp(chargeAmount, 0, maxBoostGauge);
+        Debug.Log("boostGage : " + boostGauge);
 
         if (boostGauge >= maxBoostGauge)
         {
