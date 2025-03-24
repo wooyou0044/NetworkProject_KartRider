@@ -1,6 +1,7 @@
 using System;
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public enum MapEnum {
@@ -16,8 +17,9 @@ public class MapManager : MonoBehaviourPunCallbacks
     /* 게임 종료 및 결과 전달 위한 게임 매니저, 종료시에만 호출하자. */
     private GameManager gameManager;
     
-    /* 현재 랩, 종료 랩 수 설정*/
-    [SerializeField] private int myCurrentLap = 0;    
+    /* 현재 랩, 종료 랩 설정 */
+    private int myCurrentLap = 0;    
+    
     [Header("맵 전체 바퀴 수 설정")]
     public int totalLap = 3; 
     
@@ -25,9 +27,15 @@ public class MapManager : MonoBehaviourPunCallbacks
     public Transform[] startPos;
     public Transform finishLine;
     private CheckPoint[] _allCheckPoints;
+    
+    [Header("필수 체크포인트 설정")]
     public CheckPoint[] essentialCheckPoints;    
-    [SerializeField] 
-    private Transform myLastcheckPoint;
+
+    // 디버깅용 내 마지막 체크포인트 보기
+    [SerializeField] private Transform myLastcheckPoint;
+    [HideInInspector] public UnityEvent onFinishEvent;
+
+    public int MyCurrentLap => myCurrentLap;
 
     private void Awake()
     {
@@ -71,15 +79,15 @@ public class MapManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("OnTouchFinishLine");
         
-        if (myCurrentLap > 0 && !IsEssentialCheckPointsPassed())
+        if (MyCurrentLap > 0 && !IsEssentialCheckPointsPassed())
         {
             Debug.Log("필수 체크 포인트 안지나갔음");
             return;
         }
         
-        if(myCurrentLap < totalLap + 1)
+        if(MyCurrentLap < totalLap)
         {
-            myCurrentLap++;
+            myCurrentLap = MyCurrentLap + 1;
             myLastcheckPoint = finishLine;
             ResetAllCheckPoints();
         }
@@ -87,6 +95,8 @@ public class MapManager : MonoBehaviourPunCallbacks
         {
             gameManager.OnFinished();
         }
+        
+        onFinishEvent.Invoke();
     }
 
     /* 체크 포인트 닿았을때 호출하는 메서드 */
