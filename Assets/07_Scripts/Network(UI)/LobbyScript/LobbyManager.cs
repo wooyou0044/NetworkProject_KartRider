@@ -4,7 +4,6 @@ using System.Collections;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
-using System.Linq;
 using System;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
@@ -18,23 +17,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        if(!PhotonNetwork.IsConnected)
-        {
-            Debug.Log("마스터 연결 끊겨서 다시 시도함.");
-            PhotonNetwork.ConnectUsingSettings();
-        }
-        if(!PhotonNetwork.InLobby)
-        {
-            Debug.Log("로비접속");
-            PhotonNetwork.JoinLobby();
-        }
-        
-        InitializeRoomNumbers(); // 방 번호 초기화
+        PhotonNetwork.JoinLobby();
+        InitializeRoomNumbers(); //방 번호 초기화
         lobbyUiMgr.roomReSetBtn.onClick.AddListener(() => OnRoomListUpdate(currentRoomList)); // 버튼 이벤트 연결
     }
     public void ConnectedOn()
     {
-        Debug.Log(PhotonNetwork.IsConnected+"연결상태 확인");
+        Debug.Log(PhotonNetwork.IsConnected +"마스터");
+        Debug.Log(PhotonNetwork.InLobby+"로비");
+        Debug.Log(PhotonNetwork.InRoom+"룸");
     }
 
     private void InitializeRoomNumbers()
@@ -69,17 +60,16 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public void JoinRoom(string roomName)
     {
-        if (!PhotonNetwork.InLobby)
-        {
-            PhotonNetwork.JoinLobby();
-            return;
-        }
+        //if (!PhotonNetwork.InLobby)
+        //{
+        //    PhotonNetwork.JoinLobby();
+        //    return;
+        //}
         PhotonNetwork.JoinRoom(roomName);
     }
     
     public override void OnJoinedRoom()
     {
-        PhotonNetwork.LeaveLobby();
         StartCoroutine(LoadJoinRoom("RoomScene"));
     }
     IEnumerator LoadJoinRoom(string sceneName)
@@ -93,16 +83,19 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             }
             else
             {
+                Debug.Log("로비 나가기 호출!");
                 break;
             }
             yield return null;
+            SceneCont.Instance.Oper.allowSceneActivation = true;
         }
-        SceneCont.Instance.Oper.allowSceneActivation = true;
     }
     public override void OnJoinedLobby()
     {
         Debug.Log("로비 입장");
     }
+
+    
     public override void OnLeftLobby()
     {
         Debug.Log("로비 퇴장");
@@ -119,7 +112,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             Debug.LogWarning($"해당 방 번호({roomNumber})는 사용 중이 아닙니다.");
         }
     }
-
     
     public void CreateRoomBtnClick()
     {
@@ -166,16 +158,16 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             }
         }
 
-        HashSet<string> updatedRoomNames = new HashSet<string>(roomList.Select(room => room.Name));
+        //HashSet<string> updatedRoomNames = new HashSet<string>(roomList.Select(room => room.Name));
         List<RoomEntry> entriesToRemove = new List<RoomEntry>();
 
-        foreach (var entry in existingRoomEntries)
-        {
-            if (!updatedRoomNames.Contains(entry.Key))
-            {
-                entriesToRemove.Add(entry.Value);
-            }
-        }
+        //foreach (var entry in existingRoomEntries)
+        //{
+        //    if (!updatedRoomNames.Contains(entry.Key))
+        //    {
+        //        entriesToRemove.Add(entry.Value);
+        //    }
+        //}
 
         foreach (var entryToRemove in entriesToRemove)
         {
@@ -222,7 +214,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                 {
                     ShowPasswordPrompt(roomInfo.Name, roomInfo.CustomProperties["Password"] as string);
                 }
-                else if (isGameStart)
+                else if (!isGameStart)
                 {
                     lobbyUiMgr.RoomJoinFaildeText("게임이 이미 진행 중입니다.");
                 }

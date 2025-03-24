@@ -10,8 +10,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     [SerializeField] public RoomUIManager roomUIManger;
     private Player[] players = PhotonNetwork.PlayerList;
     private void Start()
-    {
-        PhotonNetwork.LeaveLobby();
+    {        
         foreach (var player in players)
         {
             //이미지로 띄워주면 됨
@@ -25,7 +24,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
             roomUIManger.readyBtn.interactable = true;
             //만약 마스터가 아니라면 스타트 버튼이 아니라 준비완료 버튼으로 띄우기
         }
-    }    
+    }
+    public override void OnLeftLobby()
+    {
+        Debug.Log("로비 퇴장했습니다.");
+    }
     public void StartGame()
     {
         if(PhotonNetwork.IsMasterClient == true)
@@ -63,8 +66,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
     }
     IEnumerator LoadJoinLobby(string sceneName)
-    {        
-        PhotonNetwork.LeaveRoom();        
+    {
+        PhotonNetwork.LeaveRoom();
         SceneCont.Instance.Oper = SceneCont.Instance.SceneAsync(sceneName);
         SceneCont.Instance.Oper.allowSceneActivation = false;
         while (SceneCont.Instance.Oper.isDone == false)
@@ -86,5 +89,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("확실히 방탈출");
         SceneCont.Instance.Oper.allowSceneActivation = true;
+    }
+    public void JoinTestBtn()
+    {
+        Debug.Log(PhotonNetwork.IsConnected + "마스터");
+        Debug.Log(PhotonNetwork.InLobby + "로비");
+        Debug.Log(PhotonNetwork.InRoom + "룸");
     }
 }

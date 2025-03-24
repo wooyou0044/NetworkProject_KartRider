@@ -18,17 +18,8 @@ public class RoomUIManager : MonoBehaviour
 
     [Header("방 나가기 버튼")]
     [SerializeField] public Button exitBtn;
+    [Header("조인테스트 버튼")]
+    [SerializeField] public Button testBtn;
 
 
-
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
