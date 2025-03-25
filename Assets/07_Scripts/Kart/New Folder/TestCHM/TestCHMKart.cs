@@ -34,11 +34,11 @@ public class TestCHMKart : MonoBehaviour
     [SerializeField] private float boostChargeRate = 5f;        // 기본 부스트 충전 속도
     [SerializeField] private float driftBoostChargeRate = 10f;   // 드리프트 중 부스트 충전 속도
     [SerializeField] private float boostMaxSpeedKmh = 280f;        // 부스트 상태의 최대 속도
-                     private float boostSpeed;         // 부스트 활성화 시 속도
+    private float boostSpeed;         // 부스트 활성화 시 속도
     [Header("언덕 주행 보조 설정")]
     [SerializeField] private float uphillAngleThreshold = 10f;     // 언덕 판별 각도 (예: 10도 이상이면 언덕으로 간주)
     [SerializeField] private float uphillForceMultiplier = 1.5f;     // 언덕에서 추가 적용할 힘의 배수  
-                                                                   
+
 
     #endregion
 
@@ -75,48 +75,45 @@ public class TestCHMKart : MonoBehaviour
     private Transform _playerParent;
     private Transform _tr;
     private PhotonView _photonView;
-    
+
     #endregion
-    
+
     #region Unity Methods
 
     private void Awake()
     {
         wheelCtrl = wheels.GetComponent<CHMTestWheelController>(); // 바퀴 컨트롤러 참조
         rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
-        
+
         /* TODO : 포톤 붙일때 수정해주기 */
         _tr = gameObject.transform;
         _photonView = GetComponent<PhotonView>();
         _playerParent = GameObject.Find("Players").transform;
-        transform.parent = _playerParent;                
+        transform.parent = _playerParent;
     }
     private void FixedUpdate()
     {
         if (!_photonView.IsMine)
         {
             return;
-        }        
-        
+        }
+
         maxSpeed = maxSpeedKmh / 3.6f;
         boostMaxSpeed = boostMaxSpeedKmh / 3.6f;
         currentMaxSpeed = isBoostTriggered ? boostMaxSpeed : maxSpeed;
         HandleKartMovement(currentMotorInput, currentSteerInput); // 입력은 Update()에서 저장 후 사용
                                                                   // 그리고 마지막에 항상 속도 클램핑을 적용합니다.
-        ClampHorizontalSpeed(currentMaxSpeed);
-        // 기존 이동 처리 후 공중 회전 보정
-        //HandleAntiRoll();
-        //HandleBoxCastContacts();
+        ApplyEnhancedGravity();
     }
-    
+
 
     private void Update()
     {
         if (!_photonView.IsMine)
         {
             return;
-        }        
-        
+        }
+
         // 입력값 읽어오기
         currentSteerInput = Input.GetAxis("Horizontal");
         currentMotorInput = Input.GetAxis("Vertical");
@@ -124,8 +121,8 @@ public class TestCHMKart : MonoBehaviour
         // 현재 속도 갱신 (Y축 제외) 및 km/h 변환
         speed = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
         speedKM = speed.magnitude * 3.6f;
-        Debug.Log(speed.magnitude);
-        
+       
+
         // 드리프트 관련 파라미터 업데이트
         UpdateDriftParameters();
 
@@ -134,22 +131,20 @@ public class TestCHMKart : MonoBehaviour
 
         // 부스트 입력 처리
         HandleBoostInput();
-      
-        // 부스트 게이지 충전
-        if(currentMotorInput != 0 || isDrifting)
+
+        if (PerformBoxCast(groundLayer | wallLayer | jumpLayer | boosterLayer))
         {
-            ChargeBoostGauge();
+            HandleLayerCollision(); // 충돌된 레이어 처리
         }
 
-        if (boostGauge >= maxBoostGauge)
+        // 레이캐스트로 지면 체크
+        if (CheckIfGrounded())
         {
-            isBoostCreate = true;
-            boostGauge = 0;
-            chargeAmount = 0;
-            if (boostCount < 2)
-            {
-                boostCount++;
-            }
+            Debug.Log("현재 지면 위에 있습니다.");
+        }
+        else
+        {
+            Debug.Log("현재 공중 상태입니다.");
         }
     }
     #endregion
@@ -165,7 +160,7 @@ public class TestCHMKart : MonoBehaviour
         }
 
         // 드리프트 중 추가 입력으로 드리프트 각도 업데이트
-        if (isDrifting && Input.GetKey(KeyCode.LeftShift))
+        if (isDrifting && Input.GetKeyDown(KeyCode.LeftShift))
         {
             UpdateDriftAngle();
         }
@@ -174,10 +169,26 @@ public class TestCHMKart : MonoBehaviour
     private void HandleBoostInput()
     {
         // LeftControl 키와 부스트 게이지 최대치 시 부스터 기본 발동
-        if (Input.GetKeyDown(KeyCode.LeftControl) &&boostCount > 0)
+        if (Input.GetKeyDown(KeyCode.LeftControl) && boostCount > 0)
         {
             StartBoost(boostDuration);
             boostCount--;
+        }
+        // 부스트 게이지 충전
+        if (currentMotorInput != 0 || isDrifting)
+        {
+            ChargeBoostGauge();
+        }
+
+        if (boostGauge >= maxBoostGauge)
+        {
+            isBoostCreate = true;
+            boostGauge = 0;
+            chargeAmount = 0;
+            if (boostCount < 2)
+            {
+                boostCount++;
+            }
         }
     }
 
@@ -250,11 +261,11 @@ public class TestCHMKart : MonoBehaviour
         bool boosted = false;
         Debug.Log("순간 부스트 입력 대기 중...");
 
-        while (timer < 0.5f)
+        while (timer < 0.3f)
         {
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                PerformInstantBoost(momentboostDuration);                
+                PerformInstantBoost(momentboostDuration);
                 boosted = true;
                 break;
             }
@@ -290,12 +301,12 @@ public class TestCHMKart : MonoBehaviour
             ? driftBoostChargeRate * Time.fixedDeltaTime  // 드리프트 중 충전 속도
             : boostChargeRate * Time.fixedDeltaTime;       // 일반 충전 속도
 
-        boostGauge = Mathf.Clamp(chargeAmount, 0, maxBoostGauge);            
+        boostGauge = Mathf.Clamp(chargeAmount, 0, maxBoostGauge);
         if (boostGauge >= maxBoostGauge)
         {
             Debug.Log("부스트 게이지 최대치 도달!");
         }
-    }    
+    }
     /// <summary>
     /// 부스트를 시작하는 함수. 코루틴을 호출해 현재 속도에서 최대 부스트 속도까지 점진적 가속을 구현합니다.
     /// </summary>
@@ -316,9 +327,6 @@ public class TestCHMKart : MonoBehaviour
     // Inspector에서 설정 가능한 AnimationCurve들
     public AnimationCurve boostAccelerationCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
     public AnimationCurve boostDecelerationCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
-
-    
-   
 
     private IEnumerator BoostCoroutine(float duration)
     {
@@ -375,11 +383,7 @@ public class TestCHMKart : MonoBehaviour
 
     private void HandleKartMovement(float motorInput, float steerInput)
     {
-        // 현재 수평 속도를 측정하고, 최대속도 대비 비율(0~1)을 계산합니다.
-        Vector3 currentHorizontalVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
-        float currentHorizontalSpeed = currentHorizontalVelocity.magnitude;       
-        float speedFactor = Mathf.Pow(Mathf.Clamp01(currentHorizontalSpeed / currentMaxSpeed), 0.8f);
-        float steeringMultiplier = Mathf.Lerp(minSteerMultiplier, maxSteerMultiplier, speedFactor);
+        float steeringMultiplier = Mathf.Lerp(minSteerMultiplier, maxSteerMultiplier, 0.8f);
 
         // 드리프트 중인지 아닌지에 따라 별도 처리
         if (isDrifting)
@@ -392,9 +396,6 @@ public class TestCHMKart : MonoBehaviour
             ProcessAcceleration(motorInput, currentMaxSpeed);
         }
 
-        // 최종적으로 수평 속도를 currentMaxSpeed 이하로 제한합니다.
-        ClampHorizontalSpeed(currentMaxSpeed);
-
         // 조향 민감도를 적용해 회전 처리
         RotateKart(steerInput, steeringMultiplier);
 
@@ -404,6 +405,7 @@ public class TestCHMKart : MonoBehaviour
             wheelCtrl.UpdateAndRotateWheels(steerInput, motorInput, rigid.velocity.magnitude, isDrifting);
         }
     }
+
     /// <summary>
     /// 드리프트 상태일 때 속도 처리 및 측면 힘 적용
     /// </summary>
@@ -428,12 +430,13 @@ public class TestCHMKart : MonoBehaviour
         Vector3 lateralForce = transform.right * steerInput * driftForceMultiplier * movementForce;
         rigid.AddForce(lateralForce, ForceMode.Force);
     }
+
     /// <summary>
-    /// 전진/후진 가속 처리 (드리프트가 아닐 때)
-    /// </summary>  
+    /// 전진/후진 가속 처리 (드리프트가 아닐 때, 후진 부드럽게 전환)
+    /// </summary>
     private void ProcessAcceleration(float motorInput, float currentMaxSpeed)
     {
-        // 기본 가속 처리: 전진/후진에 따른 힘 계산
+        // 전진/후진 입력에 따른 가속도 계산
         Vector3 acceleration = transform.forward * movementForce * motorInput * Time.fixedDeltaTime;
 
         //// 추가: 언덕 보조 힘 적용 (지면에 붙어 있을 때만)
@@ -449,24 +452,22 @@ public class TestCHMKart : MonoBehaviour
             }
         }
 
-        // 현재 수평 속도 갱신 및 가속합산
-        Vector3 currentHorizVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
-        Vector3 newHorizVelocity = currentHorizVelocity + acceleration;
-
-        // 누적 속도를 최대 속도로 클램프
-        newHorizVelocity = Vector3.ClampMagnitude(newHorizVelocity, currentMaxSpeed);
-
-        // 후진 지원: motorInput이 음수면 뒤 방향으로 정렬
+        // 전진/후진 방향에 따라 속도 전환 처리
+        Vector3 currentVelocity = rigid.velocity;
         if (Mathf.Abs(motorInput) > 0.1f)
         {
-            newHorizVelocity = (motorInput > 0 ? transform.forward : -transform.forward) * newHorizVelocity.magnitude;
+            // motorInput 값에 따라 속도를 해당 방향으로 설정
+            Vector3 desiredDirection = motorInput > 0 ? transform.forward : -transform.forward;
+            currentVelocity = Vector3.Lerp(currentVelocity, desiredDirection * currentMaxSpeed, Time.fixedDeltaTime * 2f);
         }
 
         // Y축 속도는 기존대로 유지
-        rigid.velocity = new Vector3(newHorizVelocity.x, rigid.velocity.y, newHorizVelocity.z);
+        rigid.velocity = new Vector3(currentVelocity.x, rigid.velocity.y, currentVelocity.z);
 
+        // lockedYRotation 갱신
         lockedYRotation = transform.eulerAngles.y;
     }
+
     /// <summary>
     /// 조향 입력과 속도 기반 민감도를 적용해 회전 처리를 담당합니다.
     /// </summary>
@@ -475,244 +476,146 @@ public class TestCHMKart : MonoBehaviour
         Vector3 turnDirection = Quaternion.Euler(0, steerInput * steerAngle * steeringMultiplier * Time.fixedDeltaTime, 0) * transform.forward;
         rigid.MoveRotation(Quaternion.LookRotation(turnDirection));
     }
+
+    #endregion
+    #region [박스 캐스트 인스펙터 설정]
+
+    [Header("박스 캐스트 설정")]
+    [SerializeField] private Vector3 boxCastCenter = Vector3.zero;     // 박스 캐스트 중심 오프셋
+    [SerializeField] private Vector3 boxCastSize = new Vector3(1, 1, 1); // 박스 크기
+    [SerializeField] private float boxCastDistance = 1f;               // 박스 캐스트 거리
+    [SerializeField] private float groundRayDistance = 0.8f;               // 박스 캐스트 거리
+
+    [Header("레이어 설정")]
+    [SerializeField] private LayerMask wallLayer;     // 벽 레이어
+    [SerializeField] private LayerMask jumpLayer;     // 점프 레이어
+    [SerializeField] private LayerMask boosterLayer;  // 부스터 레이어
+    [SerializeField] private LayerMask groundLayer;   // 지면 레이어
+
+
+    // 충돌된 객체 정보를 저장할 변수
+    private RaycastHit lastHit;
+
     /// <summary>
-    /// XZ 평면상의 수평 속도를 최대값 이하로 제한합니다.
+    /// 박스 캐스트로 충돌 여부를 확인합니다.
     /// </summary>
-    private void ClampHorizontalSpeed(float maxHorizontalSpeed)
+    private bool PerformBoxCast(LayerMask layer)
     {
-        Vector3 horizontalVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
-        if (horizontalVelocity.magnitude > maxHorizontalSpeed)
+        Vector3 worldCenter = transform.position + transform.TransformDirection(boxCastCenter);
+        return Physics.BoxCast(worldCenter, boxCastSize * 0.5f, transform.forward, out lastHit, Quaternion.identity, boxCastDistance, layer.value);
+    }
+
+    /// <summary>
+    /// 충돌된 레이어를 판별합니다.
+    /// </summary>
+    private void HandleLayerCollision()
+    {
+        if (lastHit.collider != null)
         {
-            horizontalVelocity = horizontalVelocity.normalized * maxHorizontalSpeed;
-            rigid.velocity = new Vector3(horizontalVelocity.x, rigid.velocity.y -10f, horizontalVelocity.z);
+            int hitLayer = lastHit.collider.gameObject.layer;
+
+            if (((1 << hitLayer) & wallLayer.value) != 0)
+            {
+                Debug.Log("충돌: 벽 레이어");
+                ProcessWallCollision();
+            }
+            else if (((1 << hitLayer) & jumpLayer.value) != 0)
+            {
+                Debug.Log("충돌: 점프 레이어");
+                ProcessJumpCollision();
+            }
+            else if (((1 << hitLayer) & boosterLayer.value) != 0)
+            {
+                Debug.Log("충돌: 부스터 레이어");
+                ProcessBoosterCollision();
+            }
+            else if (((1 << hitLayer) & groundLayer.value) != 0)
+            {
+                Debug.Log("충돌: 지면 레이어");
+                ProcessGroundCollision();
+            }
+            else
+            {
+                Debug.Log("충돌: 정의되지 않은 레이어");
+            }
         }
     }
+
+    /// <summary>
+    /// 벽과 충돌 처리
+    /// </summary>
+    private void ProcessWallCollision()
+    {
+        // 벽 충돌 처리 로직 추가
+        Debug.Log("벽 충돌 처리 실행됨!");
+    }
+
+    /// <summary>
+    /// 점프 레이어와 충돌 처리
+    /// </summary>
+    private void ProcessJumpCollision()
+    {
+        // 점프 레이어 충돌 처리 로직 추가
+        Debug.Log("점프 충돌 처리 실행됨!");
+    }
+
+    /// <summary>
+    /// 부스터 레이어와 충돌 처리
+    /// </summary>
+    private void ProcessBoosterCollision()
+    {
+        // 부스터 충돌 처리 로직 추가
+        Debug.Log("부스터 충돌 처리 실행됨!");
+    }
+
+    /// <summary>
+    /// 지면과 충돌 처리
+    /// </summary>
+    private void ProcessGroundCollision()
+    {
+        // 지면 충돌 처리 로직 추가
+        Debug.Log("지면 충돌 처리 실행됨!");
+    }
+
+    /// <summary>
+    /// 공중 상태에서 착지 속도를 현재 속도에 비례하여 강화합니다.
+    /// </summary>
+    private void ApplyEnhancedGravity()
+    {
+        // 공중 상태 확인
+        if (!CheckIfGrounded())
+        {
+            // 현재 수평 속도 계산
+            float currentHorizontalSpeed = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z).magnitude;
+
+            // 속도에 비례한 중력 계수 계산
+            float gravityMultiplier = Mathf.Lerp(1f, 3f, currentHorizontalSpeed / currentMaxSpeed);
+
+            // 추가적인 중력 효과 적용
+            Vector3 enhancedGravity = Physics.gravity * gravityMultiplier;
+            rigid.AddForce(enhancedGravity, ForceMode.Acceleration);
+
+            Debug.Log("강화된 중력 적용됨: " + enhancedGravity + " | 현재 속도: " + currentHorizontalSpeed);
+        }
+    }
+
     #endregion
 
-    //#region [ 공중, 중력, 안티롤, 충돌 처리, 에어컨트롤 ]
+    #region [지면 체크]
 
-    //// [인스펙터 노출 변수들]
-    //[Header("레이어 설정")]
-    //[SerializeField] private LayerMask groundLayer;    // 지면 레이어
-    //[SerializeField] private LayerMask boosterLayer;   // 부스터(점프대) 레이어
-    //[SerializeField] private LayerMask jumpLayer;      // 점프 전용 레이어
-    //[SerializeField] private LayerMask wallLayer;      // 벽 전용 레이어
+    // 지면과의 접촉 확인
+    private bool CheckIfGrounded()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, groundRayDistance, groundLayer))
+        {
+            Debug.Log("지면 감지됨: " + hit.collider.name);
+            return true;
+        }
+        Debug.Log("지면 감지되지 않음");
+        return false;
+    }
 
-    //[Header("레이캐스트 및 박스캐스트 설정")]
-    //[SerializeField] private float groundRayDistance = 0.8f;
-    //[SerializeField] private Vector3 boxCastCenter = Vector3.zero;     // 카트 중심에서의 오프셋
-    //[SerializeField] private Vector3 boxCastSize = new Vector3(1, 1, 1);  // 박스 크기
-    //[SerializeField] private float boxCastDistance = 1f;                // 박스 캐스트 검사 거리
-
-    //[Header("회전/중력/안티롤 설정")]
-    //[SerializeField] private float rotationCorrectionSpeed = 2f;  // 회전 보정 속도
-    //[SerializeField] private float downwardForce = 10f;           // 하강력 (아래쪽 힘)
-    //[SerializeField] private float wallBounceFactor = 0.7f;         // 벽 충돌 후 속도 감쇠 계수
-
-    //[Header("공중 에어컨트롤 설정")]
-    //[SerializeField] private float airGravityMultiplier = 0.7f;    // 공중 중력 배수
-    //[SerializeField] private float airControlTorque = 5f;          // 공중 에어컨트롤용 회전 토크
-
-    //// 내부 변수
-    //private RaycastHit _boxCastHit;  // 박스 캐스트 결과 hit 정보
-    //                                 // isBoostTriggered, isDrifting, rigid, EndDrift() 등은 이미 정의되어 있다고 가정
-
-    ///// <summary>
-    ///// 박스캐스트 결과를 기반으로 부스터, 벽, 점프 등 각 레이어의 접촉을 처리합니다.
-    ///// </summary>
-    //private void HandleBoxCastContacts()
-    //{
-    //    // 부스터 레이어 체크
-    //    if (CheckBoxContact(boosterLayer))
-    //    {
-    //        if (!isBoostTriggered)
-    //        {
-    //            ActivateBooster(1.5f);
-    //        }
-    //    }
-
-    //    // 벽(Wall) 레이어 체크: _boxCastHit에 저장된 값을 이용해 벽 접촉 처리 실행
-    //    if (CheckBoxContact(wallLayer))
-    //    {
-    //        OnWallContact();
-    //    }
-
-    //    // 점프(Jump) 레이어 체크: 접촉 시 공중 제어(에어컨트롤, 중력 적용)
-    //    if (CheckBoxContact(jumpLayer))
-    //    {
-    //        ApplyCustomGravity();
-    //        AirControl();
-    //        Debug.Log("점프 레이어 BoxCast 접촉: 에어컨트롤 및 중력 호출");
-    //    }
-    //}
-
-    ///// <summary>
-    ///// 공중일 때 카트 회전 보정 및 아래로 힘 추가 (안티롤 효과)
-    ///// </summary>
-    //private void CorrectAirborneRotation()
-    //{
-    //    // 지면에 닿아있지 않으면 회전 보정 및 하강력 적용
-    //    if (!IsGrounded())
-    //    {
-    //        Vector3 currentEuler = transform.eulerAngles;
-    //        float correctedX = Mathf.LerpAngle(currentEuler.x, 0f, Time.deltaTime * rotationCorrectionSpeed);
-    //        float correctedZ = Mathf.LerpAngle(currentEuler.z, 0f, Time.deltaTime * rotationCorrectionSpeed);
-    //        transform.rotation = Quaternion.Euler(correctedX, currentEuler.y, correctedZ);
-
-    //        rigid.AddForce(Vector3.down * downwardForce, ForceMode.VelocityChange);
-    //    }
-    //}
-
-    ///// <summary>
-    ///// 레이캐스트를 통해 안티롤 기능을 제어합니다.
-    ///// - 점프(Jump) 레이어 접촉 시 안티롤 기능을 일시 해제하고,
-    ///// - 지면(Ground) 접촉 시 CorrectAirborneRotation()을 실행합니다.
-    ///// </summary>
-    //private void HandleAntiRoll()
-    //{
-    //    // 검사할 레이어: Ground와 Jump 레이어
-    //    int mask = groundLayer.value | jumpLayer.value;
-    //    RaycastHit hit;
-    //    if (Physics.Raycast(transform.position, Vector3.down, out hit, groundRayDistance, mask))
-    //    {
-    //        int hitLayer = hit.collider.gameObject.layer;
-    //        if (hitLayer == LayerMask.NameToLayer("Jump"))
-    //        {
-    //            Debug.Log("점프 레이어 감지됨: 안티롤 기능 일시 해제");
-    //            return;
-    //        }
-    //        else if (hitLayer == LayerMask.NameToLayer("Ground"))
-    //        {
-    //            Debug.Log("지면 감지됨: 안티롤 기능 실행");
-    //            CorrectAirborneRotation();
-    //        }
-    //    }
-    //}
-
-    ///// <summary>
-    ///// 충돌 판별: Wall, Jump 레이어 접촉 시 각각의 로직 실행
-    ///// </summary>
-    //private void OnCollisionEnter(Collision collision)
-    //{
-    //    int colLayer = collision.gameObject.layer;
-
-    //    // Wall 레이어 접촉 시: 벽 반사 로직 실행
-    //    if (((1 << colLayer) & wallLayer.value) != 0)
-    //    {
-    //        if (isDrifting)  // (드리프트 중이면 드리프트 취소)
-    //        {
-    //            EndDrift();
-    //        }
-    //        Vector3 currentVelocity = rigid.velocity;
-    //        Vector3 normal = collision.contacts[0].normal;
-    //        Vector3 reflectedVelocity = Vector3.Reflect(currentVelocity, normal);
-    //        rigid.velocity = reflectedVelocity * wallBounceFactor;
-    //        Debug.Log("벽 레이어 접촉: 반사된 속도 적용됨");
-    //    }
-
-    //    // Jump 레이어 접촉 시: 공중 제어 (에어컨트롤 및 사용자 지정 중력)
-    //    //if (((1 << colLayer) & jumpLayer.value) != 0)
-    //    //{
-    //    //    //ApplyCustomGravity();
-    //    //    AirControl();
-    //    //    Debug.Log("점프 레이어 접촉: 에어컨트롤 및 중력 함수 호출됨");
-    //    //}
-    //}
-
-    ///// <summary>
-    ///// 공중일 때 사용자 지정 중력을 적용합니다.
-    ///// </summary>
-    //private void ApplyCustomGravity()
-    //{
-    //    if (!IsGrounded())
-    //    {
-    //        Vector3 customGravity = Physics.gravity * airGravityMultiplier;
-    //        rigid.AddForce(customGravity, ForceMode.Acceleration);
-    //        Debug.Log("사용자 지정 중력 적용됨: " + customGravity);
-    //    }
-    //}
-
-    ///// <summary>
-    ///// 공중에서 에어컨트롤을 적용하여 회전 토크를 부여합니다.
-    ///// </summary>
-    //private void AirControl()
-    //{
-    //    float airSteer = Input.GetAxis("Horizontal");
-    //    Vector3 airTorque = new Vector3(0f, airSteer * airControlTorque, 0f);
-    //    rigid.AddTorque(airTorque, ForceMode.Acceleration);
-    //    Debug.Log("공중 에어컨트롤 적용됨: 토크 " + airTorque);
-    //}
-
-    ///// <summary>
-    ///// 박스 캐스트 결과(_boxCastHit)를 이용하여 벽(Wall) 레이어와의 접촉 시 처리할 로직을 실행합니다.
-    ///// </summary>
-    //private void OnWallContact()
-    //{
-    //    // 드리프트 중이면 드리프트 종료 처리
-    //    if (isDrifting)
-    //    {
-    //        EndDrift();
-    //    }
-
-    //    // 현재 속도를 반사하여 벽 충돌 효과 적용
-    //    Vector3 currentVelocity = rigid.velocity;
-    //    Vector3 normal = _boxCastHit.normal;  // CheckBoxContact()에서 얻은 hit 정보
-    //    Vector3 reflectedVelocity = Vector3.Reflect(currentVelocity, normal);
-
-    //    // 반사된 속도에 wallBounceFactor 적용
-    //    rigid.velocity = reflectedVelocity * wallBounceFactor;
-    //    Debug.Log("박스 캐스트: 벽 접촉 - 반사된 속도 적용됨");
-    //}
-
-    ///// <summary>
-    ///// 지면, 부스터, Jump 레이어 등을 포함하여 바닥 접촉 여부를 판별합니다.
-    ///// Booster 레이어 접촉 시 ActivateBooster를 호출합니다.
-    ///// </summary>
-    //public bool IsGrounded()
-    //{
-    //    int layerMask = groundLayer.value | boosterLayer.value | jumpLayer.value;
-    //    RaycastHit hit;
-    //    if (Physics.Raycast(transform.position, Vector3.down, out hit, groundRayDistance, layerMask))
-    //    {
-    //        if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Booster"))
-    //        {
-    //            ActivateBooster(1.5f);
-    //        }
-    //        return true;
-    //    }
-    //    return false;
-    //}
-
-    ///// <summary>
-    ///// 카트 중심에서 박스 캐스트로 접촉 여부를 판별한 후, 결과를 _boxCastHit에 저장합니다.
-    ///// </summary>
-    //private bool CheckBoxContact(LayerMask layer)
-    //{
-    //    Vector3 worldCenter = transform.position + transform.TransformDirection(boxCastCenter);
-    //    bool contact = Physics.BoxCast(worldCenter, boxCastSize * 0.5f, transform.forward, out _boxCastHit, transform.rotation, boxCastDistance, layer.value);
-
-    //    // 단일 레이어일 경우, 실제 레이어 인덱스를 추출하여 이름을 출력합니다.
-    //    int layerIndex = Mathf.RoundToInt(Mathf.Log(layer.value, 2f));
-    //    Debug.Log("BoxCast (" + LayerMask.LayerToName(layerIndex) + "): " +
-    //              (contact ? "접촉됨 (" + _boxCastHit.collider.name + ")" : "접촉 없음"));
-    //    return contact;
-    //}
-
-    ///// <summary>
-    ///// 기즈모를 통해 박스 캐스트 영역을 시각화합니다.
-    ///// </summary>
-    //private void OnDrawGizmosSelected()
-    //{
-    //    if (boxCastSize == Vector3.zero)
-    //        return;
-
-    //    Gizmos.color = Color.green;
-    //    Matrix4x4 cubeTransform = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
-    //    Gizmos.matrix = cubeTransform;
-    //    Gizmos.DrawWireCube(boxCastCenter, boxCastSize);
-    //}
-
-    //#endregion
-
-
+    #endregion
+   
 }
