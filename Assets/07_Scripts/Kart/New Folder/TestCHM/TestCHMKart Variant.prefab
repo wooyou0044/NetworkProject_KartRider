@@ -337,7 +337,7 @@ MonoBehaviour:
   boostDuration: 1.2
   maxBoostGauge: 100
   boostChargeRate: 1
-  driftBoostChargeRate: 2
+  driftBoostChargeRate: 10
   boostMaxSpeedKmh: 280
   rotationCorrectionSpeed: 5
   downwardForce: 50

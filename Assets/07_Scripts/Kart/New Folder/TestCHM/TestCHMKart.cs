@@ -28,7 +28,7 @@ public class TestCHMKart : MonoBehaviour
 
     [Header("부스트 설정")]
     [SerializeField] public float boostDuration = 1.2f;         // 부스트 지속시간
-    [SerializeField] private int maxBoostGauge = 100;           // 최대 부스트 게이지
+    [SerializeField] public int maxBoostGauge = 100;           // 최대 부스트 게이지
     [SerializeField] private float boostChargeRate = 5f;        // 기본 부스트 충전 속도
     [SerializeField] private float driftBoostChargeRate = 10f;   // 드리프트 중 부스트 충전 속도
     [SerializeField] private float boostMaxSpeedKmh = 280f;        // 부스트 상태의 최대 속도
