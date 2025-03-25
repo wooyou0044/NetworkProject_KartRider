@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CHMTestWheelController : MonoBehaviour
@@ -15,17 +16,46 @@ public class CHMTestWheelController : MonoBehaviour
     public float maxTorque = 30f; // 최대 토크
     public float maxSteerAngle = 30f; // 최대 조향 각도
     public Transform[] wheels; // 바퀴 트랜스폼 배열 (0: 왼쪽 앞바퀴, 1: 오른쪽 앞바퀴, 2: 왼쪽 뒷바퀴, 3: 오른쪽 뒷바퀴)
+    public GameObject skidMark;
+    public Transform[] backWheels; // 뒷 바퀴 트랜스폼
 
     // 카트 컨트롤러 참조
-    private CHMTestKartController kartController;
+    private TestCHMKart kartController;
+
+    SkidMark curLeftSkid;
+    SkidMark curRightSkid;
+
+    GameObject left;
+    GameObject right;
 
     void Start()
     {
         // 카트 컨트롤러 참조 가져오기
-        kartController = GetComponentInParent<CHMTestKartController>();
+        kartController = GetComponentInParent<TestCHMKart>();
 
         // 스키드 마크 초기 비활성화
         SetSkidMarkActive(false);
+    }
+
+    void Update()
+    {
+        if(kartController.isDrifting == true)
+        {
+            if (curLeftSkid == null && curRightSkid == null)
+            {
+                left = Instantiate(skidMark, backWheels[0].position, backWheels[0].rotation);
+                curLeftSkid = left.GetComponent<SkidMark>();
+                right = Instantiate(skidMark, backWheels[1].position, backWheels[1].rotation);
+                curRightSkid = right.GetComponent<SkidMark>();
+            }
+            curLeftSkid.AddSkidMark(backWheels[0].position);
+            curRightSkid.AddSkidMark(backWheels[1].position);
+        }
+        else
+        {
+            curLeftSkid = null;
+            curRightSkid = null;
+        }
     }
 
 
@@ -63,7 +93,7 @@ public class CHMTestWheelController : MonoBehaviour
         }
 
         // 드리프트 상태라면 스키드 마크 효과 활성화
-        SetSkidMarkActive(isDrifting);
+        //SetSkidMarkActive(isDrifting);
     }
 
 }

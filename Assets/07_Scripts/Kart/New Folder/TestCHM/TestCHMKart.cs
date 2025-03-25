@@ -288,7 +288,6 @@ public class TestCHMKart : MonoBehaviour
             : boostChargeRate * Time.fixedDeltaTime;       // 일반 충전 속도
 
         boostGauge = Mathf.Clamp(chargeAmount, 0, maxBoostGauge);
-        Debug.Log("boostGage : " + boostGauge);
 
         if (boostGauge >= maxBoostGauge)
         {
