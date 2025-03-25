@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028301, g: 0.22571309, b: 0.30692127, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028334, g: 0.22571328, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -855,6 +855,37 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &496054575
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 496054576}
+  m_Layer: 0
+  m_Name: SkidMarkManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &496054576
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 496054575}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &498531552 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 124360908002082749, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
@@ -2169,10 +2200,18 @@ PrefabInstance:
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 1768704012152056762, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 1818458926644797653, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 784157036}
+    - target: {fileID: 2097977725145865450, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 2298542361217734115, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -2181,6 +2220,10 @@ PrefabInstance:
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 2827605815575781509, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 2932825825610264605, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -2659,3 +2702,4 @@ SceneRoots:
   - {fileID: 1083733281}
   - {fileID: 1814992196}
   - {fileID: 1404370427}
+  - {fileID: 496054576}

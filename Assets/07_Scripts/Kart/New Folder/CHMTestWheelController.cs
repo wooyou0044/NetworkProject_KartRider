@@ -18,15 +18,22 @@ public class CHMTestWheelController : MonoBehaviour
     public Transform[] wheels; // ¹ÙÄû Æ®·£½ºÆû ¹è¿­ (0: ¿ÞÂÊ ¾Õ¹ÙÄû, 1: ¿À¸¥ÂÊ ¾Õ¹ÙÄû, 2: ¿ÞÂÊ µÞ¹ÙÄû, 3: ¿À¸¥ÂÊ µÞ¹ÙÄû)
     public GameObject skidMark;
     public Transform[] backWheels; // µÞ ¹ÙÄû Æ®·£½ºÆû
+    public LayerMask groundLayer;
 
     // Ä«Æ® ÄÁÆ®·Ñ·¯ ÂüÁ¶
     private TestCHMKart kartController;
+    bool isGround;
 
     SkidMark curLeftSkid;
     SkidMark curRightSkid;
 
     GameObject left;
     GameObject right;
+
+    [SerializeField] int poolSize = 50;
+    public SkidMarkPool skidMarkPool;
+
+    int curSkidMarkCount;
 
     void Start()
     {
@@ -35,27 +42,48 @@ public class CHMTestWheelController : MonoBehaviour
 
         // ½ºÅ°µå ¸¶Å© ÃÊ±â ºñÈ°¼ºÈ­
         SetSkidMarkActive(false);
+
+        skidMarkPool = new SkidMarkPool(skidMark, poolSize);
     }
 
     void Update()
     {
-        if(kartController.isDrifting == true)
+        if(kartController.isDrifting == true && CheckGround())
         {
             if (curLeftSkid == null && curRightSkid == null)
             {
-                left = Instantiate(skidMark, backWheels[0].position, backWheels[0].rotation);
+                //left = Instantiate(skidMark);
+                //left.transform.position += new Vector3(0, 0.04f, 0);
+                //curLeftSkid = left.GetComponent<SkidMark>();
+                //right = Instantiate(skidMark);
+                //right.transform.position += new Vector3(0, 0.04f, 0);
+                //curRightSkid = right.GetComponent<SkidMark>();
+
+                left = skidMarkPool.GetSkidMark();
+                left.transform.position += new Vector3(0, 0.04f, 0);
+                left.SetActive(true);
                 curLeftSkid = left.GetComponent<SkidMark>();
-                right = Instantiate(skidMark, backWheels[1].position, backWheels[1].rotation);
+
+                right = skidMarkPool.GetSkidMark();
+                right.transform.position += new Vector3(0, 0.04f, 0);
+                right.SetActive(true);
                 curRightSkid = right.GetComponent<SkidMark>();
             }
             curLeftSkid.AddSkidMark(backWheels[0].position);
             curRightSkid.AddSkidMark(backWheels[1].position);
+
+            curSkidMarkCount++;
         }
         else
         {
             curLeftSkid = null;
             curRightSkid = null;
         }
+    }
+
+    private void FixedUpdate()
+    {
+        
     }
 
 
@@ -96,4 +124,17 @@ public class CHMTestWheelController : MonoBehaviour
         //SetSkidMarkActive(isDrifting);
     }
 
+    bool CheckGround()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, 0.5f, groundLayer))
+        {
+            isGround = true;
+        }
+        else
+        {
+            isGround = false;
+        }
+        return isGround;
+    }
 }

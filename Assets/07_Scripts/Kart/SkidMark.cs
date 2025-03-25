@@ -32,8 +32,6 @@ public class SkidMark : MonoBehaviour
         skidMesh = new Mesh();
         skidFilter.mesh = skidMesh;
         skidRenderer.material = skidMat;
-
-        Debug.Log(groundLayer.value);
     }
 
     void Start()
@@ -50,7 +48,6 @@ public class SkidMark : MonoBehaviour
 
     public void AddSkidMark(Vector3 wheelPos)
     {
-        Debug.Log(transform.position);
         RaycastHit hit;
         if (!Physics.Raycast(wheelPos + Vector3.up * 0.2f, Vector3.down, out hit, 0.5f, groundLayer))
         {
@@ -69,7 +66,7 @@ public class SkidMark : MonoBehaviour
         }
 
         float maxDistance = 1.0f;
-        if(Vector3.Distance(lastPos, groundPos) > maxDistance)
+        if (Vector3.Distance(lastPos, groundPos) > maxDistance)
         {
             lastPos = groundPos;
             return;
@@ -80,6 +77,7 @@ public class SkidMark : MonoBehaviour
 
         Vector3 leftCurrent = groundPos - perpendicular;
         Vector3 rightCurrent = groundPos + perpendicular;
+
         Vector3 leftLast = lastPos - perpendicular;
         Vector3 rightLast = lastPos + perpendicular;
 
@@ -105,7 +103,7 @@ public class SkidMark : MonoBehaviour
         lastPos = groundPos;
         lastNormal = normal;
 
-        if(vertices.Count > 4)
+        if (vertices.Count > 4)
         {
             UpdateMesh();
         }
