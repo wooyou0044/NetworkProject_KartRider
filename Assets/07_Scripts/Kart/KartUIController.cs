@@ -90,7 +90,7 @@ public class KartUIController : MonoBehaviour
         isChange = false;
     }
 
-    // needle µ¹¸®±â
+    // needle ÂµÂ¹Â¸Â®Â±Ã¢
     void RotateSpeedNeedle()
     {
 
