@@ -65,48 +65,88 @@ public class SkidMark : MonoBehaviour
             return;
         }
 
-        float maxDistance = 1.0f;
-        if (Vector3.Distance(lastPos, groundPos) > maxDistance)
+        //if (Vector3.Distance(lastPos, groundPos) > 1f)
+        //{
+        //    lastPos = groundPos;
+        //    if(Vector3.Distance(lastPos, groundPos) > 0.3f)
+        //    {
+        //        Vector3 midPoint = Vector3.Lerp(lastPos, groundPos, 0.5f);
+        //        AddSkidMark(midPoint);
+        //    }
+        //}
+
+        //float maxDistance = 0.3f;
+        //if (Vector3.Distance(lastPos, groundPos) > maxDistance)
+        //{
+        //    if(Vector3.Distance(lastPos, groundPos) > 1f)
+        //    {
+        //        lastPos = groundPos;
+        //        return;
+        //    }
+        //    //lastPos = groundPos;
+        //    Vector3 midPoint = Vector3.Lerp(lastPos, groundPos, 0.5f);
+        //    AddSkidMark(midPoint);
+        //}
+
+        float segmentDistance = 0.2f;
+        float maxDistance = 1f;
+
+        float distance = Vector3.Distance(lastPos, groundPos);
+
+        if (distance > maxDistance)
         {
             lastPos = groundPos;
             return;
         }
 
-        Vector3 direction = (groundPos - lastPos).normalized;
-        Vector3 perpendicular = Vector3.Cross(normal, direction).normalized * skidWidth * 0.5f;
+        //while(Vector3.Distance(lastPos, groundPos)> segmentDistance)
+        //{
+        //    lastPos = Vector3.MoveTowards(lastPos, groundPos, segmentDistance);
+        //    CreateSkidMarkAt(lastPos, normal);
+        //}
 
-        Vector3 leftCurrent = groundPos - perpendicular;
-        Vector3 rightCurrent = groundPos + perpendicular;
+        int steps = Mathf.Max(1, Mathf.FloorToInt(distance / segmentDistance));
+        for(int i=1; i<=steps; i++)
+        {
+            Vector3 interpolatedPos = Vector3.Lerp(lastPos, groundPos, (float)i / steps);
+            CreateSkidMarkAt(interpolatedPos, normal);
+        }
 
-        Vector3 leftLast = lastPos - perpendicular;
-        Vector3 rightLast = lastPos + perpendicular;
+        //Vector3 direction = (groundPos - lastPos).normalized;
+        //Vector3 perpendicular = Vector3.Cross(normal, direction).normalized * skidWidth * 0.5f;
 
-        int index = vertices.Count;
-        vertices.Add(leftLast);
-        vertices.Add(rightLast);
-        vertices.Add(leftCurrent);
-        vertices.Add(rightCurrent);
+        //Vector3 leftCurrent = groundPos - perpendicular;
+        //Vector3 rightCurrent = groundPos + perpendicular;
 
-        triangles.Add(index);
-        triangles.Add(index + 2);
-        triangles.Add(index + 1);
+        //Vector3 leftLast = lastPos - perpendicular;
+        //Vector3 rightLast = lastPos + perpendicular;
 
-        triangles.Add(index + 1);
-        triangles.Add(index + 2);
-        triangles.Add(index + 3);
+        //int index = vertices.Count;
+        //vertices.Add(leftLast);
+        //vertices.Add(rightLast);
+        //vertices.Add(leftCurrent);
+        //vertices.Add(rightCurrent);
 
-        uvs.Add(new Vector2(0, 0));
-        uvs.Add(new Vector2(1, 0));
-        uvs.Add(new Vector2(0, 1));
-        uvs.Add(new Vector2(1, 1));
+        //triangles.Add(index);
+        //triangles.Add(index + 2);
+        //triangles.Add(index + 1);
+
+        //triangles.Add(index + 1);
+        //triangles.Add(index + 2);
+        //triangles.Add(index + 3);
+
+        //uvs.Add(new Vector2(0, 0));
+        //uvs.Add(new Vector2(1, 0));
+        //uvs.Add(new Vector2(0, 1));
+        //uvs.Add(new Vector2(1, 1));
 
         lastPos = groundPos;
         lastNormal = normal;
 
-        if (vertices.Count > 4)
-        {
-            UpdateMesh();
-        }
+        //if (vertices.Count > 4)
+        //{
+        //    UpdateMesh();
+        //}
     }
 
     void UpdateMesh()
@@ -143,5 +183,41 @@ public class SkidMark : MonoBehaviour
         skidMesh.RecalculateNormals();
 
         isFirstPoint = true;
+    }
+
+    void CreateSkidMarkAt(Vector3 position, Vector3 normal)
+    {
+        Vector3 direction = (position - lastPos).normalized;
+        Vector3 perpendicular = Vector3.Cross(normal, direction).normalized * skidWidth * 0.5f;
+
+        Vector3 leftCurrent = position - perpendicular;
+        Vector3 rightCurrent = position + perpendicular;
+
+        Vector3 leftLast = lastPos - perpendicular;
+        Vector3 rightLast = lastPos + perpendicular;
+
+        int index = vertices.Count;
+        vertices.Add(leftLast);
+        vertices.Add(rightLast);
+        vertices.Add(leftCurrent);
+        vertices.Add(rightCurrent);
+
+        triangles.Add(index);
+        triangles.Add(index + 2);
+        triangles.Add(index + 1);
+
+        triangles.Add(index + 1);
+        triangles.Add(index + 2);
+        triangles.Add(index + 3);
+
+        uvs.Add(new Vector2(0, 0));
+        uvs.Add(new Vector2(1, 0));
+        uvs.Add(new Vector2(0, 1));
+        uvs.Add(new Vector2(1, 1));
+
+        if (vertices.Count > 4)
+        {
+            UpdateMesh();
+        }
     }
 }
