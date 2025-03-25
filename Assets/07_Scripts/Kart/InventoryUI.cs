@@ -15,14 +15,12 @@ public class InventoryUI : MonoBehaviour
 
     TestCHMKart kartCtrl;
 
-    public int itemCount { get; set; }
-
     bool isItemUseNotYet;
     float blinkSpeed = 0.5f;
 
     void Start()
     {
-        itemCount = 0;
+        //itemCount = 0;
     }
 
     void Update()
@@ -33,7 +31,7 @@ public class InventoryUI : MonoBehaviour
         }
 
         // 나중에 부스트 뿐만 아니라 아이템이 들어오면 조정 필요
-        if(kartCtrl != null && kartCtrl.isBoostCreate && itemCount < 2)
+        if(kartCtrl != null && kartCtrl.isBoostCreate && kartCtrl.boostCount <= 2)
         {
             MakeInventoryItemSlot();
             kartCtrl.isBoostCreate = false;
@@ -41,45 +39,44 @@ public class InventoryUI : MonoBehaviour
         }
 
         // 임시로
-        if(Input.GetKeyDown(KeyCode.H))
+        if(kartCtrl != null && kartCtrl.isBoostUsed== true)
         {
-            itemCount--;
             // 맨 앞 슬롯에 들어있는 이미지 없애기
             // 작은 슬롯에 있는 이미지 맨 앞 슬롯에 넣기
-            if(itemCount == 0)
+            if(kartCtrl.boostCount == 0)
             {
                 itemInventImg[0].GetComponent<Image>().color = new Color(0, 0, 0, 0.6156863f);
-                itemInventImg[itemCount].GetChild(0).gameObject.SetActive(false);
+                itemInventImg[kartCtrl.boostCount].GetChild(0).gameObject.SetActive(false);
                 isItemUseNotYet = false;
             }
             else
             {
-                itemInventImg[itemCount].GetChild(0).gameObject.SetActive(false);
-                itemInventImg[itemCount - 1].GetChild(0).GetComponent<Image>().sprite = itemImg;
+                itemInventImg[kartCtrl.boostCount].GetChild(0).gameObject.SetActive(false);
+                itemInventImg[kartCtrl.boostCount - 1].GetChild(0).GetComponent<Image>().sprite = itemImg;
             }
+
+            kartCtrl.isBoostUsed = false;
         }
     }
 
     void MakeInventoryItemSlot()
     {
         Image slot = null;
-        if (itemInventImg[itemCount].childCount != 0)
+        if (itemInventImg[kartCtrl.boostCount - 1].childCount != 0)
         {
-            itemInventImg[itemCount].GetChild(0).gameObject.SetActive(true);
-            slot = itemInventImg[itemCount].GetChild(0).GetComponent<Image>();
+            itemInventImg[kartCtrl.boostCount - 1].GetChild(0).gameObject.SetActive(true);
+            slot = itemInventImg[kartCtrl.boostCount - 1].GetChild(0).GetComponent<Image>();
         }
         else
         {
-            slot = Instantiate(itemImgSlot, itemInventImg[itemCount]);
+            slot = Instantiate(itemImgSlot, itemInventImg[kartCtrl.boostCount - 1]);
         }
 
         slot.sprite = itemImg;
-        // 컨트롤 키를 누르면 itemCount--;
-        itemCount++;
 
         isItemUseNotYet = true;
 
-        if(itemCount == 1)
+        if(kartCtrl.boostCount == 1)
         {
             itemInventImg[0].GetComponent<Image>().color = new Color(1, 1, 1, 0.3686275f);
             StartCoroutine(ItemUseNotYet());
