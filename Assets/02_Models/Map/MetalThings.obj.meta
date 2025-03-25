@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: aecb1594ca34c4e3297826b69c704f3b
+guid: 21b242181eacc4624b23eeded26750e2
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -7,8 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Roadside_brick__M_Cnsw_66_Near_Road_03Mat
-    second: {fileID: 2100000, guid: bb62f26bbf5764eb3a3fc0591de222a3, type: 2}
+      name: M_Cnsw_66_Metal_01
+    second: {fileID: 2100000, guid: 96aa64d22c12241d2838d51fa048ec7e, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
