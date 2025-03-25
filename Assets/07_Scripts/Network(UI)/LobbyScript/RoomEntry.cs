@@ -36,7 +36,7 @@ public class RoomEntry : MonoBehaviour
         // 맵 이미지 설정
         var mapSprite = Resources.Load<Sprite>($"Maps/{mapNameText.text}");
         mapImage.sprite = mapSprite != null ? mapSprite : Resources.Load<Sprite>("Maps/default");
-
+        //패스워드가 있다면 패스워드 아이콘 생성
         bool passwrod = roomInfo.CustomProperties.ContainsKey("Password") &&
                !string.IsNullOrEmpty(roomInfo.CustomProperties["Password"] as string); // 비밀번호 확인
         SetLockIcon(passwrod);
@@ -52,7 +52,7 @@ public class RoomEntry : MonoBehaviour
     public bool IsPasswrod(RoomInfo roomInfo)
     {
         return roomInfo.CustomProperties.ContainsKey("Password") &&
-               !string.IsNullOrEmpty(roomInfo.CustomProperties["Password"] as string); // 비밀번호 확인
+                       !string.IsNullOrEmpty(roomInfo.CustomProperties["Password"] as string); ; // 비밀번호 확인
     }    
     public void SetLockIcon(bool isPassword)
     {

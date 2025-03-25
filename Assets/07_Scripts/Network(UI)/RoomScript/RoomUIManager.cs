@@ -14,6 +14,9 @@ public class RoomUIManager : MonoBehaviour
     [SerializeField] public TMP_Text roomMapNameText;
     [SerializeField] public Image roomMapeImg;
 
+    [Header("플레이어 슬롯 그룹 판넬")]
+    [SerializeField] public GameObject playerSlotGroupPanel;
+
     [Header("방 이름 변경")]
     [SerializeField] public GameObject roomInfoChangePanel;
     [SerializeField] public TMP_InputField roomNameChangeField;

@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
+
 public class RoomManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] public RoomUIManager roomUIManger;
@@ -14,45 +15,33 @@ public class RoomManager : MonoBehaviourPunCallbacks
     private Player[] players = PhotonNetwork.PlayerList;
     private RoomEntry roomEntry;
     private Dictionary<Player, PlayerInfo> playerDic = new Dictionary<Player, PlayerInfo>();
-    
+
     private void Start()
     {
         RoomInfoUpdate();
-        
+
         if (PhotonNetwork.IsMasterClient)
         {
             roomUIManger.startBtn.gameObject.SetActive(true);
             roomUIManger.readyBtn.gameObject.SetActive(false);
             //모든 플레이어가 준비완료 되면 트루로 바꾸기(업데이트 RPC쏴야됨)
             roomUIManger.startBtn.interactable = true;
-            int max = PhotonNetwork.CurrentRoom.MaxPlayers - 1;
-
-            PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable
-            {
-                {"0", PhotonNetwork.LocalPlayer.ActorNumber }, { "1",0},
-                { "2", 2<= max ? 0 : -1 }, { "3", 3 <= max ? 0 : -1 }, { "4",4 <= max ? 0: -1  },
-                { "5", 5 <= max ? 0 : -1 }, {"6",  6 <= max ? 0 : -1}, {"7", 7<= max ? 0 : -1}                
-            });
+            
         }
         else
         {
             roomUIManger.startBtn.gameObject.SetActive(false);
-            roomUIManger.readyBtn.gameObject.SetActive(true);            
-        }
-        foreach (var player in players)
-        {
-            if (player != null)
-            {
-                playerInfo.SetPlayerInfo(player);
-            }
-
-            //이미지로 띄워주면 됨
-            //배열의 0 번부터 차례대로
-            Debug.Log("방 안의 사람들 목록"+ player.NickName);
+            roomUIManger.readyBtn.gameObject.SetActive(true);
         }
     }
+    private void UpdateSlots()
+    {
+        
+    }
+
     public void SetRoomInfoChange()
     {
+        roomUIManger.roomInfoChangePanel.gameObject.SetActive(false);
         string roomName = roomUIManger.roomNameChangeField.text;
         string roomPassword = roomUIManger.roomPasswordChangeField.text;
 
@@ -84,14 +73,19 @@ public class RoomManager : MonoBehaviourPunCallbacks
         roomUIManger.roomMapeImg.sprite = mapSprite != null ? mapSprite : Resources.Load<Sprite>("Maps/default");
 
         bool hasPassword = roomProperties.ContainsKey("Password") && !string.IsNullOrEmpty((string)roomProperties["Password"]);
-        roomUIManger.roomPasswordText.text = (string)roomProperties["Password"];
+        roomUIManger.roomPasswordText.text = hasPassword ? (string)roomProperties["Password"] : null;
         roomUIManger.SetPasswordUI(hasPassword);
     }
+
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
-        RoomInfoUpdate(); // 변경된 방 속성을 UI에 반영
+        RoomInfoUpdate(); //변경된 방 속성을 룸에 반영        
     }
+    public override void OnLobbyStatisticsUpdate(List<TypedLobbyInfo> lobbyStatistics)
+    {
+        SetRoomInfoChange();
 
+    }
     public override void OnLeftLobby()
     {
         Debug.Log("로비 퇴장했습니다.");
@@ -110,8 +104,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {            
             if (PhotonNetwork.IsMasterClient == true)
             {
+                roomUIManger.startBtn.gameObject.SetActive(true);
+                roomUIManger.readyBtn.gameObject.SetActive(false);
+                //모든 플레이어가 준비완료 되면 트루로 바꾸기(업데이트 RPC쏴야됨)
                 roomUIManger.startBtn.interactable = true;
-                roomUIManger.readyBtn.interactable = false;
                 return;
             }
         }
@@ -119,24 +115,24 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         //유저 입장시 유저 UI업데이트.
-        UpdatePlayerUIList();
+        UpdateSlots();
     }
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         //유저 이탈시 해당 유저가 있던 부분의 UI업데이트
-        UpdatePlayerUIList();
+        UpdateSlots();
     }
     public void UpdatePlayerUIList()
     {
         for(int i = 0; i < players.Length; i++)
         {
             if(players[i] != null) 
-            {                
+            {
+                UpdateSlots();
                 //Instantiate(roomUIManger.PlayerInfo, )
             }
             else
             {
-                playerInfo.playerInfoPanel.gameObject.SetActive(false);
             }
         }
     }

@@ -1048,6 +1048,7 @@ MonoBehaviour:
   roomPasswordText: {fileID: 238411095}
   roomMapNameText: {fileID: 1422364541}
   roomMapeImg: {fileID: 1248030003}
+  playerSlotGroupPanel: {fileID: 2147466006}
   roomInfoChangePanel: {fileID: 1809343195}
   roomNameChangeField: {fileID: 1129491996}
   roomPasswordChangeField: {fileID: 2058751512}
@@ -11773,7 +11774,7 @@ GameObject:
   - component: {fileID: 2147466009}
   - component: {fileID: 2147466008}
   m_Layer: 5
-  m_Name: playerSlotPanel
+  m_Name: playerSlotGroupPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
