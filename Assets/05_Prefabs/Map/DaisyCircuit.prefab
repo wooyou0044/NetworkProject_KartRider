@@ -839,7 +839,7 @@ GameObject:
   - component: {fileID: 613543983396141521}
   - component: {fileID: 3176082177550155383}
   - component: {fileID: 8553446824268981074}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Near_Road_02__M_Cnsw_66_Near_Road02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1382,7 +1382,7 @@ GameObject:
   - component: {fileID: 1169534519926123666}
   - component: {fileID: 4086819875255423275}
   - component: {fileID: 2402390965723185873}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: polySurface8364608__M_Cnsw_66_Near_Road
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1505,6 +1505,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 4249444106685834793}
   - {fileID: 5404978161307854855}
   m_Father: {fileID: 7220970919036286728}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1555,7 +1556,7 @@ GameObject:
   - component: {fileID: 6354269461231491296}
   - component: {fileID: 286728017952445819}
   - component: {fileID: 7999247448941352226}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Near_Road_tnl__M_Cnsw_66_Near_Road_tnl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1949,7 +1950,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4249444106685834793}
   - {fileID: 1134489549483944119}
   - {fileID: 7384573404170051740}
   - {fileID: 4302170016590922001}
@@ -4742,7 +4742,7 @@ GameObject:
   - component: {fileID: 194324513493586454}
   - component: {fileID: 8506025310070493461}
   - component: {fileID: 7405574039906320050}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Road_03__M_Cnsw_66_Road_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6267,11 +6267,11 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 4466701460004435605}
+    m_TransformParent: {fileID: 594121525909174119}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: aecb1594ca34c4e3297826b69c704f3b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aecb1594ca34c4e3297826b69c704f3b, type: 3}
       propertyPath: m_LocalPosition.y
@@ -6291,11 +6291,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aecb1594ca34c4e3297826b69c704f3b, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aecb1594ca34c4e3297826b69c704f3b, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aecb1594ca34c4e3297826b69c704f3b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -8243,6 +8243,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Shortcut_stairs (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 76b4ad6804ed844dd9078048a3f7266e, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7024940457260539525, guid: 76b4ad6804ed844dd9078048a3f7266e, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8650,6 +8658,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 76b4ad6804ed844dd9078048a3f7266e, type: 3}
       propertyPath: m_Name
       value: Shortcut_stairs
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 76b4ad6804ed844dd9078048a3f7266e, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7024940457260539525, guid: 76b4ad6804ed844dd9078048a3f7266e, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
