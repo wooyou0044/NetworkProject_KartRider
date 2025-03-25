@@ -117,4 +117,31 @@ public class SkidMark : MonoBehaviour
         skidMesh.uv = uvs.ToArray();
         skidMesh.RecalculateNormals();
     }
+
+    public void ResetSkidMarks()
+    {
+        if(vertices == null)
+        {
+            vertices = new List<Vector3>();
+        }
+        if(triangles == null)
+        {
+            triangles = new List<int>();
+        }
+        if(uvs == null)
+        {
+            uvs = new List<Vector2>();
+        }
+        vertices.Clear();
+        triangles.Clear();
+        uvs.Clear();
+
+        skidMesh.Clear();
+        skidMesh.vertices = vertices.ToArray();
+        skidMesh.triangles = triangles.ToArray();
+        skidMesh.uv = uvs.ToArray();
+        skidMesh.RecalculateNormals();
+
+        isFirstPoint = true;
+    }
 }

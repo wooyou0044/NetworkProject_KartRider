@@ -4,27 +4,29 @@ using UnityEngine;
 
 public class SkidMarkPool
 {
-    Queue<GameObject> pool;
+    Queue<GameObject> unusedPool;
+    Queue<GameObject> usedPool;
     GameObject skidMarkPrefab;
 
-    public SkidMarkPool(GameObject skidMarkPrefab, int poolSize)
+    public SkidMarkPool(GameObject skidMarkPrefab, int poolSize, Transform parent)
     {
         this.skidMarkPrefab = skidMarkPrefab;
-        pool = new Queue<GameObject>();
+        unusedPool = new Queue<GameObject>();
+        usedPool = new Queue<GameObject>();
 
         for(int i=0; i<poolSize; i++)
         {
-            GameObject skidMark = Object.Instantiate(skidMarkPrefab);
+            GameObject skidMark = Object.Instantiate(skidMarkPrefab, parent);
             skidMark.SetActive(false);
-            pool.Enqueue(skidMark);
+            unusedPool.Enqueue(skidMark);
         }
     }
 
     public GameObject GetSkidMark()
     {
-        if(pool.Count > 0)
+        if(unusedPool.Count > 0)
         {
-            return pool.Dequeue();
+            return unusedPool.Dequeue();
         }
 
         return null;
@@ -32,7 +34,7 @@ public class SkidMarkPool
 
     public void ReturnSkidMark(GameObject skidMark)
     {
-        skidMark.SetActive(false);
-        pool.Enqueue(skidMark);
+        //skidMark.SetActive(false);
+        unusedPool.Enqueue(skidMark);
     }
 }

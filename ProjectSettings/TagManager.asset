@@ -8,6 +8,7 @@ TagManager:
   - Wall
   - Deadzone
   - ItemBox
+  - SkidMark
   layers:
   - Default
   - TransparentFX
