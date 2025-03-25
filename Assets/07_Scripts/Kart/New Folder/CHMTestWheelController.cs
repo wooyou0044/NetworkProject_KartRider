@@ -28,6 +28,7 @@ public class CHMTestWheelController : MonoBehaviour
 
     GameObject left;
     GameObject right;
+    GameObject skidMarkManager;
 
     [SerializeField] int poolSize = 50;
     public SkidMarkPool skidMarkPool;
@@ -42,7 +43,9 @@ public class CHMTestWheelController : MonoBehaviour
         // 스키드 마크 초기 비활성화
         SetSkidMarkActive(false);
 
-        skidMarkPool = new SkidMarkPool(skidMark, poolSize);
+        skidMarkManager = GameObject.FindGameObjectWithTag("SkidMark");
+
+        skidMarkPool = new SkidMarkPool(skidMark, poolSize, skidMarkManager.transform);
     }
 
     void Update()
@@ -59,19 +62,32 @@ public class CHMTestWheelController : MonoBehaviour
                 //curRightSkid = right.GetComponent<SkidMark>();
 
                 left = skidMarkPool.GetSkidMark();
-                left.transform.position += new Vector3(0, 0.04f, 0);
+                left.transform.position += new Vector3(0, 0.06f, 0);
                 left.SetActive(true);
                 curLeftSkid = left.GetComponent<SkidMark>();
 
                 right = skidMarkPool.GetSkidMark();
-                right.transform.position += new Vector3(0, 0.04f, 0);
+                right.transform.position += new Vector3(0, 0.06f, 0);
                 right.SetActive(true);
                 curRightSkid = right.GetComponent<SkidMark>();
+
+                skidMarkPool.ReturnSkidMark(left);
+                skidMarkPool.ReturnSkidMark(right);
+
+                if (curSkidMarkCount < 8)
+                {
+                    curSkidMarkCount += 2;
+                }
+                else
+                {
+                    Debug.Log("����");
+                    curLeftSkid.ResetSkidMarks();
+                    curRightSkid.ResetSkidMarks();
+                }
             }
+
             curLeftSkid.AddSkidMark(backWheels[0].position);
             curRightSkid.AddSkidMark(backWheels[1].position);
-
-            curSkidMarkCount++;
         }
         else
         {

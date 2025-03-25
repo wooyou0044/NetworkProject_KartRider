@@ -134,7 +134,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4784646851838524419, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: poolSize
-      value: 5
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 4784646851838524419, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: skidMark
