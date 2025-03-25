@@ -39,6 +39,15 @@ public class TestCHMKart : MonoBehaviour
     [SerializeField] private float downwardForce = 50f;         // 하강(중력 보조) 힘
     [SerializeField] private float wallBounceFactor = 2f;  // 벽 충돌 시 적용할 튕김 힘(조정 가능)
 
+    [Header("공중 및 중력 설정")]
+    [SerializeField] private float airGravityMultiplier = 0.7f;    // 공중일 때 기본 중력의 배수 (예: 0.7)
+    [SerializeField] private float airControlTorque = 5f;          // 공중 에어컨트롤 적용 토크
+
+    [Header("지면 및 부스터 체크 설정")]
+    [SerializeField] private float groundRayDistance = 0.8f;         // 지면 체크를 위한 레이 길이
+    [SerializeField] private LayerMask groundLayer;                  // 지면 레이어
+    [SerializeField] private LayerMask boosterLayer;                 // 부스터(혹은 점프대) 레이어
+
     #endregion
 
     #region Private Fields
@@ -63,19 +72,13 @@ public class TestCHMKart : MonoBehaviour
     // 내부적으로 사용할 m/s 단위 변수
     private float maxSpeed;      // 최대 속도 (m/s)
     private float boostMaxSpeed; // 부스트 최대 속도 (m/s)
-
-
-
     private Vector3 speed;                     // 현재 속도 벡터
     private float chargeAmount;
-
-    #endregion
-
-    #region
     /* Network Instantiate */
     private Transform _playerParent;
     private Transform _tr;
-    private PhotonView _photonView;    
+    private PhotonView _photonView;
+    
     #endregion
     
     #region Unity Methods
@@ -169,7 +172,7 @@ public class TestCHMKart : MonoBehaviour
 
     private void HandleBoostInput()
     {
-        // LeftControl 키와 부스트 게이지 최대치 시 기본 부스트 활성화
+        // LeftControl 키와 부스트 게이지 최대치 시 부스터 기본 발동
         if (Input.GetKeyDown(KeyCode.LeftControl) && boostGauge >= maxBoostGauge)
         {
             StartBoost(boostDuration);
@@ -178,8 +181,9 @@ public class TestCHMKart : MonoBehaviour
 
     #endregion
 
-    #region Drift and Boost Methods
+    #region Drift Methods
 
+    // 드리프트 관련 파라미터 업데이트
     private void UpdateDriftParameters()
     {
         float currentSpeed = rigid.velocity.magnitude;
@@ -190,6 +194,7 @@ public class TestCHMKart : MonoBehaviour
         driftForceMultiplier = Mathf.Lerp(minDriftForceMultiplier, maxDriftForceMultiplier, speedFactor);
     }
 
+    // 드리프트 시작 처리
     private void StartDrift(float driftInputAngle)
     {
         isDrifting = true;
@@ -209,12 +214,14 @@ public class TestCHMKart : MonoBehaviour
         Invoke(nameof(EndDrift), driftDuration);
     }
 
+    // 드리프트 중 입력에 따른 각도 업데이트
     private void UpdateDriftAngle()
     {
         currentDriftAngle += Time.deltaTime * 10f;
         currentDriftAngle = Mathf.Clamp(currentDriftAngle, -maxDriftAngle, maxDriftAngle);
     }
 
+    // 드리프트 종료 처리 및 즉시 부스트 입력 대기
     private void EndDrift()
     {
         isDrifting = false;
@@ -231,6 +238,7 @@ public class TestCHMKart : MonoBehaviour
         initialDriftSpeed = 0f;
     }
 
+    // 드리프트 종료 후 바로 부스트 입력을 받기 위한 코루틴
     private IEnumerator PostDriftBoostCoroutine()
     {
         float timer = 0f;
@@ -257,16 +265,22 @@ public class TestCHMKart : MonoBehaviour
         postDriftBoostCoroutine = null;
     }
 
+    // 드리프트 후 즉시 부스트 (현재 속력의 1.2배 증폭)
     private void PerformInstantBoost()
     {
         Debug.Log("즉시 부스트 활성화!");
-        rigid.velocity *= 1.2f;  // 현재 속력의 1.2배 증폭
+        rigid.velocity *= 1.2f;
         postDriftBoostCoroutine = null;
     }
 
+    #endregion
+
+    #region Booster Methods
+
+    // 부스터(일반 부스트) 발동 함수
     private void StartBoost(float duration)
     {
-        boostSpeed = speedKM;
+        boostSpeed = speedKM;   // 계기판으로 표시되는 속도를 기준으로 설정 (km/h)
         isBoostTriggered = true;
         boostGauge = 0;
         rigid.velocity = transform.forward * boostSpeed;
@@ -274,26 +288,49 @@ public class TestCHMKart : MonoBehaviour
         Invoke(nameof(EndBoost), duration);
     }
 
+    // 부스트 종료 처리
     private void EndBoost()
     {
         isBoostTriggered = false;
         Debug.Log("부스트 종료");
     }
 
+    // 부스트 게이지 충전 처리 (드리프트 시와 일반 충전 속도 구분)
     private void ChargeBoostGauge()
     {
         chargeAmount += isDrifting
             ? driftBoostChargeRate * Time.fixedDeltaTime  // 드리프트 중 충전 속도
             : boostChargeRate * Time.fixedDeltaTime;       // 일반 충전 속도
 
-        boostGauge = Mathf.Clamp(chargeAmount, 0, maxBoostGauge);        
+        boostGauge = Mathf.Clamp(chargeAmount, 0, maxBoostGauge);
         if (boostGauge >= maxBoostGauge)
         {
             Debug.Log("부스트 게이지 최대치 도달!");
         }
     }
+    /// <summary>
+    /// 부스터 기능 활성화
+    /// </summary>
+    private void ActivateBooster(float duration)
+    {
+        if (!isBoostTriggered)
+            StartCoroutine(BoosterCoroutine(duration));
+    }
+
+    /// <summary>
+    /// 부스터 기능을 duration(초) 동안 활성화하는 코루틴입니다.
+    /// </summary>
+    private IEnumerator BoosterCoroutine(float duration)
+    {
+        isBoostTriggered = true;
+        Debug.Log("부스터 활성화됨: " + duration + "초 동안");
+        yield return new WaitForSeconds(duration);
+        isBoostTriggered = false;
+        Debug.Log("부스터 비활성화됨");
+    }
 
     #endregion
+
     #region Movement Handling
 
     private void HandleKartMovement(float motorInput, float steerInput)
@@ -407,8 +444,7 @@ public class TestCHMKart : MonoBehaviour
 
     #endregion
 
-
-    #region 안티롤 & 충돌 처리
+    #region [ 공중, 중력, 안티롤 , 충돌 처리 , 에어컨트롤]    
     private void CorrectAirborneRotation()
     {
         // 지면에 닿아있지 않으면 보정
@@ -424,13 +460,6 @@ public class TestCHMKart : MonoBehaviour
             // 필요 시 아래쪽으로 힘을 추가하여 떨어지도록 할 수 있음.
             rigid.AddForce(Vector3.down * downwardForce, ForceMode.Acceleration);
         }
-    }
-
-    public bool IsGrounded()
-    {
-        // 간단한 Raycast를 사용하여 kart의 하단이 지면에 닿았는지 확인합니다.
-        float rayDistance = 0.8f; // 필요에 따라 조정 가능
-        return Physics.Raycast(transform.position, Vector3.down, rayDistance);
     }
     private void OnCollisionEnter(Collision collision)
     {
@@ -458,5 +487,55 @@ public class TestCHMKart : MonoBehaviour
             Debug.Log("벽 충돌: 반사된 벨로시티 적용됨");
         }
     }
+
+    /// <summary>
+    /// 공중일 때 사용자 지정 중력을 적용합니다.
+    /// </summary>
+    private void ApplyCustomGravity()
+    {
+        if (!IsGrounded())
+        {
+            Vector3 customGravity = Physics.gravity * airGravityMultiplier;
+            rigid.AddForce(customGravity, ForceMode.Acceleration);
+            Debug.Log("사용자 지정 중력 적용됨: " + customGravity);
+        }
+    }
+
+    /// <summary>
+    /// 공중에서 에어컨트롤을 적용하여 회전 토크를 부여합니다.
+    /// </summary>
+    private void AirControl()
+    {
+        float airSteer = Input.GetAxis("Horizontal");
+        Vector3 airTorque = new Vector3(0f, airSteer * airControlTorque, 0f);
+        rigid.AddTorque(airTorque, ForceMode.Acceleration);
+        Debug.Log("공중 에어컨트롤 적용됨: 토크 " + airTorque);
+    }
+
+    /// <summary>
+    /// 지면 및 부스터(점프대) 여부를 판별합니다.
+    /// Booster 레이어가 감지되면 부스터를 1.5초 동안 활성화합니다.
+    /// </summary>
+    public bool IsGrounded()
+    {
+        // 지면 레이어와 부스터 레이어를 모두 포함하는 레이어 마스크를 구성합니다.
+        int layerMask = groundLayer | boosterLayer;
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, groundRayDistance, layerMask))
+        {
+            // 만약 감지한 Collider가 부스터 레이어에 속한다면,
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Booster"))
+            {
+                // 부스터 기능을 1.5초 동안 활성화합니다.
+                ActivateBooster(1.5f);
+            }
+            return true;
+        }
+        return false;
+    }
+    
+
     #endregion
+
+
 }

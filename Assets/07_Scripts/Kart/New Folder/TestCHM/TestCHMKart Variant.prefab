@@ -346,6 +346,15 @@ MonoBehaviour:
   rotationCorrectionSpeed: 5
   downwardForce: 50
   wallBounceFactor: 1
+  airGravityMultiplier: 0.7
+  airControlTorque: 5
+  groundRayDistance: 0.8
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  boosterLayer:
+    serializedVersion: 2
+    m_Bits: 0
   isDrifting: 0
   currentDriftAngle: 0
 --- !u!114 &3506412311101806673
