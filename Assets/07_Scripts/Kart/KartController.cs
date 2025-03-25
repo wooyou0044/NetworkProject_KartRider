@@ -20,7 +20,7 @@ public class KartController : MonoBehaviour
     private float steerInput; // 조향 입력 값
     private float driftTime = 0f;
 
-    private bool isDrifting = false;
+    public bool isDrifting { get; private set; }
     public bool isBoostTriggered = false;
     private bool isUpArrowKeyPressed = false; // 현재 키가 눌려있는 상태
     private bool wasUpArrowKeyReleased = true; // 이전에 키가 떼어진 상태

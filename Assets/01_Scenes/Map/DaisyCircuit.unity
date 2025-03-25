@@ -836,6 +836,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3283680461316375532, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.21061349
+      objectReference: {fileID: 0}
+    - target: {fileID: 3283680461316375532, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.000000022351742
+      objectReference: {fileID: 0}
     - target: {fileID: 4848290750487293163, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: m_Name
       value: TestKart
@@ -1018,7 +1026,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1508638635}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13938598, y: -0.7328566, z: 0.15789105, w: 0.64696467}
+  m_LocalRotation: {x: 0.139386, y: -0.7328566, z: 0.15789106, w: 0.64696467}
   m_LocalPosition: {x: 3.2443652, y: 5.5999966, z: 33.040916}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1152,6 +1160,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Wall
       objectReference: {fileID: 0}
+    - target: {fileID: 1768704012152056762, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 1836289018987606756, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Convex
       value: 0
@@ -1160,6 +1172,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Wall
       objectReference: {fileID: 0}
+    - target: {fileID: 2097977725145865450, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 2226151617576318501, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_TagString
       value: Wall
@@ -1167,6 +1183,10 @@ PrefabInstance:
     - target: {fileID: 2410491224627978779, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_TagString
       value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 2827605815575781509, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3031338880674190342, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_TagString
