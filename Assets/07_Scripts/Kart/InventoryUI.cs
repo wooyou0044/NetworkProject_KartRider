@@ -29,7 +29,7 @@ public class InventoryUI : MonoBehaviour
     {
         if (kartCtrl != null)
         {
-            driftDurationImg.fillAmount = (kartCtrl.boostGauge / kartCtrl.maxDriftAngle);     
+            driftDurationImg.fillAmount = (kartCtrl.boostGauge / kartCtrl.maxBoostGauge);     
         }
 
         // 나중에 부스트 뿐만 아니라 아이템이 들어오면 조정 필요
