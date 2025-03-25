@@ -131,18 +131,7 @@ public class TestCHMKart : MonoBehaviour
         HandleDriftInput(currentSteerInput);
 
         // 부스트 입력 처리
-        HandleBoostInput();
-
-        // 드리프트 중 지속시간 누적 및 조건 체크
-        //if (isDrifting)
-        //{
-        //    driftDuration += Time.deltaTime;
-        //    if (driftDuration >= 1f)
-        //    {
-        //        isBoostCreate = true;
-        //        driftDuration = 0f;
-        //    }
-        //}
+        HandleBoostInput();        
 
         // 부스트 게이지 충전
         if(currentMotorInput != 0 || isDrifting)
