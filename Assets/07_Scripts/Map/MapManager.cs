@@ -103,6 +103,7 @@ public class MapManager : MonoBehaviourPunCallbacks
         }
         else
         {
+            ResetAllCheckPoints();
             gameManager.OnFinished();
         }
         

@@ -1,168 +1,167 @@
 using System.Collections;
 using Photon.Pun;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TestCHMKart : MonoBehaviour
 {
     #region Serialized Fields
 
-    [Header("Ä«Æ® ±¸¼º ¿ä¼Ò")]
-    [SerializeField] private GameObject wheels;   // ¹ÙÄû ¿ÀºêÁ§Æ®
+    [Header("ì¹´íŠ¸ êµ¬ì„± ìš”ì†Œ")]
+    [SerializeField] private GameObject wheels;   // ë°”í€´ ì˜¤ë¸Œì íŠ¸
 
-    [Header("ÀÌµ¿ ¼³Á¤")]
-    [SerializeField] private float maxSpeedKmh = 200f;           // ÃÖ´ë ¼Óµµ
-    [SerializeField] private float movementForce = 20f;       // ÀÌµ¿¿¡ Àû¿ëÇÒ Èû
-    [SerializeField] private float steerAngle = 200f;         // Á¶Çâ(È¸Àü) °¢µµ
-    [SerializeField] private float decelerationRate = 2f;  // Å° ¾øÀ½ °¨¼Ó º¸Á¤ °è¼ö
-    [SerializeField] private float minSteerMultiplier = 1f;  // ÃÖ¼Ò Á¶Çâ ¹è¼ö (¼Óµµ°¡ ³·À» ¶§)
-    [SerializeField] private float maxSteerMultiplier = 2f;  // ÃÖ´ë Á¶Çâ ¹è¼ö (¼Óµµ°¡ ÃÖ´ëÀÏ ¶§)
+    [Header("ì´ë™ ì„¤ì •")]
+    [SerializeField] private float maxSpeedKmh = 200f;           // ìµœëŒ€ ì†ë„
+    [SerializeField] private float movementForce = 20f;       // ì´ë™ì— ì ìš©í•  í˜
+    [SerializeField] private float steerAngle = 100f;         // ì¡°í–¥(íšŒì „) ê°ë„
+    [SerializeField] private float decelerationRate = 2f;  // í‚¤ ì—†ìŒ ê°ì† ë³´ì • ê³„ìˆ˜
+    [SerializeField] private float minSteerMultiplier = 1f;  // ìµœì†Œ ì¡°í–¥ ë°°ìˆ˜ (ì†ë„ê°€ ë‚®ì„ ë•Œ)
+    [SerializeField] private float maxSteerMultiplier = 2f;  // ìµœëŒ€ ì¡°í–¥ ë°°ìˆ˜ (ì†ë„ê°€ ìµœëŒ€ì¼ ë•Œ)
 
-    [Header("µå¸®ÇÁÆ® ¼³Á¤")]
-    [SerializeField] private float minDriftAngle = 30f;       // ÃÖ¼Ò µå¸®ÇÁÆ® °¢µµ
-    [SerializeField] public float maxDriftAngle = 180f;       // ÃÖ´ë µå¸®ÇÁÆ® °¢µµ
-    [SerializeField] private float minDriftDuration = 0.2f;     // ÃÖ¼Ò µå¸®ÇÁÆ® Áö¼Ó½Ã°£
-    [SerializeField] private float maxDriftDuration = 2f;       // ÃÖ´ë µå¸®ÇÁÆ® Áö¼Ó½Ã°£
-    [SerializeField] private float minDriftForceMultiplier = 1f;// ÃÖ¼Ò µå¸®ÇÁÆ® Èû ¹è¼ö
-    [SerializeField] private float maxDriftForceMultiplier = 5f;// ÃÖ´ë µå¸®ÇÁÆ® Èû ¹è¼ö
-    [SerializeField] private float driftSpeedReduction = 0.7f;  // µå¸®ÇÁÆ® ½Ã ¼Óµµ °¨¼Ò ºñÀ²
+    [Header("ë“œë¦¬í”„íŠ¸ ì„¤ì •")]
+    [SerializeField] private float minDriftAngle = 30f;       // ìµœì†Œ ë“œë¦¬í”„íŠ¸ ê°ë„
+    [SerializeField] public float maxDriftAngle = 180f;       // ìµœëŒ€ ë“œë¦¬í”„íŠ¸ ê°ë„
+    [SerializeField] private float minDriftDuration = 0.2f;     // ìµœì†Œ ë“œë¦¬í”„íŠ¸ ì§€ì†ì‹œê°„
+    [SerializeField] private float maxDriftDuration = 2f;       // ìµœëŒ€ ë“œë¦¬í”„íŠ¸ ì§€ì†ì‹œê°„
+    [SerializeField] private float minDriftForceMultiplier = 1f;// ìµœì†Œ ë“œë¦¬í”„íŠ¸ í˜ ë°°ìˆ˜
+    [SerializeField] private float maxDriftForceMultiplier = 5f;// ìµœëŒ€ ë“œë¦¬í”„íŠ¸ í˜ ë°°ìˆ˜
+    [SerializeField] private float driftSpeedReduction = 0.7f;  // ë“œë¦¬í”„íŠ¸ ì‹œ ì†ë„ ê°ì†Œ ë¹„ìœ¨
 
-    [Header("ºÎ½ºÆ® ¼³Á¤")]
-    [SerializeField] public float boostDuration = 1.2f;         // ºÎ½ºÆ® Áö¼Ó½Ã°£
-    [SerializeField] public int maxBoostGauge = 100;           // ÃÖ´ë ºÎ½ºÆ® °ÔÀÌÁö
-    [SerializeField] private float boostChargeRate = 5f;        // ±âº» ºÎ½ºÆ® ÃæÀü ¼Óµµ
-    [SerializeField] private float driftBoostChargeRate = 10f;   // µå¸®ÇÁÆ® Áß ºÎ½ºÆ® ÃæÀü ¼Óµµ
-    [SerializeField] private float boostMaxSpeedKmh = 280f;        // ºÎ½ºÆ® »óÅÂÀÇ ÃÖ´ë ¼Óµµ
-                     private float boostSpeed;         // ºÎ½ºÆ® È°¼ºÈ­ ½Ã ¼Óµµ
+    [Header("ë¶€ìŠ¤íŠ¸ ì„¤ì •")]
+    [SerializeField] public float boostDuration = 2f;         // ê¸°ë³¸ ë¶€ìŠ¤íŠ¸ ì§€ì†ì‹œê°„
+    [SerializeField] public float momentboostDuration = 1.2f;         // ê¸°ë³¸ ë¶€ìŠ¤íŠ¸ ì§€ì†ì‹œê°„
+    [SerializeField] public int maxBoostGauge = 100;           // ìµœëŒ€ ë¶€ìŠ¤íŠ¸ ê²Œì´ì§€
+    [SerializeField] private float boostChargeRate = 5f;        // ê¸°ë³¸ ë¶€ìŠ¤íŠ¸ ì¶©ì „ ì†ë„
+    [SerializeField] private float driftBoostChargeRate = 10f;   // ë“œë¦¬í”„íŠ¸ ì¤‘ ë¶€ìŠ¤íŠ¸ ì¶©ì „ ì†ë„
+    [SerializeField] private float boostMaxSpeedKmh = 280f;        // ë¶€ìŠ¤íŠ¸ ìƒíƒœì˜ ìµœëŒ€ ì†ë„
+    private float boostSpeed;         // ë¶€ìŠ¤íŠ¸ í™œì„±í™” ì‹œ ì†ë„
+    [Header("ì–¸ë• ì£¼í–‰ ë³´ì¡° ì„¤ì •")]
+    [SerializeField] private float uphillAngleThreshold = 10f;     // ì–¸ë• íŒë³„ ê°ë„ (ì˜ˆ: 10ë„ ì´ìƒì´ë©´ ì–¸ë•ìœ¼ë¡œ ê°„ì£¼)
+    [SerializeField] private float uphillForceMultiplier = 1.5f;     // ì–¸ë•ì—ì„œ ì¶”ê°€ ì ìš©í•  í˜ì˜ ë°°ìˆ˜  
 
-    [Header("±âÅ¸ ¼³Á¤")]
-    [SerializeField] private float rotationCorrectionSpeed = 5f;// È¸Àü º¸Á¤ ¼Óµµ
-    [SerializeField] private float downwardForce = 50f;         // ÇÏ°­(Áß·Â º¸Á¶) Èû
-    [SerializeField] private float wallBounceFactor = 2f;  // º® Ãæµ¹ ½Ã Àû¿ëÇÒ Æ¨±è Èû(Á¶Á¤ °¡´É)
 
     #endregion
 
     #region Private Fields
 
-    private CHMTestWheelController wheelCtrl;  // ¹ÙÄû Á¦¾î ½ºÅ©¸³Æ®
-    private Rigidbody rigid;                     // ¸®Áöµå¹Ùµğ (¹°¸® Ã³¸®)
-    public float speedKM { get; private set; }     // ÇöÀç ¼Ó·Â (km/h ´ÜÀ§)
-    public bool isBoostTriggered { get; private set; } // ºÎ½ºÆ® È°¼ºÈ­ ¿©ºÎ
-    private float driftDuration;  // µå¸®ÇÁÆ® ÁøÇà ´©Àû½Ã°£
-    public bool isBoostCreate { get; set; }            // µå¸®ÇÁÆ® ¾ÆÀÌÅÛ »ı¼º °¡´É ¿©ºÎ
+    public float speedKM { get; private set; }     // í˜„ì¬ ì†ë ¥ (km/h ë‹¨ìœ„)
+    public bool isBoostTriggered { get; private set; } // ë¶€ìŠ¤íŠ¸ í™œì„±í™” ì—¬ë¶€
+    public bool isBoostCreate { get; set; }    // ë“œë¦¬í”„íŠ¸ ì•„ì´í…œ ìƒì„± ê°€ëŠ¥ ì—¬ë¶€
+    public float boostGauge { get; private set; }                // í˜„ì¬ ë¶€ìŠ¤íŠ¸ ê²Œì´ì§€
 
-    private Coroutine postDriftBoostCoroutine; // µå¸®ÇÁÆ® Á¾·á ÈÄ ºÎ½ºÆ® Ã³¸®¸¦ À§ÇÑ ÄÚ·çÆ¾ º¯¼ö
-    private float initialDriftSpeed;           // µå¸®ÇÁÆ® ½ÃÀÛ ½Ã ±â·ÏµÈ ÃÊ±â ¼Óµµ
-    public bool isDrifting = false;            // µå¸®ÇÁÆ® ÁøÇà Áß ¿©ºÎ
-    public float currentDriftAngle = 0f;       // ÇöÀç ´©Àû µå¸®ÇÁÆ® °¢µµ
-    private float currentDriftThreshold;       // ¼Óµµ¿¡ µû¸¥ µå¸®ÇÁÆ® ÀÔ·Â ±âÁØ °ª
-    private float driftForceMultiplier;        // µ¿ÀûÀ¸·Î °è»êµÈ µå¸®ÇÁÆ® Èû ¹è¼ö
-    public float boostGauge { get; private set; }                // ÇöÀç ºÎ½ºÆ® °ÔÀÌÁö
-    private float lockedYRotation = 0f;        // µå¸®ÇÁÆ® ½Ã °íÁ¤µÇ´Â Y È¸Àü°ª
+    private float driftDuration = 4f;  // ë¶€ìŠ¤í„° ì§€ì† ì‹œê°„ (ì˜ˆ: ì´ 4ì´ˆ, 2ì´ˆ ê°€ì†, 2ì´ˆ ê°ì†)
+    private CHMTestWheelController wheelCtrl;  // ë°”í€´ ì œì–´ ìŠ¤í¬ë¦½íŠ¸
+    private Rigidbody rigid;                   // ë¦¬ì§€ë“œë°”ë”” (ë¬¼ë¦¬ ì²˜ë¦¬)
+    private Coroutine postDriftBoostCoroutine; // ë“œë¦¬í”„íŠ¸ ì¢…ë£Œ í›„ ë¶€ìŠ¤íŠ¸ ì²˜ë¦¬ë¥¼ ìœ„í•œ ì½”ë£¨í‹´ ë³€ìˆ˜
+    private float initialDriftSpeed;           // ë“œë¦¬í”„íŠ¸ ì‹œì‘ ì‹œ ê¸°ë¡ëœ ì´ˆê¸° ì†ë„
+    public bool isDrifting = false;            // ë“œë¦¬í”„íŠ¸ ì§„í–‰ ì¤‘ ì—¬ë¶€
+    public float currentDriftAngle = 0f;       // í˜„ì¬ ëˆ„ì  ë“œë¦¬í”„íŠ¸ ê°ë„
+    private float currentDriftThreshold;       // ì†ë„ì— ë”°ë¥¸ ë“œë¦¬í”„íŠ¸ ì…ë ¥ ê¸°ì¤€ ê°’
+    private float driftForceMultiplier;        // ë™ì ìœ¼ë¡œ ê³„ì‚°ëœ ë“œë¦¬í”„íŠ¸ í˜ ë°°ìˆ˜
+    private float lockedYRotation = 0f;        // ë“œë¦¬í”„íŠ¸ ì‹œ ê³ ì •ë˜ëŠ” Y íšŒì „ê°’
     private float currentMotorInput;
     private float currentSteerInput;
-    // ³»ºÎÀûÀ¸·Î »ç¿ëÇÒ m/s ´ÜÀ§ º¯¼ö
-    private float maxSpeed;      // ÃÖ´ë ¼Óµµ (m/s)
-    private float boostMaxSpeed; // ºÎ½ºÆ® ÃÖ´ë ¼Óµµ (m/s)
-
-
-
-    private Vector3 speed;                     // ÇöÀç ¼Óµµ º¤ÅÍ
+    private int boostCount;
+    // ë‚´ë¶€ì ìœ¼ë¡œ ì‚¬ìš©í•  m/s ë‹¨ìœ„ ë³€ìˆ˜
+    private float maxSpeed;      // ìµœëŒ€ ì†ë„ (m/s)
+    private float boostMaxSpeed; // ë¶€ìŠ¤íŠ¸ ìµœëŒ€ ì†ë„ (m/s)
+    private Vector3 speed;       // í˜„ì¬ ì†ë„ ë²¡í„°
     private float chargeAmount;
+    private float currentMaxSpeed;//ë¶€ìŠ¤íŠ¸,ê¸°ë³¸ ìµœëŒ€ì†ë„ íŒë‹¨í•´ì„œ ë‹´ê¹€
+    public AnimationCurve boostCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);  // 0ì´ˆì— 0, 1ì´ˆì— 1 ê°’ì„ ê°€ì§„ ë¶€ë“œëŸ¬ìš´ ì»¤ë¸Œ
 
-    #endregion
 
-    #region
     /* Network Instantiate */
     private Transform _playerParent;
     private Transform _tr;
-    private PhotonView _photonView;    
+    private PhotonView _photonView;
+
     #endregion
-    
+
     #region Unity Methods
 
     private void Awake()
     {
-        wheelCtrl = wheels.GetComponent<CHMTestWheelController>(); // ¹ÙÄû ÄÁÆ®·Ñ·¯ ÂüÁ¶
-        rigid = GetComponent<Rigidbody>();                         // ¸®Áöµå¹Ùµğ ÂüÁ¶
-        
-        /* TODO : Æ÷Åæ ºÙÀÏ¶§ ¼öÁ¤ÇØÁÖ±â */
+        wheelCtrl = wheels.GetComponent<CHMTestWheelController>(); // ë°”í€´ ì»¨íŠ¸ë¡¤ëŸ¬ ì°¸ì¡°
+        rigid = GetComponent<Rigidbody>();                         // ë¦¬ì§€ë“œë°”ë”” ì°¸ì¡°
+
+        /* TODO : í¬í†¤ ë¶™ì¼ë•Œ ìˆ˜ì •í•´ì£¼ê¸° */
         _tr = gameObject.transform;
         _photonView = GetComponent<PhotonView>();
         _playerParent = GameObject.Find("Players").transform;
-        transform.parent = _playerParent;                
+        transform.parent = _playerParent;
     }
     private void FixedUpdate()
     {
         if (!_photonView.IsMine)
         {
             return;
-        }        
-        
+        }
+
         maxSpeed = maxSpeedKmh / 3.6f;
         boostMaxSpeed = boostMaxSpeedKmh / 3.6f;
-        float currentMaxSpeed = isBoostTriggered ? boostMaxSpeed : maxSpeed;
-        HandleKartMovement(currentMotorInput, currentSteerInput); // ÀÔ·ÂÀº Update()¿¡¼­ ÀúÀå ÈÄ »ç¿ë
-                                                                  // ±×¸®°í ¸¶Áö¸·¿¡ Ç×»ó ¼Óµµ Å¬·¥ÇÎÀ» Àû¿ëÇÕ´Ï´Ù.
-        ClampHorizontalSpeed(currentMaxSpeed);
-        // ±âÁ¸ ÀÌµ¿ Ã³¸® ÈÄ °øÁß È¸Àü º¸Á¤
-        CorrectAirborneRotation();
+        currentMaxSpeed = isBoostTriggered ? boostMaxSpeed : maxSpeed;
+        HandleKartMovement(currentMotorInput, currentSteerInput); // ì…ë ¥ì€ Update()ì—ì„œ ì €ì¥ í›„ ì‚¬ìš©
+                                                                  // ê·¸ë¦¬ê³  ë§ˆì§€ë§‰ì— í•­ìƒ ì†ë„ í´ë¨í•‘ì„ ì ìš©í•©ë‹ˆë‹¤.
+        ApplyEnhancedGravity();
     }
-    
+
 
     private void Update()
     {
         if (!_photonView.IsMine)
         {
             return;
-        }        
-        
-        // ÀÔ·Â°ª ÀĞ¾î¿À±â
+        }
+
+        // ì…ë ¥ê°’ ì½ì–´ì˜¤ê¸°
         currentSteerInput = Input.GetAxis("Horizontal");
         currentMotorInput = Input.GetAxis("Vertical");
 
-        // ÇöÀç ¼Óµµ °»½Å (YÃà Á¦¿Ü) ¹× km/h º¯È¯
+        // í˜„ì¬ ì†ë„ ê°±ì‹  (Yì¶• ì œì™¸) ë° km/h ë³€í™˜
         speed = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
         speedKM = speed.magnitude * 3.6f;
-        
-        // µå¸®ÇÁÆ® °ü·Ã ÆÄ¶ó¹ÌÅÍ ¾÷µ¥ÀÌÆ®
+       
+
+        // ë“œë¦¬í”„íŠ¸ ê´€ë ¨ íŒŒë¼ë¯¸í„° ì—…ë°ì´íŠ¸
         UpdateDriftParameters();
 
-        // µå¸®ÇÁÆ® ÀÔ·Â Ã³¸®
+        // ë“œë¦¬í”„íŠ¸ ì…ë ¥ ì²˜ë¦¬
         HandleDriftInput(currentSteerInput);
 
-        // ºÎ½ºÆ® ÀÔ·Â Ã³¸®
-        HandleBoostInput();        
+        // ë¶€ìŠ¤íŠ¸ ì…ë ¥ ì²˜ë¦¬
+        HandleBoostInput();
 
-        // ºÎ½ºÆ® °ÔÀÌÁö ÃæÀü
-        if(currentMotorInput != 0 || isDrifting)
+        if (PerformBoxCast(groundLayer | wallLayer | jumpLayer | boosterLayer))
+
         {
-            ChargeBoostGauge();
+            HandleLayerCollision(); // ì¶©ëŒëœ ë ˆì´ì–´ ì²˜ë¦¬
         }
 
-        if(boostGauge >= maxBoostGauge)
+        // ë ˆì´ìºìŠ¤íŠ¸ë¡œ ì§€ë©´ ì²´í¬
+        if (CheckIfGrounded())
         {
-            isBoostCreate = true;
-            boostGauge = 0;
-            chargeAmount = 0;
+            Debug.Log("í˜„ì¬ ì§€ë©´ ìœ„ì— ìˆìŠµë‹ˆë‹¤.");
         }
-
-        // Ä«Æ® ÀÌµ¿ Ã³¸® (ÀÌµ¿/È¸Àü)
-        //HandleKartMovement(currentMotorInput, currentSteerInput);
+        else
+        {
+            Debug.Log("í˜„ì¬ ê³µì¤‘ ìƒíƒœì…ë‹ˆë‹¤.");
+        }
     }
     #endregion
 
-    #region Input Handling
+    #region [í‚¤ì…ë ¥ í•¨ìˆ˜ ]
 
     private void HandleDriftInput(float steerInput)
     {
-        // LeftShift Å°¿Í Á¶Çâ ÀÔ·ÂÀÌ ÀÖÀ» ¶§ µå¸®ÇÁÆ® ½ÃÀÛ
+        // LeftShift í‚¤ì™€ ì¡°í–¥ ì…ë ¥ì´ ìˆì„ ë•Œ ë“œë¦¬í”„íŠ¸ ì‹œì‘
         if (Input.GetKeyDown(KeyCode.LeftShift) && Mathf.Abs(steerInput) > 0)
         {
             StartDrift(steerInput * currentDriftThreshold);
         }
 
-        // µå¸®ÇÁÆ® Áß Ãß°¡ ÀÔ·ÂÀ¸·Î µå¸®ÇÁÆ® °¢µµ ¾÷µ¥ÀÌÆ®
-        if (isDrifting && Input.GetKey(KeyCode.LeftShift))
+        // ë“œë¦¬í”„íŠ¸ ì¤‘ ì¶”ê°€ ì…ë ¥ìœ¼ë¡œ ë“œë¦¬í”„íŠ¸ ê°ë„ ì—…ë°ì´íŠ¸
+        if (isDrifting && Input.GetKeyDown(KeyCode.LeftShift))
         {
             UpdateDriftAngle();
         }
@@ -170,59 +169,80 @@ public class TestCHMKart : MonoBehaviour
 
     private void HandleBoostInput()
     {
-        // LeftControl Å°¿Í ºÎ½ºÆ® °ÔÀÌÁö ÃÖ´ëÄ¡ ½Ã ±âº» ºÎ½ºÆ® È°¼ºÈ­
-        if (Input.GetKeyDown(KeyCode.LeftControl) && boostGauge >= maxBoostGauge)
+        // LeftControl í‚¤ì™€ ë¶€ìŠ¤íŠ¸ ê²Œì´ì§€ ìµœëŒ€ì¹˜ ì‹œ ë¶€ìŠ¤í„° ê¸°ë³¸ ë°œë™
+        if (Input.GetKeyDown(KeyCode.LeftControl) && boostCount > 0)
         {
             StartBoost(boostDuration);
+            boostCount--;
+        }
+        // ë¶€ìŠ¤íŠ¸ ê²Œì´ì§€ ì¶©ì „
+        if (currentMotorInput != 0 || isDrifting)
+        {
+            ChargeBoostGauge();
+        }
+
+        if (boostGauge >= maxBoostGauge)
+        {
+            isBoostCreate = true;
+            boostGauge = 0;
+            chargeAmount = 0;
+            if (boostCount < 2)
+            {
+                boostCount++;
+            }
         }
     }
 
     #endregion
 
-    #region Drift and Boost Methods
+    #region [ë“œë¦¬í”„íŠ¸ ê´€ë ¨ í•¨ìˆ˜]
 
+    // ë“œë¦¬í”„íŠ¸ ê´€ë ¨ íŒŒë¼ë¯¸í„° ì—…ë°ì´íŠ¸
     private void UpdateDriftParameters()
     {
         float currentSpeed = rigid.velocity.magnitude;
         float speedFactor = Mathf.Clamp01(currentSpeed / maxSpeed * 2f);
 
-        // ¼Óµµ¿¡ µû¶ó µå¸®ÇÁÆ® ÀÔ·Â ¹Î°¨µµ¿Í Èû ¹è¼ö ¾÷µ¥ÀÌÆ®
+        // ì†ë„ì— ë”°ë¼ ë“œë¦¬í”„íŠ¸ ì…ë ¥ ë¯¼ê°ë„ì™€ í˜ ë°°ìˆ˜ ì—…ë°ì´íŠ¸
         currentDriftThreshold = Mathf.Lerp(minDriftAngle, maxDriftAngle, speedFactor);
         driftForceMultiplier = Mathf.Lerp(minDriftForceMultiplier, maxDriftForceMultiplier, speedFactor);
     }
 
+    // ë“œë¦¬í”„íŠ¸ ì‹œì‘ ì²˜ë¦¬
     private void StartDrift(float driftInputAngle)
     {
         isDrifting = true;
         currentDriftAngle = driftInputAngle;
-        lockedYRotation = transform.eulerAngles.y;  // µå¸®ÇÁÆ® ½ÃÀÛ ½Ã ÇöÀç È¸Àü°ª °íÁ¤
+        lockedYRotation = transform.eulerAngles.y;  // ë“œë¦¬í”„íŠ¸ ì‹œì‘ ì‹œ í˜„ì¬ íšŒì „ê°’ ê³ ì •
 
-        // ¼Óµµ¿Í Á¶Çâ ÀÔ·Â¿¡ µû¸¥ µå¸®ÇÁÆ® Áö¼Ó½Ã°£ °áÁ¤
+        // ì†ë„ì™€ ì¡°í–¥ ì…ë ¥ì— ë”°ë¥¸ ë“œë¦¬í”„íŠ¸ ì§€ì†ì‹œê°„ ê²°ì •
         float currentSpeed = rigid.velocity.magnitude;
         float speedFactor = Mathf.Clamp01(currentSpeed / maxSpeed);
         float steerFactor = Mathf.Abs(driftInputAngle / currentDriftThreshold);
         float influenceFactor = (speedFactor + steerFactor) / 2f;
         driftDuration = Mathf.Lerp(minDriftDuration, maxDriftDuration, influenceFactor);
 
-        Debug.Log($"µå¸®ÇÁÆ® ½ÃÀÛ: ÀÔ·Â°¢={driftInputAngle}, ¼Óµµ={currentSpeed}, Á¶Çâºñ={steerFactor}, Áö¼Ó½Ã°£={driftDuration:F2}ÃÊ");
+        Debug.Log($"ë“œë¦¬í”„íŠ¸ ì‹œì‘: ì…ë ¥ê°={driftInputAngle}, ì†ë„={currentSpeed}, ì¡°í–¥ë¹„={steerFactor}, ì§€ì†ì‹œê°„={driftDuration:F2}ì´ˆ");
 
-        // ÁöÁ¤µÈ ½Ã°£ ÈÄ µå¸®ÇÁÆ® Á¾·á ¿¹¾à
+        // ì§€ì •ëœ ì‹œê°„ í›„ ë“œë¦¬í”„íŠ¸ ì¢…ë£Œ ì˜ˆì•½
         Invoke(nameof(EndDrift), driftDuration);
     }
 
+    // ë“œë¦¬í”„íŠ¸ ì¤‘ ì…ë ¥ì— ë”°ë¥¸ ê°ë„ ì—…ë°ì´íŠ¸
     private void UpdateDriftAngle()
     {
         currentDriftAngle += Time.deltaTime * 10f;
         currentDriftAngle = Mathf.Clamp(currentDriftAngle, -maxDriftAngle, maxDriftAngle);
     }
 
+    // ë“œë¦¬í”„íŠ¸ ì¢…ë£Œ ì²˜ë¦¬ ë° ì¦‰ì‹œ ë¶€ìŠ¤íŠ¸ ì…ë ¥ ëŒ€ê¸°
     private void EndDrift()
     {
         isDrifting = false;
         currentDriftAngle = 0f;
-        Debug.Log("µå¸®ÇÁÆ® Á¾·á");
+        Debug.Log("ë“œë¦¬í”„íŠ¸ ì¢…ë£Œ");
 
-        // µå¸®ÇÁÆ® Á¾·á ÈÄ 0.5ÃÊ µ¿¾È Áï½Ã ºÎ½ºÆ® ÀÔ·Â ´ë±â
+        // ë“œë¦¬í”„íŠ¸ ì¢…ë£Œ í›„ 0.5ì´ˆ ë™ì•ˆ ì¦‰ì‹œ ë¶€ìŠ¤íŠ¸ ì…ë ¥ ëŒ€ê¸°
         if (postDriftBoostCoroutine != null)
         {
             StopCoroutine(postDriftBoostCoroutine);
@@ -231,18 +251,22 @@ public class TestCHMKart : MonoBehaviour
 
         initialDriftSpeed = 0f;
     }
+    #endregion
 
+    #region [ë¶€ìŠ¤í„° ê´€ë ¨ í•¨ìˆ˜]
+
+    // ë“œë¦¬í”„íŠ¸ ì¢…ë£Œ í›„ ë°”ë¡œ ë¶€ìŠ¤íŠ¸ ì…ë ¥ì„ ë°›ê¸° ìœ„í•œ ì½”ë£¨í‹´
     private IEnumerator PostDriftBoostCoroutine()
     {
         float timer = 0f;
         bool boosted = false;
-        Debug.Log("Áï½Ã ºÎ½ºÆ® ÀÔ·Â ´ë±â Áß...");
+        Debug.Log("ìˆœê°„ ë¶€ìŠ¤íŠ¸ ì…ë ¥ ëŒ€ê¸° ì¤‘...");
 
-        while (timer < 0.5f)
+        while (timer < 0.3f)
         {
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                PerformInstantBoost();
+                PerformInstantBoost(momentboostDuration);
                 boosted = true;
                 break;
             }
@@ -252,66 +276,117 @@ public class TestCHMKart : MonoBehaviour
 
         if (!boosted)
         {
-            Debug.Log("Áï½Ã ºÎ½ºÆ® ÀÔ·Â ½Ã°£ ÃÊ°ú");
+            Debug.Log("ì¦‰ì‹œ ë¶€ìŠ¤íŠ¸ ì…ë ¥ ì‹œê°„ ì´ˆê³¼");
         }
 
         postDriftBoostCoroutine = null;
     }
 
-    private void PerformInstantBoost()
+    // ë“œë¦¬í”„íŠ¸ í›„ ì¦‰ì‹œ ë¶€ìŠ¤íŠ¸ (í˜„ì¬ ì†ë ¥ì˜ 1.2ë°° ì¦í­)
+    private void PerformInstantBoost(float momentboostDuration)
     {
-        Debug.Log("Áï½Ã ºÎ½ºÆ® È°¼ºÈ­!");
-        rigid.velocity *= 1.2f;  // ÇöÀç ¼Ó·ÂÀÇ 1.2¹è ÁõÆø
+        Debug.Log("ì¦‰ì‹œ ë¶€ìŠ¤íŠ¸ í™œì„±í™”!");
+        rigid.velocity *= 1.2f;
         postDriftBoostCoroutine = null;
     }
-
-    private void StartBoost(float duration)
-    {
-        boostSpeed = speedKM;
-        isBoostTriggered = true;
-        boostGauge = 0;
-        rigid.velocity = transform.forward * boostSpeed;
-        Debug.Log("ºÎ½ºÆ® È°¼ºÈ­");
-        Invoke(nameof(EndBoost), duration);
-    }
-
+    // ë¶€ìŠ¤íŠ¸ ì¢…ë£Œ ì²˜ë¦¬
     private void EndBoost()
     {
         isBoostTriggered = false;
-        Debug.Log("ºÎ½ºÆ® Á¾·á");
+        Debug.Log("ë¶€ìŠ¤íŠ¸ ì¢…ë£Œ");
     }
-
+    // ë¶€ìŠ¤íŠ¸ ê²Œì´ì§€ ì¶©ì „ ì²˜ë¦¬ (ë“œë¦¬í”„íŠ¸ ì‹œì™€ ì¼ë°˜ ì¶©ì „ ì†ë„ êµ¬ë¶„)
     private void ChargeBoostGauge()
     {
         chargeAmount += isDrifting
-            ? driftBoostChargeRate * Time.fixedDeltaTime  // µå¸®ÇÁÆ® Áß ÃæÀü ¼Óµµ
-            : boostChargeRate * Time.fixedDeltaTime;       // ÀÏ¹İ ÃæÀü ¼Óµµ
+            ? driftBoostChargeRate * Time.fixedDeltaTime  // ë“œë¦¬í”„íŠ¸ ì¤‘ ì¶©ì „ ì†ë„
+            : boostChargeRate * Time.fixedDeltaTime;       // ì¼ë°˜ ì¶©ì „ ì†ë„
 
         boostGauge = Mathf.Clamp(chargeAmount, 0, maxBoostGauge);
-
         if (boostGauge >= maxBoostGauge)
         {
-            Debug.Log("ºÎ½ºÆ® °ÔÀÌÁö ÃÖ´ëÄ¡ µµ´Ş!");
+            Debug.Log("ë¶€ìŠ¤íŠ¸ ê²Œì´ì§€ ìµœëŒ€ì¹˜ ë„ë‹¬!");
         }
+    }
+    /// <summary>
+    /// ë¶€ìŠ¤íŠ¸ë¥¼ ì‹œì‘í•˜ëŠ” í•¨ìˆ˜. ì½”ë£¨í‹´ì„ í˜¸ì¶œí•´ í˜„ì¬ ì†ë„ì—ì„œ ìµœëŒ€ ë¶€ìŠ¤íŠ¸ ì†ë„ê¹Œì§€ ì ì§„ì  ê°€ì†ì„ êµ¬í˜„í•©ë‹ˆë‹¤.
+    /// </summary>
+    /// <param name="duration">ë¶€ìŠ¤íŠ¸ ì§€ì† ì‹œê°„(ì´ˆ)</param>
+    private void StartBoost(float duration)
+    {
+        if (isBoostTriggered) return;  // ì´ë¯¸ ë¶€ìŠ¤íŠ¸ ì¤‘ì´ë©´ ë¬´ì‹œ
+
+        // ì½”ë£¨í‹´ ì‹¤í–‰: BoostCoroutineì´ ë§¤ í”„ë ˆì„ ì†ë„ë¥¼ ì—…ë°ì´íŠ¸í•©ë‹ˆë‹¤.
+        StartCoroutine(BoostCoroutine(duration));
+    }
+
+    /// <summary>
+    /// BoostCoroutine ì½”ë£¨í‹´ì€ boostDuration ë™ì•ˆ linearly (ì„ í˜• ë³´ê°„) í˜„ì¬ ì†ë„ì—ì„œ boostMaxSpeedì— ë„ë‹¬í•˜ë„ë¡ ê°€ì†ì„ ì¡°ì ˆí•©ë‹ˆë‹¤.
+    /// </summary>
+    /// <param name="duration">ë¶€ìŠ¤íŠ¸ ì§€ì† ì‹œê°„(ì´ˆ)</param>
+    /// <returns></returns>
+    // Inspectorì—ì„œ ì„¤ì • ê°€ëŠ¥í•œ AnimationCurveë“¤
+    public AnimationCurve boostAccelerationCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+    public AnimationCurve boostDecelerationCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+
+    private IEnumerator BoostCoroutine(float duration)
+    {
+        isBoostTriggered = true;
+
+        // ì „ì²´ ë¶€ìŠ¤í„° ì‹œê°„ì„ ê°€ì†/ê°ì† ê¸°ê°„ìœ¼ë¡œ ë¶„í• 
+        float accelDuration = duration * 0.5f;
+        float decelDuration = duration * 0.5f;
+
+        // ë¶€ìŠ¤í„° ì‹œì‘ ì‹œì  ì†ë„ (ì‹¤ì œ m/s ë‹¨ìœ„)
+        float startSpeed = rigid.velocity.magnitude;
+
+        float timer = 0f;
+
+        // [Phase 1] Acceleration: startSpeed -> boostMaxSpeed
+        while (timer < accelDuration)
+        {
+            timer += Time.deltaTime;
+            float t = Mathf.Clamp01(timer / accelDuration);
+            // acceleration curveë¥¼ ì‚¬ìš©í•´ ë¹„ì„ í˜• ë³´ê°„ ì ìš©
+            float curveValue = boostAccelerationCurve.Evaluate(t);
+            float newSpeed = Mathf.Lerp(startSpeed, boostMaxSpeed, curveValue);
+
+            // forward ë°©í–¥ìœ¼ë¡œ ìƒˆ ì†ë„ ì ìš©
+            rigid.velocity = transform.forward * newSpeed;
+            yield return null;
+        }
+
+        // ê°€ì† ì¢…ë£Œ í›„ í™•ì‹¤íˆ boostMaxSpeedë¥¼ ì ìš©
+        rigid.velocity = transform.forward * boostMaxSpeed;
+
+        // [Phase 2] Deceleration: boostMaxSpeed -> maxSpeed (í˜¹ì€ ë‹¤ë¥¸ ê¸°ë³¸ ì†ë„)
+        timer = 0f;
+        while (timer < decelDuration)
+        {
+            timer += Time.deltaTime;
+            float t = Mathf.Clamp01(timer / decelDuration);
+            // deceleration curveë¥¼ ì‚¬ìš©í•´ ê°ì† ê³¡ì„  ì ìš©
+            float curveValue = boostDecelerationCurve.Evaluate(t);
+            float newSpeed = Mathf.Lerp(boostMaxSpeed, maxSpeed, curveValue);
+
+            rigid.velocity = transform.forward * newSpeed;
+            yield return null;
+        }
+
+        // ê°ì†ì´ ëë‚¬ìœ¼ë©´ ë¶€ìŠ¤í„° ì¢…ë£Œ í”Œë˜ê·¸ í•´ì œ
+        isBoostTriggered = false;
+        Debug.Log("ë¶€ìŠ¤íŠ¸ ì¢…ë£Œ");
     }
 
     #endregion
-    #region Movement Handling
+
+    #region [ì „ì§„,í›„ì§„,ì¡°í–¥ ê°’ ê³„ì‚°]
 
     private void HandleKartMovement(float motorInput, float steerInput)
     {
-        // ºÎ½ºÅÍ Àû¿ë ¿©ºÎ¿¡ µû¶ó ÃÖ´ë ¼Óµµ(m/s)¸¦ ¼³Á¤ÇÕ´Ï´Ù.
-        float currentMaxSpeed = isBoostTriggered ? boostMaxSpeed : maxSpeed;
+        float steeringMultiplier = Mathf.Lerp(minSteerMultiplier, maxSteerMultiplier, 0.8f);
 
-        // ÇöÀç ¼öÆò ¼Óµµ¸¦ ÃøÁ¤ÇÏ°í, ÃÖ´ë¼Óµµ ´ëºñ ºñÀ²(0~1)À» °è»êÇÕ´Ï´Ù.
-        Vector3 currentHorizontalVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
-        float currentHorizontalSpeed = currentHorizontalVelocity.magnitude;
-        float speedFactor = Mathf.Clamp01(currentHorizontalSpeed / currentMaxSpeed);
-
-        // ¼Óµµ¿¡ µû¶ó Á¶Çâ ¹Î°¨µµ¸¦ ¼±Çü º¸°£ÇÕ´Ï´Ù.
-        float steeringMultiplier = Mathf.Lerp(minSteerMultiplier, maxSteerMultiplier, speedFactor);
-
-        // µå¸®ÇÁÆ® ÁßÀÎÁö ¾Æ´ÑÁö¿¡ µû¶ó º°µµ Ã³¸®
+        // ë“œë¦¬í”„íŠ¸ ì¤‘ì¸ì§€ ì•„ë‹Œì§€ì— ë”°ë¼ ë³„ë„ ì²˜ë¦¬
         if (isDrifting)
         {
             ProcessDrift(steerInput, steeringMultiplier);
@@ -322,13 +397,10 @@ public class TestCHMKart : MonoBehaviour
             ProcessAcceleration(motorInput, currentMaxSpeed);
         }
 
-        // ÃÖÁ¾ÀûÀ¸·Î ¼öÆò ¼Óµµ¸¦ currentMaxSpeed ÀÌÇÏ·Î Á¦ÇÑÇÕ´Ï´Ù.
-        ClampHorizontalSpeed(currentMaxSpeed);
-
-        // Á¶Çâ ¹Î°¨µµ¸¦ Àû¿ëÇØ È¸Àü Ã³¸®
+        // ì¡°í–¥ ë¯¼ê°ë„ë¥¼ ì ìš©í•´ íšŒì „ ì²˜ë¦¬
         RotateKart(steerInput, steeringMultiplier);
 
-        // ¹ÙÄû ¾÷µ¥ÀÌÆ® (ÇÊ¿ä ½Ã)
+        // ë°”í€´ ì—…ë°ì´íŠ¸ (í•„ìš” ì‹œ)
         if (wheelCtrl != null)
         {
             wheelCtrl.UpdateAndRotateWheels(steerInput, motorInput, rigid.velocity.magnitude, isDrifting);
@@ -336,57 +408,69 @@ public class TestCHMKart : MonoBehaviour
     }
 
     /// <summary>
-    /// µå¸®ÇÁÆ® »óÅÂÀÏ ¶§ ¼Óµµ Ã³¸® ¹× Ãø¸é Èû Àû¿ë
+    /// ë“œë¦¬í”„íŠ¸ ìƒíƒœì¼ ë•Œ ì†ë„ ì²˜ë¦¬ ë° ì¸¡ë©´ í˜ ì ìš©
     /// </summary>
     private void ProcessDrift(float steerInput, float steeringMultiplier)
     {
-        // µå¸®ÇÁÆ® ½ÃÀÛ ½Ã ÃÖÃÊ ¼Óµµ¸¦ ±â·ÏÇÕ´Ï´Ù.
+        // ë“œë¦¬í”„íŠ¸ ì‹œì‘ ì‹œ ìµœì´ˆ ì†ë„ë¥¼ ê¸°ë¡í•©ë‹ˆë‹¤.
         if (Mathf.Approximately(initialDriftSpeed, 0f))
         {
             initialDriftSpeed = rigid.velocity.magnitude;
         }
         float driftSpeed = initialDriftSpeed * driftSpeedReduction;
 
-        // Á¶Çâ ÀÔ·Â¿¡ ¹Î°¨µµ¸¦ Àû¿ëÇÏ¿© ´©Àû È¸ÀüÀ» º¸Á¤ÇÕ´Ï´Ù.
+        // ì¡°í–¥ ì…ë ¥ì— ë¯¼ê°ë„ë¥¼ ì ìš©í•˜ì—¬ ëˆ„ì  íšŒì „ì„ ë³´ì •í•©ë‹ˆë‹¤.
         lockedYRotation += steerInput * ((steerAngle / 2.5f) * steeringMultiplier) * Time.fixedDeltaTime;
         Quaternion driftRotation = Quaternion.Euler(0f, lockedYRotation, 0f);
         Vector3 driftDirection = driftRotation * Vector3.forward;
 
-        // ÇöÀç ¼Óµµ¸¦ ºÎµå·´°Ô µå¸®ÇÁÆ® ¹æÇâÀ¸·Î ÀüÈ¯ÇÕ´Ï´Ù.
+        // í˜„ì¬ ì†ë„ë¥¼ ë¶€ë“œëŸ½ê²Œ ë“œë¦¬í”„íŠ¸ ë°©í–¥ìœ¼ë¡œ ì „í™˜í•©ë‹ˆë‹¤.
         rigid.velocity = Vector3.Lerp(rigid.velocity, driftDirection * driftSpeed, Time.fixedDeltaTime * 5f);
 
-        // Ãø¸é ÈûÀ» Ãß°¡ÇÏ¿© µå¸®ÇÁÆ® ´À³¦À» °­È­ÇÕ´Ï´Ù.
+        // ì¸¡ë©´ í˜ì„ ì¶”ê°€í•˜ì—¬ ë“œë¦¬í”„íŠ¸ ëŠë‚Œì„ ê°•í™”í•©ë‹ˆë‹¤.
         Vector3 lateralForce = transform.right * steerInput * driftForceMultiplier * movementForce;
         rigid.AddForce(lateralForce, ForceMode.Force);
     }
 
     /// <summary>
-    /// ÀüÁø/ÈÄÁø °¡¼Ó Ã³¸® (µå¸®ÇÁÆ®°¡ ¾Æ´Ò ¶§)
+    /// ì „ì§„/í›„ì§„ ê°€ì† ì²˜ë¦¬ (ë“œë¦¬í”„íŠ¸ê°€ ì•„ë‹ ë•Œ, í›„ì§„ ë¶€ë“œëŸ½ê²Œ ì „í™˜)
     /// </summary>
     private void ProcessAcceleration(float motorInput, float currentMaxSpeed)
     {
+        // ì „ì§„/í›„ì§„ ì…ë ¥ì— ë”°ë¥¸ ê°€ì†ë„ ê³„ì‚°
         Vector3 acceleration = transform.forward * movementForce * motorInput * Time.fixedDeltaTime;
-        Vector3 currentHorizVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
-        Vector3 newHorizVelocity = currentHorizVelocity + acceleration;
 
-        // ´©ÀûµÈ ¼Óµµ¸¦ ÃÖ´ë ¼Óµµ·Î Å¬·¥ÇÁÇÕ´Ï´Ù.
-        newHorizVelocity = Vector3.ClampMagnitude(newHorizVelocity, currentMaxSpeed);
-
-        // ÀÔ·ÂÀÌ ÀÖ´Â °æ¿ì, ¼Óµµ º¤ÅÍ¸¦ Áï½Ã transform.forward ¹æÇâÀ¸·Î Á¤·ÄÇÕ´Ï´Ù.
-        if (Mathf.Abs(motorInput) > 0.1f)
+        //// ì¶”ê°€: ì–¸ë• ë³´ì¡° í˜ ì ìš© (ì§€ë©´ì— ë¶™ì–´ ìˆì„ ë•Œë§Œ)
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit))
         {
-            newHorizVelocity = transform.forward * newHorizVelocity.magnitude;
+            // ì§€ë©´ì˜ ê¸°ìš¸ê¸°ë¥¼ ê³„ì‚° (ë…¸ë©€ê³¼ ìœ„ìª½ ë²¡í„° ì‚¬ì´ì˜ ê°ë„)
+            float groundAngle = Vector3.Angle(hit.normal, Vector3.up);
+            if (groundAngle > uphillAngleThreshold && motorInput > 0)
+            {
+                // ì–¸ë•ì—ì„œ ì „ì§„í•  ë•Œ ë³´ì¡° í˜ ì ìš©
+                acceleration *= uphillForceMultiplier;
+            }
         }
 
-        // ¼öÁ÷ ¼Óµµ(Y)´Â ±×´ë·Î µÎ°í, XZ ¼ººĞ¸¸ Àû¿ëÇÕ´Ï´Ù.
-        rigid.velocity = new Vector3(newHorizVelocity.x, rigid.velocity.y, newHorizVelocity.z);
+        // ì „ì§„/í›„ì§„ ë°©í–¥ì— ë”°ë¼ ì†ë„ ì „í™˜ ì²˜ë¦¬
+        Vector3 currentVelocity = rigid.velocity;
+        if (Mathf.Abs(motorInput) > 0.1f)
+        {
+            // motorInput ê°’ì— ë”°ë¼ ì†ë„ë¥¼ í•´ë‹¹ ë°©í–¥ìœ¼ë¡œ ì„¤ì •
+            Vector3 desiredDirection = motorInput > 0 ? transform.forward : -transform.forward;
+            currentVelocity = Vector3.Lerp(currentVelocity, desiredDirection * currentMaxSpeed, Time.fixedDeltaTime * 2f);
+        }
 
-        // º¸Á¤µÈ È¸Àü°ª ÀúÀå (ÇÊ¿ä ½Ã)
+        // Yì¶• ì†ë„ëŠ” ê¸°ì¡´ëŒ€ë¡œ ìœ ì§€
+        rigid.velocity = new Vector3(currentVelocity.x, rigid.velocity.y, currentVelocity.z);
+
+        // lockedYRotation ê°±ì‹ 
         lockedYRotation = transform.eulerAngles.y;
     }
 
     /// <summary>
-    /// Á¶Çâ ÀÔ·Â°ú ¼Óµµ ±â¹İ ¹Î°¨µµ¸¦ Àû¿ëÇØ È¸Àü Ã³¸®¸¦ ´ã´çÇÕ´Ï´Ù.
+    /// ì¡°í–¥ ì…ë ¥ê³¼ ì†ë„ ê¸°ë°˜ ë¯¼ê°ë„ë¥¼ ì ìš©í•´ íšŒì „ ì²˜ë¦¬ë¥¼ ë‹´ë‹¹í•©ë‹ˆë‹¤.
     /// </summary>
     private void RotateKart(float steerInput, float steeringMultiplier)
     {
@@ -394,71 +478,145 @@ public class TestCHMKart : MonoBehaviour
         rigid.MoveRotation(Quaternion.LookRotation(turnDirection));
     }
 
+    #endregion
+    #region [ë°•ìŠ¤ ìºìŠ¤íŠ¸ ì¸ìŠ¤í™í„° ì„¤ì •]
+
+    [Header("ë°•ìŠ¤ ìºìŠ¤íŠ¸ ì„¤ì •")]
+    [SerializeField] private Vector3 boxCastCenter = Vector3.zero;     // ë°•ìŠ¤ ìºìŠ¤íŠ¸ ì¤‘ì‹¬ ì˜¤í”„ì…‹
+    [SerializeField] private Vector3 boxCastSize = new Vector3(1, 1, 1); // ë°•ìŠ¤ í¬ê¸°
+    [SerializeField] private float boxCastDistance = 1f;               // ë°•ìŠ¤ ìºìŠ¤íŠ¸ ê±°ë¦¬
+    [SerializeField] private float groundRayDistance = 0.8f;               // ë°•ìŠ¤ ìºìŠ¤íŠ¸ ê±°ë¦¬
+
+    [Header("ë ˆì´ì–´ ì„¤ì •")]
+    [SerializeField] private LayerMask wallLayer;     // ë²½ ë ˆì´ì–´
+    [SerializeField] private LayerMask jumpLayer;     // ì í”„ ë ˆì´ì–´
+    [SerializeField] private LayerMask boosterLayer;  // ë¶€ìŠ¤í„° ë ˆì´ì–´
+    [SerializeField] private LayerMask groundLayer;   // ì§€ë©´ ë ˆì´ì–´
+
+
+    // ì¶©ëŒëœ ê°ì²´ ì •ë³´ë¥¼ ì €ì¥í•  ë³€ìˆ˜
+    private RaycastHit lastHit;
+
     /// <summary>
-    /// XZ Æò¸é»óÀÇ ¼öÆò ¼Óµµ¸¦ ÃÖ´ë°ª ÀÌÇÏ·Î Á¦ÇÑÇÕ´Ï´Ù.
+    /// ë°•ìŠ¤ ìºìŠ¤íŠ¸ë¡œ ì¶©ëŒ ì—¬ë¶€ë¥¼ í™•ì¸í•©ë‹ˆë‹¤.
     /// </summary>
-    private void ClampHorizontalSpeed(float maxHorizontalSpeed)
+    private bool PerformBoxCast(LayerMask layer)
     {
-        Vector3 horizontalVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
-        if (horizontalVelocity.magnitude > maxHorizontalSpeed)
-        {
-            horizontalVelocity = horizontalVelocity.normalized * maxHorizontalSpeed;
-            rigid.velocity = new Vector3(horizontalVelocity.x, rigid.velocity.y, horizontalVelocity.z);
-        }
+        Vector3 worldCenter = transform.position + transform.TransformDirection(boxCastCenter);
+        return Physics.BoxCast(worldCenter, boxCastSize * 0.5f, transform.forward, out lastHit, Quaternion.identity, boxCastDistance, layer.value);
     }
 
-    #endregion
-
-
-    #region ¾ÈÆ¼·Ñ & Ãæµ¹ Ã³¸®
-    private void CorrectAirborneRotation()
+    /// <summary>
+    /// ì¶©ëŒëœ ë ˆì´ì–´ë¥¼ íŒë³„í•©ë‹ˆë‹¤.
+    /// </summary>
+    private void HandleLayerCollision()
     {
-        // Áö¸é¿¡ ´ê¾ÆÀÖÁö ¾ÊÀ¸¸é º¸Á¤
-        if (!IsGrounded())
+        if (lastHit.collider != null)
         {
-            // ÇöÀç È¸Àü°ªÀ» °¡Á®¿Í¼­, x¿Í z´Â ÃµÃµÈ÷ 0À¸·Î º¸°£ÇÕ´Ï´Ù. (y´Â ±×´ë·Î À¯Áö)
-            Vector3 currentEuler = transform.eulerAngles;
-            float correctedX = Mathf.LerpAngle(currentEuler.x, 0f, Time.deltaTime * rotationCorrectionSpeed);
-            float correctedZ = Mathf.LerpAngle(currentEuler.z, 0f, Time.deltaTime * rotationCorrectionSpeed);
+            int hitLayer = lastHit.collider.gameObject.layer;
 
-            transform.rotation = Quaternion.Euler(correctedX, currentEuler.y, correctedZ);
-
-            // ÇÊ¿ä ½Ã ¾Æ·¡ÂÊÀ¸·Î ÈûÀ» Ãß°¡ÇÏ¿© ¶³¾îÁöµµ·Ï ÇÒ ¼ö ÀÖÀ½.
-            rigid.AddForce(Vector3.down * downwardForce, ForceMode.Acceleration);
-        }
-    }
-
-    public bool IsGrounded()
-    {
-        // °£´ÜÇÑ Raycast¸¦ »ç¿ëÇÏ¿© kartÀÇ ÇÏ´ÜÀÌ Áö¸é¿¡ ´ê¾Ò´ÂÁö È®ÀÎÇÕ´Ï´Ù.
-        float rayDistance = 0.8f; // ÇÊ¿ä¿¡ µû¶ó Á¶Á¤ °¡´É
-        return Physics.Raycast(transform.position, Vector3.down, rayDistance);
-    }
-    private void OnCollisionEnter(Collision collision)
-    {
-        // Ãæµ¹ÇÑ ¿ÀºêÁ§Æ®°¡ "Wall" ÅÂ±×ÀÎ °æ¿ì
-        if (collision.gameObject.CompareTag("Wall"))
-        {
-            // µå¸®ÇÁÆ® ÁßÀÌ¸é µå¸®ÇÁÆ® Ãë¼Ò (¿¹: EndDrift() È£Ãâ)
-            if (isDrifting)
+            if (((1 << hitLayer) & wallLayer.value) != 0)
             {
-                EndDrift();
+                Debug.Log("ì¶©ëŒ: ë²½ ë ˆì´ì–´");
+                ProcessWallCollision();
             }
-
-            // ÇöÀç ¼Óµµ¸¦ °¡Á®¿È
-            Vector3 currentVelocity = rigid.velocity;
-
-            // Ãæµ¹ Á¢Á¡ÀÇ Ã¹ ¹øÂ° ¹ı¼± º¤ÅÍ¸¦ °¡Á®¿È
-            Vector3 normal = collision.contacts[0].normal;
-
-            // Vector3.Reflect()¸¦ »ç¿ëÇÏ¿© º®¿¡ ´êÀº ¹æÇâ¿¡ ´ëÇØ ¹İ»çµÈ ¼Óµµ¸¦ °è»ê
-            Vector3 reflectedVelocity = Vector3.Reflect(currentVelocity, normal);
-
-            // Æ¨±ä ÈÄ °¨¼Ó È¿°ú¸¦ Àû¿ëÇÏ±â À§ÇØ °è¼ö¸¦ °öÇÔ
-            rigid.velocity = reflectedVelocity * wallBounceFactor;
-
-            Debug.Log("º® Ãæµ¹: ¹İ»çµÈ º§·Î½ÃÆ¼ Àû¿ëµÊ");
+            else if (((1 << hitLayer) & jumpLayer.value) != 0)
+            {
+                Debug.Log("ì¶©ëŒ: ì í”„ ë ˆì´ì–´");
+                ProcessJumpCollision();
+            }
+            else if (((1 << hitLayer) & boosterLayer.value) != 0)
+            {
+                Debug.Log("ì¶©ëŒ: ë¶€ìŠ¤í„° ë ˆì´ì–´");
+                ProcessBoosterCollision();
+            }
+            else if (((1 << hitLayer) & groundLayer.value) != 0)
+            {
+                Debug.Log("ì¶©ëŒ: ì§€ë©´ ë ˆì´ì–´");
+                ProcessGroundCollision();
+            }
+            else
+            {
+                Debug.Log("ì¶©ëŒ: ì •ì˜ë˜ì§€ ì•Šì€ ë ˆì´ì–´");
+            }
         }
     }
+
+    /// <summary>
+    /// ë²½ê³¼ ì¶©ëŒ ì²˜ë¦¬
+    /// </summary>
+    private void ProcessWallCollision()
+    {
+        // ë²½ ì¶©ëŒ ì²˜ë¦¬ ë¡œì§ ì¶”ê°€
+        Debug.Log("ë²½ ì¶©ëŒ ì²˜ë¦¬ ì‹¤í–‰ë¨!");
+    }
+
+    /// <summary>
+    /// ì í”„ ë ˆì´ì–´ì™€ ì¶©ëŒ ì²˜ë¦¬
+    /// </summary>
+    private void ProcessJumpCollision()
+    {
+        // ì í”„ ë ˆì´ì–´ ì¶©ëŒ ì²˜ë¦¬ ë¡œì§ ì¶”ê°€
+        Debug.Log("ì í”„ ì¶©ëŒ ì²˜ë¦¬ ì‹¤í–‰ë¨!");
+    }
+
+    /// <summary>
+    /// ë¶€ìŠ¤í„° ë ˆì´ì–´ì™€ ì¶©ëŒ ì²˜ë¦¬
+    /// </summary>
+    private void ProcessBoosterCollision()
+    {
+        // ë¶€ìŠ¤í„° ì¶©ëŒ ì²˜ë¦¬ ë¡œì§ ì¶”ê°€
+        Debug.Log("ë¶€ìŠ¤í„° ì¶©ëŒ ì²˜ë¦¬ ì‹¤í–‰ë¨!");
+    }
+
+    /// <summary>
+    /// ì§€ë©´ê³¼ ì¶©ëŒ ì²˜ë¦¬
+    /// </summary>
+    private void ProcessGroundCollision()
+    {
+        // ì§€ë©´ ì¶©ëŒ ì²˜ë¦¬ ë¡œì§ ì¶”ê°€
+        Debug.Log("ì§€ë©´ ì¶©ëŒ ì²˜ë¦¬ ì‹¤í–‰ë¨!");
+    }
+
+    /// <summary>
+    /// ê³µì¤‘ ìƒíƒœì—ì„œ ì°©ì§€ ì†ë„ë¥¼ í˜„ì¬ ì†ë„ì— ë¹„ë¡€í•˜ì—¬ ê°•í™”í•©ë‹ˆë‹¤.
+    /// </summary>
+    private void ApplyEnhancedGravity()
+    {
+        // ê³µì¤‘ ìƒíƒœ í™•ì¸
+        if (!CheckIfGrounded())
+        {
+            // í˜„ì¬ ìˆ˜í‰ ì†ë„ ê³„ì‚°
+            float currentHorizontalSpeed = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z).magnitude;
+
+            // ì†ë„ì— ë¹„ë¡€í•œ ì¤‘ë ¥ ê³„ìˆ˜ ê³„ì‚°
+            float gravityMultiplier = Mathf.Lerp(1f, 3f, currentHorizontalSpeed / currentMaxSpeed);
+
+            // ì¶”ê°€ì ì¸ ì¤‘ë ¥ íš¨ê³¼ ì ìš©
+            Vector3 enhancedGravity = Physics.gravity * gravityMultiplier;
+            rigid.AddForce(enhancedGravity, ForceMode.Acceleration);
+
+            Debug.Log("ê°•í™”ëœ ì¤‘ë ¥ ì ìš©ë¨: " + enhancedGravity + " | í˜„ì¬ ì†ë„: " + currentHorizontalSpeed);
+        }
+    }
+
     #endregion
+
+    #region [ì§€ë©´ ì²´í¬]
+
+    // ì§€ë©´ê³¼ì˜ ì ‘ì´‰ í™•ì¸
+    private bool CheckIfGrounded()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, groundRayDistance, groundLayer))
+        {
+            Debug.Log("ì§€ë©´ ê°ì§€ë¨: " + hit.collider.name);
+            return true;
+        }
+        Debug.Log("ì§€ë©´ ê°ì§€ë˜ì§€ ì•ŠìŒ");
+        return false;
+    }
+
+    #endregion
+   
 }
