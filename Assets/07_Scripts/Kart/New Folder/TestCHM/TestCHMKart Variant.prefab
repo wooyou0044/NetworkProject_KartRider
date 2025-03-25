@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 413315142395756821, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.6
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 413315142395756821, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.6
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 413315142395756821, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.6
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 413315142395756821, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -82,7 +82,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1327599218726025444, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: m_ExcludeLayers.m_Bits
-      value: 128
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2680623755718992227, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: m_Drag
@@ -90,7 +90,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2680623755718992227, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: m_Mass
-      value: 10
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 2680623755718992227, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: m_AngularDrag
@@ -143,6 +143,10 @@ PrefabInstance:
     - target: {fileID: 4784646851838524419, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: maxTorque
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4784646851838524419, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: antiRollForce
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 4784646851838524419, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: maxSteerAngle
@@ -360,28 +364,121 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wheels: {fileID: 8764957354587669828}
   maxSpeedKmh: 200
-  movementForce: 20
-  steerAngle: 100
+  movementForce: 25
+  steerAngle: 40
   decelerationRate: 2
   minSteerMultiplier: 1
-  maxSteerMultiplier: 5
+  maxSteerMultiplier: 2
   minDriftAngle: 20
   maxDriftAngle: 360
   minDriftDuration: 0.1
-  maxDriftDuration: 2
+  maxDriftDuration: 1
   minDriftForceMultiplier: 1
   maxDriftForceMultiplier: 20
   driftSpeedReduction: 0.85
-  boostDuration: 1.2
+  boostDuration: 1.8
+  momentboostDuration: 1.2
   maxBoostGauge: 100
-  boostChargeRate: 1
-  driftBoostChargeRate: 10
+  boostChargeRate: 5
+  driftBoostChargeRate: 20
   boostMaxSpeedKmh: 280
-  rotationCorrectionSpeed: 5
-  downwardForce: 50
-  wallBounceFactor: 1
+  uphillAngleThreshold: 5
+  uphillForceMultiplier: 10
   isDrifting: 0
   currentDriftAngle: 0
+  boostCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  boostAccelerationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  boostDecelerationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  boosterLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  jumpLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  groundRayDistance: 0.8
+  boxCastCenter: {x: 0, y: 0.5, z: 0}
+  boxCastSize: {x: 2.25, y: 0.5, z: 3.25}
+  boxCastDistance: 1
+  rotationCorrectionSpeed: 2
+  downwardForce: 10
+  wallBounceFactor: 0.7
+  airGravityMultiplier: 0.7
+  airControlTorque: 5
 --- !u!114 &3506412311101806673
 MonoBehaviour:
   m_ObjectHideFlags: 0
