@@ -1450,7 +1450,7 @@ MonoBehaviour:
   mapManager: {fileID: 1236464623}
   kartPrefab: {fileID: 6750277665416376479, guid: b1aff00853afc7641ae0d58aebea703b, type: 3}
   characterPrefab: {fileID: 3662294271039095178, guid: 92e11ca434aeb40b0aaa867626d01af8, type: 3}
-  startCountDownSeconds: 3
+  startCountDownSeconds: 5
   retireCountDownSeconds: 10
 --- !u!114 &880665176
 MonoBehaviour:
@@ -2559,7 +2559,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainText: {fileID: 146840601}
-  fadeOutTime: 0.5
+  fadeOutTime: 0.7
 --- !u!1 &1236464621
 GameObject:
   m_ObjectHideFlags: 0
