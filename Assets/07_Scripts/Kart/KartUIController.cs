@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,7 +17,7 @@ public class KartUIController : MonoBehaviour
 
     public Text speedTxt;
 
-    KartController kartCtrl;
+    TestCHMKart kartCtrl;
     Animator speedAni;
 
     float kartSpeed;
@@ -27,8 +26,6 @@ public class KartUIController : MonoBehaviour
 
     void Start()
     {
-        kartCtrl = kart.GetComponent<KartController>();
-
         isChange = false;
         circleBack.SetActive(false);
         speedAni = speedDashBoard.GetComponent<Animator>();
@@ -37,27 +34,26 @@ public class KartUIController : MonoBehaviour
 
     void Update()
     {
-        if(kartCtrl == null)
+        if (kartCtrl != null)
         {
-            kartCtrl = GameObject.FindGameObjectWithTag("Player").GetComponent<KartController>();
+            kartSpeed = kartCtrl.speedKM*2f;
+            kartSpeed = Mathf.FloorToInt(kartSpeed);
+            speedTxt.text = kartSpeed.ToString("f0");
+            speedCircle.fillAmount = kartSpeed * 0.0025f;            
         }
 
-        kartSpeed = kartCtrl.speedKM * 2;
-        kartSpeed = Mathf.FloorToInt(kartSpeed);
-        speedTxt.text = kartSpeed.ToString("f0");
-        speedCircle.fillAmount = kartSpeed * 0.0025f;
         if(kartSpeed < 300.0f)
         {
             needle.rotation = Quaternion.Euler(0, 0, 135 - kartSpeed * 0.9f);
         }
 
-        if (kartCtrl.isBoostTriggered)
+        if (kartCtrl != null && kartCtrl.isBoostTriggered)
         {
             isChange = false;
             StartCoroutine(ChangeSpeedUIOff());
         }
 
-        if (isChange == false)
+        if (kartCtrl != null && isChange == false)
         {
             ChangeSpeedUIToBoost(kartCtrl.isBoostTriggered);
             isChange = true;
@@ -94,10 +90,15 @@ public class KartUIController : MonoBehaviour
         isChange = false;
     }
 
-    // needle µ¹¸®±â
+    // needle ÂµÂ¹Â¸Â®Â±Ã¢
     void RotateSpeedNeedle()
     {
 
     }
 
+    public void SetKart(GameObject instance)
+    {
+        kart = instance;
+        kartCtrl = kart.GetComponent<TestCHMKart>();
+    }
 }

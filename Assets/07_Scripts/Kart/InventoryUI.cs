@@ -13,7 +13,7 @@ public class InventoryUI : MonoBehaviour
     // 슬롯에 들어갈 아이템 이미지
     [SerializeField] Sprite itemImg;
 
-    KartController kartCtrl;
+    TestCHMKart kartCtrl;
 
     public int itemCount { get; set; }
 
@@ -22,22 +22,18 @@ public class InventoryUI : MonoBehaviour
 
     void Start()
     {
-        kartCtrl = kart.GetComponent<KartController>();
-
         itemCount = 0;
     }
 
     void Update()
     {
-        if (kartCtrl == null)
+        if (kartCtrl != null)
         {
-            kartCtrl = GameObject.FindGameObjectWithTag("Player").GetComponent<KartController>();
+            driftDurationImg.fillAmount = (kartCtrl.boostGauge / kartCtrl.maxBoostGauge);     
         }
 
-        driftDurationImg.fillAmount = kartCtrl.driftDuration;
-
         // 나중에 부스트 뿐만 아니라 아이템이 들어오면 조정 필요
-        if(kartCtrl.isBoostCreate && itemCount < 2)
+        if(kartCtrl != null && kartCtrl.isBoostCreate && itemCount < 2)
         {
             MakeInventoryItemSlot();
             kartCtrl.isBoostCreate = false;
@@ -100,4 +96,10 @@ public class InventoryUI : MonoBehaviour
             yield return new WaitForSeconds(blinkSpeed);
         }
     }
+    
+    public void SetKart(GameObject instance)
+    {
+        kart = instance;
+        kartCtrl = kart.GetComponent<TestCHMKart>();
+    }    
 }

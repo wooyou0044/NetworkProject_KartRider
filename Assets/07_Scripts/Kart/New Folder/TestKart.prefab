@@ -1580,7 +1580,6 @@ GameObject:
   m_Component:
   - component: {fileID: 413315142395756821}
   - component: {fileID: 2680623755718992227}
-  - component: {fileID: 8355780068096780142}
   - component: {fileID: 1327599218726025444}
   m_Layer: 3
   m_Name: TestKart
@@ -1634,38 +1633,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &8355780068096780142
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4848290750487293163}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: abc864103efd1694fae08cbd8bf7244f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wheels: {fileID: 7441698397815003440}
-  carBody: {fileID: 4848290750487293163}
-  maxSpeed: 200
-  movementForce: 400
-  steerAngle: 180
-  minDriftAngle: 30
-  maxDriftAngle: 180
-  minDriftDuration: 0.2
-  maxDriftDuration: 2
-  minDriftForceMultiplier: 1
-  maxDriftForceMultiplier: 5
-  driftSpeedReduction: 0.7
-  boostSpeed: 280
-  boostDuration: 1.2
-  maxBoostGauge: 100
-  boostChargeRate: 1
-  driftBoostChargeRate: 5
-  boostMaxSpeed: 280
-  isDrifting: 0
-  currentDriftAngle: 0
 --- !u!136 &1327599218726025444
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2300,7 +2267,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3283680461316375532}
   - component: {fileID: 9038055264865009733}
-  - component: {fileID: 1357518235593986490}
   m_Layer: 0
   m_Name: Virtual Camera
   m_TagString: Untagged
@@ -2316,8 +2282,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6165037171512218186}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.21061346, y: 0.00000008940697, z: -0.000000029802322, w: 0.97756946}
-  m_LocalPosition: {x: -0.0000020861626, y: 5.7500005, z: -12.724999}
+  m_LocalRotation: {x: 0.21061347, y: 0.00000011920929, z: -0.000000037252903, w: 0.97756946}
+  m_LocalPosition: {x: -0.00000074505806, y: 5.7500005, z: -12.725}
   m_LocalScale: {x: 1.5000001, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2363,23 +2329,6 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 7423400174909878637}
---- !u!114 &1357518235593986490
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6165037171512218186}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f2b7ff231f3728439bda967c4f2221c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  virtualCamera: {fileID: 9038055264865009733}
-  kart: {fileID: 413315142395756821}
-  driftOffsetX: 0
-  driftOffsetZ: 1
-  driftSmoothTime: 0.5
 --- !u!1 &6267111827973566992
 GameObject:
   m_ObjectHideFlags: 0
