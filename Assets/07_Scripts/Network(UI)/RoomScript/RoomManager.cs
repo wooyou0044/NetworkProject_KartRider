@@ -3,22 +3,21 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
+using System.Collections.Generic;
 
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] public RoomUIManager roomUIManger;
+    public PlayerInfo playerInfo;
+    
     private Player[] players = PhotonNetwork.PlayerList;
     private RoomEntry roomEntry;
+    private Dictionary<Player, PlayerInfo> playerDic = new Dictionary<Player, PlayerInfo>();
+    
     private void Start()
     {
         RoomInfoUpdate();
-        foreach (var player in players)
-        {
-            //이미지로 띄워주면 됨
-            //배열의 0 번부터 차례대로
-            Debug.Log("방 안의 사람들 목록"+ player.NickName);
-        }
         
         if (PhotonNetwork.IsMasterClient)
         {
@@ -32,14 +31,24 @@ public class RoomManager : MonoBehaviourPunCallbacks
             {
                 {"0", PhotonNetwork.LocalPlayer.ActorNumber }, { "1",0},
                 { "2", 2<= max ? 0 : -1 }, { "3", 3 <= max ? 0 : -1 }, { "4",4 <= max ? 0: -1  },
-                { "5", 5 <= max ? 0 : -1 }, {"6",  6 <= max ? 0 : -1}, {"7", 7<= max ? 0 : -1}
-                
+                { "5", 5 <= max ? 0 : -1 }, {"6",  6 <= max ? 0 : -1}, {"7", 7<= max ? 0 : -1}                
             });
-        }        
+        }
         else
         {
             roomUIManger.startBtn.gameObject.SetActive(false);
             roomUIManger.readyBtn.gameObject.SetActive(true);            
+        }
+        foreach (var player in players)
+        {
+            if (player != null)
+            {
+                playerInfo.SetPlayerInfo(player);
+            }
+
+            //이미지로 띄워주면 됨
+            //배열의 0 번부터 차례대로
+            Debug.Log("방 안의 사람들 목록"+ player.NickName);
         }
     }
     public void SetRoomInfoChange()
@@ -121,14 +130,20 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         for(int i = 0; i < players.Length; i++)
         {
-
+            if(players[i] != null) 
+            {                
+                //Instantiate(roomUIManger.PlayerInfo, )
+            }
+            else
+            {
+                playerInfo.playerInfoPanel.gameObject.SetActive(false);
+            }
         }
     }
     public void OutRoomBtn()
     {
         if (PhotonNetwork.InRoom)
-        {
-            Debug.Log("일단 방은 맞습니다.");
+        {            
             StartCoroutine(LoadJoinLobby("LobbyScene"));
         }
     }
@@ -147,19 +162,16 @@ public class RoomManager : MonoBehaviourPunCallbacks
             {
                 break;
             }
-        }
-        Debug.Log("옵니까?");
+        }        
         yield break; 
     }
     public override void OnLeftRoom()
-    {
-        Debug.Log("확실히 방탈출");
+    {        
         SceneCont.Instance.Oper.allowSceneActivation = true;
-    }
-        
+    }        
 
     public void PlayerBtnController()
-    {//준비 상태가 아니라면 준비상태로만들기        
+    {//준비 상태가 아니라면 준비상태로만들기
         if(roomUIManger.readyBtn.gameObject.activeSelf)
         {
             roomUIManger.readyBtn.gameObject.SetActive(false);

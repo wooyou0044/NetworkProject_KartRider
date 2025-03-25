@@ -22,27 +22,25 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         yield return new WaitUntil(() => PhotonNetwork.IsConnectedAndReady);
         PhotonNetwork.JoinLobby();
-        InitializeRoomNumbers(); //방 번호 초기화
-    }    
-    private void InitializeRoomNumbers()
+        InitializeRoomNumber(); //방 번호 초기화
+    }
+    private void InitializeRoomNumber()
     {
         HashSet<string> uniqueNumbers = new HashSet<string>();
-        System.Random random = new System.Random();
 
         while (uniqueNumbers.Count < 100) // 100개의 고유한 방 번호 생성
         {
-            string roomNumber = random.Next(100000, 999999).ToString();
+            string roomNumber = Random.Range(100000, 999999).ToString();
             uniqueNumbers.Add(roomNumber);
         }
 
         foreach (var number in uniqueNumbers)
         {
             availableRoomNumbers.Enqueue(number);
-        }
-        Debug.Log($"현재 큐 상태: {availableRoomNumbers.Count}");
+        }        
     }
 
-    private string GetUniqueRoomNumber()
+    private string GetRoomNumber()
     {
         if (availableRoomNumbers.Count > 0)
         {
@@ -51,30 +49,57 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             return roomNumber;
         }
         //큐에 남아있는 방 번호가 없을 경우, UI로 오류 메시지 표시
-        lobbyUiMgr.RoomJoinFaildeText("남아있는 방 번호가 없습니다");
+        lobbyUiMgr.RoomJoinFaildeText("방을 만들 수 없습니다.");
         return null; //오류 상황을 처리할 수 있도록 null 반환
     }
 
     public void JoinRoom(string roomName)
-    {
-        //if (!PhotonNetwork.InLobby)
-        //{
-        //    PhotonNetwork.JoinLobby();
-        //    return;
-        //}
+    {//
         PhotonNetwork.JoinRoom(roomName);
     }
+    public void CreateRoomBtnClick()
+    {//룸 생성 확인 버튼과 연결 됨
+        string roomName = lobbyUiMgr.roomNameInputField.text;
+        string password = string.IsNullOrEmpty(lobbyUiMgr.roomPasswordInputField.text) ? null : lobbyUiMgr.roomPasswordInputField.text;
+        string roomNumber = GetRoomNumber();
+
+        if (string.IsNullOrEmpty(roomNumber))
+            return;
+        
+        CreateRoom(roomName, password, roomNumber);
+    }
     public void JoinRandomRoomBtn()
-    {
+    {//랜덤한 방 입장 버튼과 연결, 방이 없으면 알아서 랜덤한 방을 생성함
         PhotonNetwork.JoinRandomRoom();
+    }
+
+    public void CreateRoom(string roomName, string password, string roomNumber)
+    {
+        Hashtable custom = new Hashtable
+        {
+            { "RoomName", roomName },
+            { "Password", password },
+            { "RoomNumber", roomNumber }
+        };
+
+        RoomOptions roomOptions = new RoomOptions
+        {
+            MaxPlayers = 8, //최대 입장 플레이어 제한
+            EmptyRoomTtl = 0, //방에 사람이 없다면 바로 방을 삭제하도록 지정     
+            CustomRoomProperties = custom,
+            CustomRoomPropertiesForLobby = new string[] { "RoomName", "Password", "RoomNumber" }
+        };
+        
+        PhotonNetwork.CreateRoom(roomNumber, roomOptions, TypedLobby.Default);
     }
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-
+        //랜덤 조인 시도 시 방이 없다면 방을 생성하기 위한 메서드
+        //방제는 저기중 하나가 나옴 추가설정 가능
         string[] roomNames = { "다함께 카트라이더", "메타플밍9기 모여라", "방 제목을 할게 없네요" };
         int randomName = Random.Range(0, roomNames.Length);
         string randomRoomName = roomNames[randomName];
-        string roomNumber = GetUniqueRoomNumber();
+        string roomNumber = GetRoomNumber();
         Hashtable custom = new Hashtable
         {
             { "RoomName", randomRoomName },
@@ -83,8 +108,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         RoomOptions roomOptions = new RoomOptions
         {
-            MaxPlayers = 8,
-            EmptyRoomTtl = 0,
+            MaxPlayers = 8, //최대 입장 플레이어 제한
+            EmptyRoomTtl = 0, //방에 사람이 없다면 바로 방을 삭제하도록 지정
             CustomRoomProperties = custom,
             CustomRoomPropertiesForLobby = new string[] { "RoomName", "RoomNumber" }
         };
@@ -104,10 +129,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         {
             if (SceneCont.Instance.Oper.progress < 0.9f)
             {
+                //로비 > 룸 이동에 프로그래스바를 만들 필요가 있을까..?
             }
             else
             {
-                Debug.Log("로비 나가기 호출!");
+                Debug.Log("로비 나가기");
                 break;
             }
             yield return null;
@@ -117,58 +143,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnJoinedLobby()
     {
         Debug.Log("로비 입장");
-    }
-
+    }    
     
-    public override void OnLeftLobby()
-    {
-        Debug.Log("로비 퇴장");
-    }
-    private void ReleaseRoomNumber(string roomNumber)
-    {
-        if (usedRoomNumbers.Contains(roomNumber))
-        {
-            usedRoomNumbers.Remove(roomNumber);
-            availableRoomNumbers.Enqueue(roomNumber); // 재활용
-        }
-        else
-        {
-            Debug.LogWarning($"해당 방 번호({roomNumber})는 사용 중이 아닙니다.");
-        }
-    }
-    
-    public void CreateRoomBtnClick()
-    {
-        string roomName = lobbyUiMgr.roomNameInputField.text;
-        string password = string.IsNullOrEmpty(lobbyUiMgr.roomPasswordInputField.text) ? null : lobbyUiMgr.roomPasswordInputField.text;
-        string roomNumber = GetUniqueRoomNumber();
-
-        if (string.IsNullOrEmpty(roomNumber))
-            return;
-
-        
-        CreateRoom(roomName, password, roomNumber);
-    }
-
-    public void CreateRoom(string roomName, string password, string roomNumber)
-    {
-        Hashtable custom = new Hashtable
-        {
-            { "RoomName", roomName },
-            { "Password", password },
-            { "RoomNumber", roomNumber }
-        };
-
-        RoomOptions roomOptions = new RoomOptions
-        {
-            MaxPlayers = 8,
-            EmptyRoomTtl = 0,            
-            CustomRoomProperties = custom,
-            CustomRoomPropertiesForLobby = new string[] { "RoomName", "Password", "RoomNumber" }
-        };
-        
-        PhotonNetwork.CreateRoom(roomNumber, roomOptions, TypedLobby.Default);
-    }
     
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {        

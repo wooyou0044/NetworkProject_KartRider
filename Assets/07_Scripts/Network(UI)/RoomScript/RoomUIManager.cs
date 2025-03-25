@@ -22,9 +22,6 @@ public class RoomUIManager : MonoBehaviour
     [Header("방 비밀번호 아이콘")]
     [SerializeField] public Image passwordGroup;
 
-    [Header("플레이어 슬롯 판넬")]
-    [SerializeField] public GameObject playerSlotPanel;
-    
     [Header("맵(트랙변경) 버튼")]
     [SerializeField] public Button MapChangeBtn;    
 
@@ -51,7 +48,6 @@ public class RoomUIManager : MonoBehaviour
     [SerializeField] public Button characterSelectBtn;
     [SerializeField] public Image characterImg;
     [SerializeField] public Button characterPanelBtn;
-
 
     public void SetPasswordUI(bool hasPassword)
     {
