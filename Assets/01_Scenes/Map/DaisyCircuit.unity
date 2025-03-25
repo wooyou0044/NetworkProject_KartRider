@@ -1108,6 +1108,37 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &496054575
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 496054576}
+  m_Layer: 0
+  m_Name: SkidMarkManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &496054576
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 496054575}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &498531552 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 124360908002082749, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
@@ -4404,3 +4435,4 @@ SceneRoots:
   - {fileID: 1083733281}
   - {fileID: 1814992196}
   - {fileID: 1404370427}
+  - {fileID: 496054576}

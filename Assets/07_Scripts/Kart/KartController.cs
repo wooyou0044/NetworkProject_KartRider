@@ -8,7 +8,7 @@ public class KartController : MonoBehaviour
     [SerializeField] GameObject wheels;
     [SerializeField] GameObject carBody;
 
-    public float maxSpeed = 50f; // ÃÖ´ë ¼Óµµ
+    public float maxSpeed = 50f; // ìµœëŒ€ ì†ë„
     public float antiRollPow;
     public float AnglePow;
     public float speedKM { get; private set; }
@@ -17,73 +17,71 @@ public class KartController : MonoBehaviour
     Rigidbody rigid;
     Transform[] wheelTrans;
 
-    private float motorInput; // ¸ğÅÍ ÀÔ·Â °ª
-    private float steerInput; // Á¶Çâ ÀÔ·Â °ª
+    private float motorInput; // ëª¨í„° ì…ë ¥ ê°’
+    private float steerInput; // ì¡°í–¥ ì…ë ¥ ê°’
     private float driftTime = 0f;
 
-    private bool isDrifting = false;
+    public bool isDrifting { get; private set; }
     public bool isBoostTriggered = false;
-    private bool isUpArrowKeyPressed = false; // ÇöÀç Å°°¡ ´­·ÁÀÖ´Â »óÅÂ
-    private bool wasUpArrowKeyReleased = true; // ÀÌÀü¿¡ Å°°¡ ¶¼¾îÁø »óÅÂ
+    private bool isUpArrowKeyPressed = false; // í˜„ì¬ í‚¤ê°€ ëˆŒë ¤ìˆëŠ” ìƒíƒœ
+    private bool wasUpArrowKeyReleased = true; // ì´ì „ì— í‚¤ê°€ ë–¼ì–´ì§„ ìƒíƒœ
 
     [Header("Steering Settings")]
-    [Tooltip("Á¶Çâ ¹Î°¨µµ")]
+    [Tooltip("ì¡°í–¥ ë¯¼ê°ë„")]
     public float steeringForce = 200f;
 
     [Header("Motor Settings")]
-    [Tooltip("°¡¼Óµµ Èû")]
+    [Tooltip("ê°€ì†ë„ í˜")]
     public float motorForce = 1000f;
-    [Tooltip("ÃÖ´ë ¼Óµµ (km/h)")]
+    [Tooltip("ìµœëŒ€ ì†ë„ (km/h)")]
     public float maxSpeedKPH = 280f;
 
     [Header("Physics Settings")]
-    [Tooltip("¾ÈÆ¼ ·Ñ °­µµ")]
+    [Tooltip("ì•ˆí‹° ë¡¤ ê°•ë„")]
     public float antiRollForce = 5000f;
-    [Tooltip("Áö¸é ·¹ÀÌ¾î")]
+    [Tooltip("ì§€ë©´ ë ˆì´ì–´")]
     public LayerMask groundLayer;
 
     [Header("Drift Settings")]
-    [Tooltip("µå¸®ÇÁÆ® Å° ¼³Á¤")]
+    [Tooltip("ë“œë¦¬í”„íŠ¸ í‚¤ ì„¤ì •")]
     public KeyCode driftKey = KeyCode.LeftShift;
-    [Tooltip("µå¸®ÇÁÆ® °¨¼Ó ºñÀ²")]
+    [Tooltip("ë“œë¦¬í”„íŠ¸ ê°ì† ë¹„ìœ¨")]
     public float driftFactor = 0.5f;
-    [Tooltip("µå¸®ÇÁÆ® Ãø¸é Èû")]
+    [Tooltip("ë“œë¦¬í”„íŠ¸ ì¸¡ë©´ í˜")]
     public float driftForceSide = 200f;
-    [Tooltip("ÃÖ´ë µå¸®ÇÁÆ® Áö¼Ó ½Ã°£")]
+    [Tooltip("ìµœëŒ€ ë“œë¦¬í”„íŠ¸ ì§€ì† ì‹œê°„")]
     public float maxDriftDuration = 2f;
-    [Tooltip("µå¸®ÇÁÆ® Áß ÇöÀç Ãø¸é Èû")]
+    [Tooltip("ë“œë¦¬í”„íŠ¸ ì¤‘ í˜„ì¬ ì¸¡ë©´ í˜")]
     public float currentDriftForce = 20f;
 
     [Header("Drag Settings")]
-    [Tooltip("±âº» µå·¡±× °ª")]
+    [Tooltip("ê¸°ë³¸ ë“œë˜ê·¸ ê°’")]
     public float normalDrag = 0.5f;
-    [Tooltip("µå¸®ÇÁÆ® Áß µå·¡±× °ª")]
+    [Tooltip("ë“œë¦¬í”„íŠ¸ ì¤‘ ë“œë˜ê·¸ ê°’")]
     public float driftDrag = 0.01f;
-    [Tooltip("±âº» Angular Drag °ª")]
+    [Tooltip("ê¸°ë³¸ Angular Drag ê°’")]
     public float normalAngularDrag = 0.05f;
-    [Tooltip("µå¸®ÇÁÆ® Áß Angular Drag °ª")]
+    [Tooltip("ë“œë¦¬í”„íŠ¸ ì¤‘ Angular Drag ê°’")]
     public float driftAngularDrag = 0.01f;
 
     [Header("Boost Settings")]
-    [Tooltip("ºÎ½ºÆ® Èû")]
+    [Tooltip("ë¶€ìŠ¤íŠ¸ í˜")]
     public float boostForce = 1.1f;
-    [Tooltip("ºÎ½ºÆ® Áö¼Ó ½Ã°£")]
+    [Tooltip("ë¶€ìŠ¤íŠ¸ ì§€ì† ì‹œê°„")]
     public float boostDuration = 1.5f;
 
     public float driftDuration { get; private set; }
     public bool isBoostCreate { get; set; }
-    
     /* MapTest */
     private Transform _playerParent;
     private Transform _tr;
     private PhotonView _photonView;    
-    
     private void Awake()
     {
         wheelCtrl = wheels.GetComponent<WheelController>();
         rigid = GetComponent<Rigidbody>();
         
-        /* TODO : Æ÷Åæ ºÙÀÏ¶§ ¼öÁ¤ÇØÁÖ±â */
+        /* TODO : í¬í†¤ ë¶™ì¼ë•Œ ìˆ˜ì •í•´ì£¼ê¸° */
         _tr = gameObject.transform;
         _photonView = GetComponent<PhotonView>();
         _playerParent = GameObject.Find("Players").transform;
@@ -100,9 +98,9 @@ public class KartController : MonoBehaviour
             wheelTrans[i] = wheels.transform.GetChild(i).transform;
         }
 
-        // ¸®Áöµå¹Ùµğ µå·¡±× ÃÊ±âÈ­
+        // ë¦¬ì§€ë“œë°”ë”” ë“œë˜ê·¸ ì´ˆê¸°í™”
         rigid.drag = normalDrag;
-        // ±âº» Angular Drag °ª ÃÊ±âÈ­
+        // ê¸°ë³¸ Angular Drag ê°’ ì´ˆê¸°í™”
         rigid.angularDrag = normalAngularDrag;
     }
 
@@ -116,23 +114,23 @@ public class KartController : MonoBehaviour
         steerInput = Input.GetAxis("Horizontal");
         motorInput = Input.GetAxis("Vertical");
 
-        // Å° ÀÔ·Â »óÅÂ ÃßÀû
+        // í‚¤ ì…ë ¥ ìƒíƒœ ì¶”ì 
         if (Input.GetKey(KeyCode.UpArrow))
         {
             if (wasUpArrowKeyReleased)
             {
-                isUpArrowKeyPressed = true; // »õ·Ó°Ô Å° ÀÔ·Â
-                wasUpArrowKeyReleased = false; // ÀÔ·Â »óÅÂ·Î ÀüÈ¯
+                isUpArrowKeyPressed = true; // ìƒˆë¡­ê²Œ í‚¤ ì…ë ¥
+                wasUpArrowKeyReleased = false; // ì…ë ¥ ìƒíƒœë¡œ ì „í™˜
             }
             else
             {
-                isUpArrowKeyPressed = false; // Áö¼Ó ÀÔ·ÂÀº ¹«½Ã
+                isUpArrowKeyPressed = false; // ì§€ì† ì…ë ¥ì€ ë¬´ì‹œ
             }
         }
         else
         {
-            wasUpArrowKeyReleased = true; // Å°°¡ ¶¼¾îÁø »óÅÂ·Î º¯°æ
-            isUpArrowKeyPressed = false; // ÀÔ·Â ÇØÁ¦
+            wasUpArrowKeyReleased = true; // í‚¤ê°€ ë–¼ì–´ì§„ ìƒíƒœë¡œ ë³€ê²½
+            isUpArrowKeyPressed = false; // ì…ë ¥ í•´ì œ
         }
 
         if (steerInput != 0 || motorInput != 0)
@@ -144,9 +142,9 @@ public class KartController : MonoBehaviour
             wheelCtrl.UpdateWheelRotation(motorInput, speed);
         }
 
-        speedKM = rigid.velocity.magnitude * 3.6f; // m/s¸¦ km/h·Î º¯È¯
+        speedKM = rigid.velocity.magnitude * 3.6f; // m/së¥¼ km/hë¡œ ë³€í™˜
 
-        // µå¸®ÇÁÆ® ¾ÆÀÌÅÛ »ı¼º
+        // ë“œë¦¬í”„íŠ¸ ì•„ì´í…œ ìƒì„±
         if(isDrifting == true)
         {
             driftDuration += Time.fixedDeltaTime;
@@ -167,19 +165,19 @@ public class KartController : MonoBehaviour
         
         if (steerInput != 0 || motorInput != 0)
         {
-            HandleSteering(steerInput);  // Á¶Çâ Ã³¸®
-            HandleMovement(motorInput); // °¡¼Ó/°¨¼Ó Ã³¸®
-            //ApplyAntiRoll();            // ¾ÈÆ¼·Ñ Ã³¸®
-            LimitSpeed();               // ÃÖ´ë ¼Óµµ Á¦ÇÑ
+            HandleSteering(steerInput);  // ì¡°í–¥ ì²˜ë¦¬
+            HandleMovement(motorInput); // ê°€ì†/ê°ì† ì²˜ë¦¬
+            //ApplyAntiRoll();            // ì•ˆí‹°ë¡¤ ì²˜ë¦¬
+            LimitSpeed();               // ìµœëŒ€ ì†ë„ ì œí•œ
 
-            // µå¸®ÇÁÆ® ½ÃÀÛ ¹× Á¾·á °ü¸®
+            // ë“œë¦¬í”„íŠ¸ ì‹œì‘ ë° ì¢…ë£Œ ê´€ë¦¬
             if (Input.GetKey(driftKey))
             {
-                StartDrift(); // µå¸®ÇÁÆ® ½ÃÀÛ
+                StartDrift(); // ë“œë¦¬í”„íŠ¸ ì‹œì‘
             }
             else
             {
-                EndDrift(); // µå¸®ÇÁÆ® Á¾·á
+                EndDrift(); // ë“œë¦¬í”„íŠ¸ ì¢…ë£Œ
             }
         }
     }
@@ -201,14 +199,14 @@ public class KartController : MonoBehaviour
             isDrifting = true;
             driftTime = 0f;
 
-            // Áï°¢ÀûÀÎ °¨¼Ó È¿°ú
+            // ì¦‰ê°ì ì¸ ê°ì† íš¨ê³¼
             rigid.velocity *= 0.8f;
-            // µå¸®ÇÁÆ® Áß µå·¡±× °ª Àû¿ë
+            // ë“œë¦¬í”„íŠ¸ ì¤‘ ë“œë˜ê·¸ ê°’ ì ìš©
             rigid.drag = driftDrag;
-            // Angular Drag Á¶Á¤
+            // Angular Drag ì¡°ì •
             rigid.angularDrag = driftAngularDrag;
 
-            // µå¸®ÇÁÆ® Èû Á¶Á¤
+            // ë“œë¦¬í”„íŠ¸ í˜ ì¡°ì •
             float speedFactor = Mathf.Clamp01(rigid.velocity.magnitude / (maxSpeedKPH / 3.6f));
             float adjustedDriftForceSide = driftForceSide * (1 - speedFactor) * 5f;
 
@@ -225,9 +223,9 @@ public class KartController : MonoBehaviour
                 rigid.AddForce(sideForce, ForceMode.Acceleration);
             }
 
-            // ½ºÅ°µå ¸¶Å© È°¼ºÈ­
+            // ìŠ¤í‚¤ë“œ ë§ˆí¬ í™œì„±í™”
             wheelCtrl.SetSkidMarkActive(true);
-            Debug.Log("µå¸®ÇÁÆ® ½ÃÀÛ!");
+            Debug.Log("ë“œë¦¬í”„íŠ¸ ì‹œì‘!");
         }
     }
 
@@ -238,15 +236,15 @@ public class KartController : MonoBehaviour
             isDrifting = false;
             driftTime = 0f;
             currentDriftForce = 0f;
-            // ±âº» µå·¡±× °ª º¹¿ø
+            // ê¸°ë³¸ ë“œë˜ê·¸ ê°’ ë³µì›
             rigid.drag = normalDrag;
-            // Angular Drag º¹¿ø
+            // Angular Drag ë³µì›
             rigid.angularDrag = normalAngularDrag;
 
-            // ½ºÅ°µå¸¶Å© ºñÈ°¼ºÈ­
+            // ìŠ¤í‚¤ë“œë§ˆí¬ ë¹„í™œì„±í™”
             wheelCtrl.SetSkidMarkActive(false);
 
-            Debug.Log("µå¸®ÇÁÆ® Á¾·á!");
+            Debug.Log("ë“œë¦¬í”„íŠ¸ ì¢…ë£Œ!");
             StartCoroutine(BoostCheckCoroutine());
         }
     }
@@ -255,7 +253,7 @@ public class KartController : MonoBehaviour
         float timer = 0f;
         while (timer < 0.5f)
         {
-            if (isUpArrowKeyPressed) // ÀçÀÔ·Â °¨Áö
+            if (isUpArrowKeyPressed) // ì¬ì…ë ¥ ê°ì§€
             {
                 TriggerBoost();
                 break;
@@ -270,7 +268,7 @@ public class KartController : MonoBehaviour
         if (!isBoostTriggered)
         {
             isBoostTriggered = true;
-            Debug.Log("ºÎ½ºÅÍ ¹ßµ¿!");
+            Debug.Log("ë¶€ìŠ¤í„° ë°œë™!");
             StartCoroutine(ApplyBoostCoroutine());
         }
     }
@@ -280,8 +278,8 @@ public class KartController : MonoBehaviour
         float timer = 0f;
         while (timer < boostDuration)
         {
-            float currentSpeed = rigid.velocity.magnitude * 3.6f; // m/s¸¦ km/h·Î º¯È¯
-            if (currentSpeed < maxSpeedKPH) // ÃÖ´ë ¼Óµµ ÃÊ°ú ¿©ºÎ È®ÀÎ
+            float currentSpeed = rigid.velocity.magnitude * 3.6f; // m/së¥¼ km/hë¡œ ë³€í™˜
+            if (currentSpeed < maxSpeedKPH) // ìµœëŒ€ ì†ë„ ì´ˆê³¼ ì—¬ë¶€ í™•ì¸
             {
                 rigid.AddForce(transform.forward * boostForce, ForceMode.Acceleration);
             }
@@ -294,17 +292,17 @@ public class KartController : MonoBehaviour
     private void HandleSteering(float steerInput)
     {
         float currentSpeed = rigid.velocity.magnitude;
-        float steeringSensitivity = Mathf.Clamp(1 - (currentSpeed / (maxSpeedKPH / 3.6f)), 0.5f, 2.0f); // ¼Óµµ¿¡ µû¶ó Á¶Çâ ¹Î°¨µµ Áõ°¡
+        float steeringSensitivity = Mathf.Clamp(1 - (currentSpeed / (maxSpeedKPH / 3.6f)), 0.5f, 2.0f); // ì†ë„ì— ë”°ë¼ ì¡°í–¥ ë¯¼ê°ë„ ì¦ê°€
 
-        // ÀÌµ¿ ¹æÇâ°ú Á¶È­
-        if (isDrifting) // µå¸®ÇÁÆ® Áß¿¡´Â °­È­µÈ À¯ÅÏ È¿°ú Ãß°¡
+        // ì´ë™ ë°©í–¥ê³¼ ì¡°í™”
+        if (isDrifting) // ë“œë¦¬í”„íŠ¸ ì¤‘ì—ëŠ” ê°•í™”ëœ ìœ í„´ íš¨ê³¼ ì¶”ê°€
         {
             rigid.velocity = Quaternion.Euler(0, steerInput * 90f * Time.deltaTime, 0) * rigid.velocity;
         }
 
         wheelCtrl.RotateWheel(steerInput, steeringSensitivity);
 
-        // Â÷·® ÀÚÃ¼ È¸Àü Ã³¸®
+        // ì°¨ëŸ‰ ìì²´ íšŒì „ ì²˜ë¦¬
         Vector3 turnDirection = Quaternion.Euler(0, steerInput * steeringForce * steeringSensitivity * Time.deltaTime, 0) * transform.forward;
         rigid.MoveRotation(Quaternion.LookRotation(turnDirection));
     }
@@ -319,7 +317,7 @@ public class KartController : MonoBehaviour
 
     private void DisplaySpeed()
     {
-        float speed = rigid.velocity.magnitude * 3.6f; // m/s¸¦ km/h·Î º¯È¯
+        float speed = rigid.velocity.magnitude * 3.6f; // m/së¥¼ km/hë¡œ ë³€í™˜
         //if (speedtext != null)
         //{
         //    speedtext.text = "speed: " + speed.tostring("f2") + " km/h";
