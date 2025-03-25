@@ -132,18 +132,7 @@ public class TestCHMKart : MonoBehaviour
 
         // 부스트 입력 처리
         HandleBoostInput();
-
-        // 드리프트 중 지속시간 누적 및 조건 체크
-        //if (isDrifting)
-        //{
-        //    driftDuration += Time.deltaTime;
-        //    if (driftDuration >= 1f)
-        //    {
-        //        isBoostCreate = true;
-        //        driftDuration = 0f;
-        //    }
-        //}
-
+      
         // 부스트 게이지 충전
         if(currentMotorInput != 0 || isDrifting)
         {
@@ -157,8 +146,7 @@ public class TestCHMKart : MonoBehaviour
             chargeAmount = 0;
         }
 
-        // 카트 이동 처리 (이동/회전)
-        //HandleKartMovement(currentMotorInput, currentSteerInput);
+        
     }
     #endregion
 
@@ -298,9 +286,7 @@ public class TestCHMKart : MonoBehaviour
             ? driftBoostChargeRate * Time.fixedDeltaTime  // 드리프트 중 충전 속도
             : boostChargeRate * Time.fixedDeltaTime;       // 일반 충전 속도
 
-        boostGauge = Mathf.Clamp(chargeAmount, 0, maxBoostGauge);
-        Debug.Log("boostGage : " + boostGauge);
-
+        boostGauge = Mathf.Clamp(chargeAmount, 0, maxBoostGauge);        
         if (boostGauge >= maxBoostGauge)
         {
             Debug.Log("부스트 게이지 최대치 도달!");
