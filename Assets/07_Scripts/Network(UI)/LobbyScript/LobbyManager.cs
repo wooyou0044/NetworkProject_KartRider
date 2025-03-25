@@ -13,8 +13,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     private List<RoomInfo> currentRoomList = new List<RoomInfo>();
     private List<RoomEntry> roomEntryList = new List<RoomEntry>();
-    private Dictionary<string, RoomEntry> roomEntryMap = new Dictionary<string, RoomEntry>();
-
+    private Dictionary<string, RoomEntry> roomEntryMap = new Dictionary<string, RoomEntry>();    
     private Queue<string> availableRoomNumbers = new Queue<string>(); // 방 번호 관리 Queue
     private HashSet<string> usedRoomNumbers = new HashSet<string>(); // 사용 중인 방 번호 추적
 
@@ -143,16 +142,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnJoinedLobby()
     {
         Debug.Log("로비 입장");
-    }    
-    
+    }        
     
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
-    {        
+    {
         RoomListUpdate(roomList);
     }
     public void RoomListUpdateBtn()
     {
-        RoomListUpdate(currentRoomList);
+        
     }
     public void RoomListUpdate(List<RoomInfo> roomList)
     {
@@ -195,26 +193,23 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         {
             RoomEntry existingEntry = roomEntryMap[roomInfo.Name];
             existingEntry.SetRoomInfo(roomInfo); // 최신 RoomInfo로 업데이트
-        }
+        }        
     }
     public void AddRoomToList(RoomInfo roomInfo)
     {
         var roomEntry = Instantiate(lobbyUiMgr.roomPrefab, lobbyUiMgr.roomListPanel.transform);
         var roomEntryScript = roomEntry.GetComponent<RoomEntry>();
-        roomEntryScript.SetRoomInfo(roomInfo); // RoomInfo에서 정보 설정
-        roomEntryList.Add(roomEntryScript); // 리스트에 추가
-        roomEntryMap.Add(roomInfo.Name, roomEntryScript);
-
+        roomEntryList.Add(roomEntryScript); //리스트에 추가
+        roomEntryMap.Add(roomInfo.Name, roomEntryScript);//방정보와 진짜오브젝트와 맵핑
         if (roomEntryScript != null)
         {
-            roomEntryScript.SetRoomInfo(roomInfo);
+            bool hasPassword = roomEntryScript.IsPasswrod(roomInfo);
+            bool isGameStart = roomEntryScript.IsGameStarted(roomInfo);
+            bool isRoomFull = roomEntryScript.IsRoomFull(roomInfo);
+            roomEntryScript.SetRoomInfo(roomInfo); //RoomInfo에서 정보 설정
 
             roomEntry.onClick.AddListener(() =>
-            {
-                bool hasPassword = roomEntryScript.IsPasswrod(roomInfo);
-                bool isGameStart = roomEntryScript.IsGameStarted(roomInfo);
-                bool isRoomFull = roomEntryScript.IsRoomFull(roomInfo);
-
+            {                
                 if (hasPassword)
                 {
                     ShowPasswordPrompt(roomInfo.Name, roomInfo.CustomProperties["Password"] as string);
