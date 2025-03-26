@@ -5,28 +5,30 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 
-
-
 public class RoomManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] public RoomUIManager roomUIManger;
-    public PlayerInfo playerInfo;
-    
+    [SerializeField] public PlayerSlot[] playerSlots;
+
     private Player[] players = PhotonNetwork.PlayerList;
     private RoomEntry roomEntry;
-    private Dictionary<Player, PlayerInfo> playerDic = new Dictionary<Player, PlayerInfo>();
+    private PhotonView photonView;
 
-    private void Start()
+    private IEnumerator Start()
     {
-        RoomInfoUpdate();
+        yield return new WaitUntil(() => PhotonNetwork.IsConnectedAndReady);
+        photonView = GetComponent<PhotonView>();
+        InitializeUI();
+    }
 
+    private void InitializeUI()
+    {
         if (PhotonNetwork.IsMasterClient)
         {
             roomUIManger.startBtn.gameObject.SetActive(true);
             roomUIManger.readyBtn.gameObject.SetActive(false);
-            //모든 플레이어가 준비완료 되면 트루로 바꾸기(업데이트 RPC쏴야됨)
             roomUIManger.startBtn.interactable = true;
-            
+            InitializeMasterPanel();
         }
         else
         {
@@ -34,11 +36,106 @@ public class RoomManager : MonoBehaviourPunCallbacks
             roomUIManger.readyBtn.gameObject.SetActive(true);
         }
     }
-    private void UpdateSlots()
+    private void InitializeMasterPanel()
     {
-        
+        foreach (var slot in playerSlots)
+        {
+            if (slot.IsEmpty)
+            {
+                slot.AssignPlayer(PhotonNetwork.LocalPlayer.ActorNumber, PhotonNetwork.LocalPlayer.NickName);
+                break;
+            }
+        }
     }
 
+    public override void OnMasterClientSwitched(Player newMasterClient)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            ResetAndBroadcastUI(); // 새로운 방장이 슬롯을 초기화
+        }
+
+    }
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            ResetAndBroadcastUI();
+        }
+    }
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            ResetAndBroadcastUI();
+        }
+    }
+    
+    private void ResetAndBroadcastUI()
+    {
+        foreach (var slot in playerSlots)
+        {
+            slot.ClearPlayerPanel(); // 모든 슬롯 초기화
+        }
+
+        foreach (Player player in PhotonNetwork.PlayerList)
+        {
+            foreach (var slot in playerSlots)
+            {
+                if (slot.IsEmpty)
+                {
+                    slot.AssignPlayer(player.ActorNumber, player.NickName);
+                    break;
+                }
+            }
+        }
+        photonView.RPC("UpdateUIForAllClients", RpcTarget.Others, PhotonNetwork.PlayerList);
+    }
+    [PunRPC]
+    public void UpdateUIForAllClients(Player[] players)
+    {
+        foreach (var slot in playerSlots)
+        {
+            slot.ClearPlayerPanel(); // 모든 슬롯 초기화
+        }
+        foreach (var player in players)
+        {
+            foreach (var slot in playerSlots)
+            {
+                if (slot.IsEmpty)
+                {
+                    slot.AssignPlayer(player.ActorNumber, player.NickName);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void OutRoomBtn()
+    {
+        if (PhotonNetwork.InRoom)
+        {            
+            StartCoroutine(LoadJoinLobby("LobbyScene"));
+        }
+    }
+    IEnumerator LoadJoinLobby(string sceneName)
+    {
+        PhotonNetwork.LeaveRoom();
+        SceneCont.Instance.Oper = SceneCont.Instance.SceneAsync(sceneName);
+        SceneCont.Instance.Oper.allowSceneActivation = false;
+        while (SceneCont.Instance.Oper.isDone == false)
+        {
+            if (SceneCont.Instance.Oper.progress < 0.9f)
+            {
+                //룸 내의 모든 행동 금지시키기.. 로비 이동중... 띄우기
+            }
+            else
+            {
+                break;
+            }
+        }        
+        yield break; 
+    }
     public void SetRoomInfoChange()
     {
         roomUIManger.roomInfoChangePanel.gameObject.SetActive(false);
@@ -76,7 +173,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         roomUIManger.roomPasswordText.text = hasPassword ? (string)roomProperties["Password"] : null;
         roomUIManger.SetPasswordUI(hasPassword);
     }
-
+    
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
         RoomInfoUpdate(); //변경된 방 속성을 룸에 반영        
@@ -97,69 +194,6 @@ public class RoomManager : MonoBehaviourPunCallbacks
             //인 게임으로 씬이동
             //PhotonNetwork.LoadLevel("InGameScene");
         }
-    }
-    public override void OnMasterClientSwitched(Player newMasterClient)
-    {        
-        foreach (var player in players)
-        {            
-            if (PhotonNetwork.IsMasterClient == true)
-            {
-                roomUIManger.startBtn.gameObject.SetActive(true);
-                roomUIManger.readyBtn.gameObject.SetActive(false);
-                //모든 플레이어가 준비완료 되면 트루로 바꾸기(업데이트 RPC쏴야됨)
-                roomUIManger.startBtn.interactable = true;
-                return;
-            }
-        }
-    }
-    public override void OnPlayerEnteredRoom(Player newPlayer)
-    {
-        //유저 입장시 유저 UI업데이트.
-        UpdateSlots();
-    }
-    public override void OnPlayerLeftRoom(Player otherPlayer)
-    {
-        //유저 이탈시 해당 유저가 있던 부분의 UI업데이트
-        UpdateSlots();
-    }
-    public void UpdatePlayerUIList()
-    {
-        for(int i = 0; i < players.Length; i++)
-        {
-            if(players[i] != null) 
-            {
-                UpdateSlots();
-                //Instantiate(roomUIManger.PlayerInfo, )
-            }
-            else
-            {
-            }
-        }
-    }
-    public void OutRoomBtn()
-    {
-        if (PhotonNetwork.InRoom)
-        {            
-            StartCoroutine(LoadJoinLobby("LobbyScene"));
-        }
-    }
-    IEnumerator LoadJoinLobby(string sceneName)
-    {
-        PhotonNetwork.LeaveRoom();
-        SceneCont.Instance.Oper = SceneCont.Instance.SceneAsync(sceneName);
-        SceneCont.Instance.Oper.allowSceneActivation = false;
-        while (SceneCont.Instance.Oper.isDone == false)
-        {
-            if (SceneCont.Instance.Oper.progress < 0.9f)
-            {
-                //룸 내의 모든 행동 금지시키기.. 로비 이동중... 띄우기
-            }
-            else
-            {
-                break;
-            }
-        }        
-        yield break; 
     }
     public override void OnLeftRoom()
     {        

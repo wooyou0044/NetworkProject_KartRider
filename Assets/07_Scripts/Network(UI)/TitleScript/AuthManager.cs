@@ -59,7 +59,10 @@ public class AuthManager : MonoBehaviour
         if (userLoginTask.Exception != null)
         {
             titleUI.ShowMessage(titleUI.errorMessage, "로그인 상태 확인 실패 다시 로그인하세요.", true);
-            yield break;
+            titleUI.ShowMessage(titleUI.errorMessage, "서버 접속 실패 다시 로그인해주세요.", true);
+            yield return new WaitForSeconds(1f);
+            titleUI.InitializeLogin();//다시 로그인 하는 것 처럼 타이틀 창 초기화
+            yield break;            
         }
         bool? isLoggedIn = userLoginTask.Result.Value as bool?;
         if (isLoggedIn.HasValue && isLoggedIn.Value)
@@ -69,7 +72,7 @@ public class AuthManager : MonoBehaviour
             yield break; // 로그인 시도를 중단
         }
         else
-        {         
+        {
             var userRef = FirebaseDBManager.Instance.DbRef.Child("users")
                 .Child(FirebaseDBManager.Instance.User.UserId)
                 .Child("isLoggedIn").SetValueAsync(true);
@@ -103,8 +106,9 @@ public class AuthManager : MonoBehaviour
             default:
                 message = "이메일 혹은 비밀번호를 잘못 입력하셨거나\n 등록되지 않은 이메일 입니다.";
                 break;
-        }
-        titleUI.ShowMessage(titleUI.errorMessage, message, true);
+        }        
+        titleUI.ShowMessage(titleUI.errorMessage, message, true);                
+        titleUI.InitializeLogin();//다시 로그인 하는 것 처럼 타이틀 창 초기화
     }
 
     void LoginSuccess(FirebaseUser user)
@@ -138,20 +142,19 @@ public class AuthManager : MonoBehaviour
             else
             {
                 //마스터 서버 접속 대기중
-                yield return new WaitUntil(predicate: () => serverCon.Connect());
-                if (!serverCon.Connect())
-                {
-                    //커넥트 오류시
-                    titleUI.ShowMessage(titleUI.errorMessage, "서버 접속 실패 다시 로그인해주세요.", true);
-                    yield return new WaitForSeconds(1f);
-                    titleUI.InitializeLogin();//다시 로그인 하는 것 처럼 타이틀 창 초기화
-                    yield break;
-                }
                 titleUI.lodingBar.value = 1f;
                 break;
             }
         }
-        yield return null;
+        yield return new WaitUntil(predicate: () => serverCon.Connect());
+        if (!serverCon.Connect())
+        {
+            //커넥트 오류시
+            titleUI.ShowMessage(titleUI.errorMessage, "서버 접속 실패 다시 로그인해주세요.", true);
+            yield return new WaitForSeconds(1f);
+            titleUI.InitializeLogin();//다시 로그인 하는 것 처럼 타이틀 창 초기화
+            yield break;
+        }
         SceneCont.Instance.Oper.allowSceneActivation = true;
     }
 
