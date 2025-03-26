@@ -96,7 +96,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skidMat: {fileID: 2100000, guid: 6cee54f9aefa5ac45b8b67c429ec595b, type: 2}
-  skidWidth: 0.2
+  skidWidth: 0.5
   groundLayer:
     serializedVersion: 2
     m_Bits: 64

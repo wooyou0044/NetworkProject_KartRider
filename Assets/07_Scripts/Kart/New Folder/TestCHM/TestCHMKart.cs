@@ -48,6 +48,7 @@ public class TestCHMKart : MonoBehaviour
     public bool isBoostTriggered { get; private set; } // 부스트 활성화 여부
     public bool isBoostCreate { get; set; }    // 드리프트 아이템 생성 가능 여부
     public float boostGauge { get; private set; }                // 현재 부스트 게이지
+    public bool isBoostUsed { get; set; }
 
     private float driftDuration = 4f;  // 부스터 지속 시간 (예: 총 4초, 2초 가속, 2초 감속)
     private CHMTestWheelController wheelCtrl;  // 바퀴 제어 스크립트
@@ -61,7 +62,7 @@ public class TestCHMKart : MonoBehaviour
     private float lockedYRotation = 0f;        // 드리프트 시 고정되는 Y 회전값
     private float currentMotorInput;
     private float currentSteerInput;
-    private int boostCount;
+    public int boostCount { get; private set; }
     // 내부적으로 사용할 m/s 단위 변수
     private float maxSpeed;      // 최대 속도 (m/s)
     private float boostMaxSpeed; // 부스트 최대 속도 (m/s)
@@ -174,6 +175,7 @@ public class TestCHMKart : MonoBehaviour
         {
             StartBoost(boostDuration);
             boostCount--;
+            isBoostUsed = true;
         }
         // 부스트 게이지 충전
         if (currentMotorInput != 0 || isDrifting)

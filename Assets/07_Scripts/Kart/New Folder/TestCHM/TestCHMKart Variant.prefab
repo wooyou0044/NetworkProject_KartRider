@@ -379,8 +379,8 @@ MonoBehaviour:
   boostDuration: 1.8
   momentboostDuration: 1.2
   maxBoostGauge: 100
-  boostChargeRate: 5
-  driftBoostChargeRate: 20
+  boostChargeRate: 2
+  driftBoostChargeRate: 10
   boostMaxSpeedKmh: 280
   uphillAngleThreshold: 5
   uphillForceMultiplier: 10
@@ -458,27 +458,22 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  boosterLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  jumpLayer:
-    serializedVersion: 2
-    m_Bits: 512
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 1024
-  groundRayDistance: 0.8
   boxCastCenter: {x: 0, y: 0.5, z: 0}
   boxCastSize: {x: 2.25, y: 0.5, z: 3.25}
   boxCastDistance: 1
-  rotationCorrectionSpeed: 2
-  downwardForce: 10
-  wallBounceFactor: 0.7
-  airGravityMultiplier: 0.7
-  airControlTorque: 5
+  groundRayDistance: 0.8
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  jumpLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  boosterLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &3506412311101806673
 MonoBehaviour:
   m_ObjectHideFlags: 0
