@@ -8,7 +8,7 @@ public class PlayerSlot : MonoBehaviour
     [SerializeField] public PlayerPanel playerPanel;
     public bool IsEmpty => playerPanel == null; // playerPanel이 null이면 true 반환
 
-    public PlayerPanel CreatePlayerPanel()
+    public void CreatePlayerPanel()
     {
         if (playerPanel == null) // 현재 슬롯이 비어있다면
         {
@@ -16,7 +16,7 @@ public class PlayerSlot : MonoBehaviour
             instancePanel.transform.SetParent(gameObject.transform);
             playerPanel = instancePanel.GetComponent<PlayerPanel>();
         }
-        return playerPanel; // 생성된 패널 반환
+        //return playerPanel; // 생성된 패널 반환
     }
 
     public void ClearPlayerPanel()
