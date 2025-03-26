@@ -13,7 +13,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Shortcut_stairsMat
-    second: {fileID: 2100000, guid: b211b093c81534d579b78038e711a893, type: 2}
+    second: {fileID: 2100000, guid: bb62f26bbf5764eb3a3fc0591de222a3, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
