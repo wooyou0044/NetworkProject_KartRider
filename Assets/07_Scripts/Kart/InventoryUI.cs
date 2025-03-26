@@ -13,14 +13,25 @@ public class InventoryUI : MonoBehaviour
     // 슬롯에 들어갈 아이템 이미지
     [SerializeField] Sprite itemImg;
 
+    [SerializeField] GameObject boostSpeed;
+
     TestCHMKart kartCtrl;
 
     bool isItemUseNotYet;
     float blinkSpeed = 0.5f;
 
+    Animator boostAni;
+    Image boostSpeedImg;
+
     void Start()
     {
         //itemCount = 0;
+
+        boostAni = boostSpeed.GetComponent<Animator>();
+        boostSpeedImg = boostSpeed.GetComponent<Image>();
+
+        boostAni.enabled = false;
+        boostSpeedImg.enabled = false;
     }
 
     void Update()
@@ -56,6 +67,17 @@ public class InventoryUI : MonoBehaviour
             }
 
             kartCtrl.isBoostUsed = false;
+        }
+
+        if(kartCtrl != null && kartCtrl.isBoostTriggered == true)
+        {
+            boostAni.enabled = true;
+            boostSpeedImg.enabled = true;
+        }
+        if (kartCtrl != null && kartCtrl.isBoostTriggered == false)
+        {
+            boostAni.enabled = false;
+            boostSpeedImg.enabled = false;
         }
     }
 

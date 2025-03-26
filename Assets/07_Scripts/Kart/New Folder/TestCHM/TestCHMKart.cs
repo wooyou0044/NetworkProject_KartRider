@@ -9,6 +9,7 @@ public class TestCHMKart : MonoBehaviour
 
     [Header("카트 구성 요소")]
     [SerializeField] private GameObject wheels;   // 바퀴 오브젝트
+    [SerializeField] GameObject kartBody; // 카트 바디 오브젝트
 
     [Header("이동 설정")]
     [SerializeField] private float maxSpeedKmh = 200f;           // 최대 속도
@@ -49,6 +50,7 @@ public class TestCHMKart : MonoBehaviour
     public bool isBoostCreate { get; set; }    // 드리프트 아이템 생성 가능 여부
     public float boostGauge { get; private set; }                // 현재 부스트 게이지
     public bool isBoostUsed { get; set; }
+    public bool isRacingStart { get; set; }
 
     private float driftDuration = 4f;  // 부스터 지속 시간 (예: 총 4초, 2초 가속, 2초 감속)
     private CHMTestWheelController wheelCtrl;  // 바퀴 제어 스크립트
@@ -71,11 +73,12 @@ public class TestCHMKart : MonoBehaviour
     private float currentMaxSpeed;//부스트,기본 최대속도 판단해서 담김
     public AnimationCurve boostCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);  // 0초에 0, 1초에 1 값을 가진 부드러운 커브
 
-
     /* Network Instantiate */
     private Transform _playerParent;
     private Transform _tr;
     private PhotonView _photonView;
+
+    KartBodyController kartBodyCtrl;
 
     #endregion
 
@@ -84,6 +87,7 @@ public class TestCHMKart : MonoBehaviour
     private void Awake()
     {
         wheelCtrl = wheels.GetComponent<CHMTestWheelController>(); // 바퀴 컨트롤러 참조
+        kartBodyCtrl = kartBody.GetComponent<KartBodyController>();
         rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
 
         /* TODO : 포톤 붙일때 수정해주기 */
@@ -114,6 +118,11 @@ public class TestCHMKart : MonoBehaviour
         {
             return;
         }
+
+        //if(isRacingStart == false)
+        //{
+        //    return;
+        //}
 
         // 입력값 읽어오기
         currentSteerInput = Input.GetAxis("Horizontal");
@@ -173,6 +182,9 @@ public class TestCHMKart : MonoBehaviour
         // LeftControl 키와 부스트 게이지 최대치 시 부스터 기본 발동
         if (Input.GetKeyDown(KeyCode.LeftControl) && boostCount > 0)
         {
+            // 램프 TrilRenderer 실행
+            kartBodyCtrl.SetLampTrailActive(true);
+
             StartBoost(boostDuration);
             boostCount--;
             isBoostUsed = true;
@@ -374,6 +386,9 @@ public class TestCHMKart : MonoBehaviour
             rigid.velocity = transform.forward * newSpeed;
             yield return null;
         }
+
+        // 램프 TrailRenderer 끄기
+        kartBodyCtrl.SetLampTrailActive(false);
 
         // 감속이 끝났으면 부스터 종료 플래그 해제
         isBoostTriggered = false;
