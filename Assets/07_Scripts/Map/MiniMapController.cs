@@ -4,15 +4,35 @@ using UnityEngine;
 
 public class MiniMapController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public Camera miniMapCamera;
+    public Transform toFollow;
+
+    [Range(100f, 1000f)] public float upPosition;
+    
+    public void SetFollower(Transform someKart)
     {
-        
+        toFollow = someKart;
+        SetCameraPos(toFollow);
+    }
+
+    private void SetCameraPos(Transform syncTarget)
+    {
+        miniMapCamera.gameObject.SetActive(true);
+        SyncPos(syncTarget);
+    }
+
+    private void SyncPos(Transform syncTarget)
+    {
+        Vector3 upPos = new Vector3(0, upPosition, 0);
+        miniMapCamera.transform.position = syncTarget.transform.position + upPos;
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-        
+        if (toFollow != null)
+        {
+            SyncPos(toFollow);            
+        }
     }
 }

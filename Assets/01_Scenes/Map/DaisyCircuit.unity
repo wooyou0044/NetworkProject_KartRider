@@ -790,7 +790,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 322685746}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Players
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1161,6 +1161,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 917f653e31e064e5b837a1a40e665b5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  miniMapCamera: {fileID: 1454443287}
+  toFollow: {fileID: 0}
+  upPosition: 150
 --- !u!1 &633263529
 GameObject:
   m_ObjectHideFlags: 0
@@ -1525,6 +1528,7 @@ MonoBehaviour:
   inventoryUI: {fileID: 1823722457}
   timeUIController: {fileID: 333115318}
   mainTextController: {fileID: 1203804154}
+  miniMapController: {fileID: 500467822}
   mapManager: {fileID: 1236464623}
   kartPrefab: {fileID: 6750277665416376479, guid: b1aff00853afc7641ae0d58aebea703b, type: 3}
   characterPrefab: {fileID: 3662294271039095178, guid: 92e11ca434aeb40b0aaa867626d01af8, type: 3}
@@ -2847,7 +2851,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1454443286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2860,7 +2864,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RenderShadows: 1
+  m_RenderShadows: 0
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
@@ -2931,7 +2935,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 72
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 3402f2e961c1b41b4a48e105bf0dfcff, type: 2}
   m_TargetDisplay: 0
@@ -2952,7 +2956,7 @@ Transform:
   m_GameObject: {fileID: 1454443285}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 25, y: 720, z: 200}
+  m_LocalPosition: {x: 30, y: 720, z: 200}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3503,6 +3507,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5232637417378233989, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
+    - target: {fileID: 5232637417378233989, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_IncludeLayers.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 5332625253606434460, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -3611,6 +3623,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1755363329}
+    - target: {fileID: 7774180649617283571, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_IncludeLayers.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 7874569781456211415, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh
       value: 
