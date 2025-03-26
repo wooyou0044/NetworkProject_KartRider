@@ -379,8 +379,8 @@ MonoBehaviour:
   boostDuration: 1.8
   momentboostDuration: 1.2
   maxBoostGauge: 100
-  boostChargeRate: 10
-  driftBoostChargeRate: 20
+  boostChargeRate: 2
+  driftBoostChargeRate: 10
   boostMaxSpeedKmh: 280
   uphillAngleThreshold: 5
   uphillForceMultiplier: 10
