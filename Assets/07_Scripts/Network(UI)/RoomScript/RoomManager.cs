@@ -4,6 +4,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
@@ -16,9 +17,15 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     private IEnumerator Start()
     {
-        yield return new WaitUntil(() => PhotonNetwork.IsConnectedAndReady);
         photonView = GetComponent<PhotonView>();
+        yield return new WaitUntil(() => PhotonNetwork.IsConnectedAndReady);
+        RoomInfoUpdate();
+        //AssignLocalPlayerToSlot();
         InitializeUI();
+        if(PhotonNetwork.LocalPlayer != null)
+        {
+            AssignLocalPlayerToSlot();
+        }
     }
 
     private void InitializeUI()
@@ -28,7 +35,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
             roomUIManger.startBtn.gameObject.SetActive(true);
             roomUIManger.readyBtn.gameObject.SetActive(false);
             roomUIManger.startBtn.interactable = true;
-            InitializeMasterPanel();
+            
         }
         else
         {
@@ -36,14 +43,44 @@ public class RoomManager : MonoBehaviourPunCallbacks
             roomUIManger.readyBtn.gameObject.SetActive(true);
         }
     }
-    private void InitializeMasterPanel()
+
+    private void AssignLocalPlayerToSlot()
     {
-        foreach (var slot in playerSlots)
+        foreach(var slot in playerSlots)
         {
-            if (slot.IsEmpty)
+            if (slot.IsEmpty) // 슬롯이 비어 있는지 확인
             {
-                slot.AssignPlayer(PhotonNetwork.LocalPlayer.ActorNumber, PhotonNetwork.LocalPlayer.NickName);
+                int slotIndex = Array.IndexOf(playerSlots, slot);
+                Debug.Log($"{slotIndex}번 슬롯에 할당됨");
+
+                // 로컬에서 슬롯 초기화
+                slot.CreatePlayerPanel();
+                slot.playerPanel.UpdatePanel(PhotonNetwork.LocalPlayer.NickName);
+
+                // 다른 클라이언트에 슬롯 정보 전송
+                photonView.RPC("UpdateSlotForAllClients", RpcTarget.All, slotIndex,PhotonNetwork.LocalPlayer.NickName);
                 break;
+            }
+        }
+    }
+
+    [PunRPC]
+    public void UpdateSlotForAllClients(int slotIndex, string playerName)
+    {
+        if (slotIndex >= 0 && slotIndex < playerSlots.Length) // 슬롯 인덱스 유효성 확인
+        {
+            Debug.Log($"{slotIndex}번 슬롯 업데이트 중");
+
+            // 패널이 이미 생성된 경우 중복 생성 방지
+            if (playerSlots[slotIndex].playerPanel == null)
+            {
+                playerSlots[slotIndex].CreatePlayerPanel();
+            }
+
+            // 기존 데이터를 덮어쓰지 않도록 데이터 갱신만 수행
+            if (playerSlots[slotIndex].playerPanel.PlayerNameText.text != playerName)
+            {
+                playerSlots[slotIndex].playerPanel.UpdatePanel(playerName);
             }
         }
     }
@@ -52,7 +89,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            ResetAndBroadcastUI(); // 새로운 방장이 슬롯을 초기화
+            //ResetAndBroadcastUI(); // 새로운 방장이 슬롯을 초기화
         }
 
     }
@@ -60,17 +97,42 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            ResetAndBroadcastUI();
+            // 현재 슬롯 정보를 새로운 플레이어에게 전달
+            SyncSlotsForNewPlayer(newPlayer);
+        }
+
+    }
+    private void SyncSlotsForNewPlayer(Player newPlayer)
+    {
+        for (int i = 0; i < playerSlots.Length; i++)
+        {
+            if (!playerSlots[i].IsEmpty) // 비어 있지 않은 슬롯만 전송
+            {
+                photonView.RPC("UpdateSlotForNewPlayer", newPlayer, i, playerSlots[i].playerPanel.PlayerNameText.text);
+            }
+        }
+    }
+    [PunRPC]
+    public void UpdateSlotForNewPlayer(int slotIndex, string playerName)
+    {
+        if (slotIndex >= 0 && slotIndex < playerSlots.Length) // 슬롯 유효성 확인
+        {
+            if (playerSlots[slotIndex].playerPanel == null) // 패널이 없는 경우 생성
+            {
+                playerSlots[slotIndex].CreatePlayerPanel();
+            }
+
+            // 슬롯에 데이터 업데이트
+            playerSlots[slotIndex].playerPanel.UpdatePanel(playerName);
         }
     }
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            ResetAndBroadcastUI();
+            //ResetAndBroadcastUI();
         }
     }
-    
     private void ResetAndBroadcastUI()
     {
         foreach (var slot in playerSlots)
@@ -89,26 +151,26 @@ public class RoomManager : MonoBehaviourPunCallbacks
                 }
             }
         }
-        photonView.RPC("UpdateUIForAllClients", RpcTarget.Others, PhotonNetwork.PlayerList);
+        //photonView.RPC("UpdateUIForAllClients", RpcTarget.Others, PhotonNetwork.PlayerList);
     }
     [PunRPC]
     public void UpdateUIForAllClients(Player[] players)
     {
-        foreach (var slot in playerSlots)
-        {
-            slot.ClearPlayerPanel(); // 모든 슬롯 초기화
-        }
-        foreach (var player in players)
-        {
-            foreach (var slot in playerSlots)
-            {
-                if (slot.IsEmpty)
-                {
-                    slot.AssignPlayer(player.ActorNumber, player.NickName);
-                    break;
-                }
-            }
-        }
+        //foreach (var slot in playerSlots)
+        //{
+        //    slot.ClearPlayerPanel(); // 모든 슬롯 초기화
+        //}
+        //foreach (var player in players)
+        //{
+        //    foreach (var slot in playerSlots)
+        //    {
+        //        if (slot.IsEmpty)
+        //        {
+        //            slot.AssignPlayer(player.ActorNumber, player.NickName);
+        //            break;
+        //        }
+        //    }
+        //}
     }
 
     public void OutRoomBtn()
