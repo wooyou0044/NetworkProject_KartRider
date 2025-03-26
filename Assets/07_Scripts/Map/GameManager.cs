@@ -1,16 +1,22 @@
 using System.Collections;
+using System.Collections.Generic;
 using Cinemachine;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 
-public class GameManager : MonoBehaviourPunCallbacks
+public class GameManager : MonoBehaviour
 {
-    [Header("인게임 관련 UI, 카메라, 매니저")] 
+    [Header("카메라")]
     public CinemachineVirtualCamera virtualCamera;
+
+    [Header("인게임 UI 요소")] 
     public KartUIController kartUIController;
     public InventoryUI inventoryUI;
     public TimeUIController timeUIController;
+    public MainTextController mainTextController;
+    
+    [Header("인게임 요소들 매니저")]
     public MapManager mapManager;
     
     // ToDo 실제 네트워크 연결하면 네트워크 상 정보로 바꿀 것
@@ -18,12 +24,24 @@ public class GameManager : MonoBehaviourPunCallbacks
     public GameObject kartPrefab;
     public GameObject characterPrefab;
 
+    [Header("게임 진행과 관련한 변수")]
+    public int startCountDownSeconds = 3;
+    public int retireCountDownSeconds = 10;
+    
     private PhotonView _gameManagerView;
     private Player _winner;
+
+    // 방장이 가지고 있는 준비된 참가자들 리스트
+    private List<Player> _readyPlayers;
+
+    private void Awake()
+    {
+        _readyPlayers = new List<Player>();
+    }
     
     private void Start()
     {
-        // ToDo 실제 네트워크 연결하면 네트워크 상 정보로 바꿀 것
+        // ToDo 실제 네트워크 연결하면 네트워크 상 캐릭터, 카트 정보로 바꿀 것
         _gameManagerView = GetComponent<PhotonView>();
         DefaultPool pool = PhotonNetwork.PrefabPool as DefaultPool;
         if (pool != null)
@@ -31,19 +49,19 @@ public class GameManager : MonoBehaviourPunCallbacks
             pool.ResourceCache.Add(kartPrefab.name, kartPrefab);
             pool.ResourceCache.Add(characterPrefab.name, characterPrefab);
         }
+
+        // 방에 있다가 씬 전환인 경우 카트 생성 호출
+        if (PhotonNetwork.InRoom)
+        {
+            InstantiateObject();
+        }
     }
     
-    // ToDo 실제 네트워크 연결시 Intstantiate 어떻게 설정할지 체크 필요
-    public override void OnJoinedRoom()
+    public void InstantiateObject()
     {
         GameObject kart = PhotonNetwork.Instantiate(kartPrefab.name, Vector3.zero, Quaternion.identity);
         PhotonNetwork.Instantiate(characterPrefab.name, Vector3.zero, Quaternion.identity);
         StartCoroutine(PlaceToMap(kart));
-    }
-    
-    public override void OnJoinRoomFailed(short returnCode, string message)
-    {
-        Debug.Log("방 참여 실패, code : " + returnCode + " msg : " + message);
     }
 
     IEnumerator PlaceToMap(GameObject kart)
@@ -61,6 +79,50 @@ public class GameManager : MonoBehaviourPunCallbacks
         int num = kartOwner.ActorNumber - 1;
         
         mapManager.PlaceToStartPos(num, kart);
+        SendLoadFinished();
+    }
+    
+    /* 방장 클라에 준비 다 되었다고 쏘기 */
+    public void SendLoadFinished()
+    {
+        _gameManagerView.RPC("ReceiveLoadFinished", RpcTarget.MasterClient, PhotonNetwork.LocalPlayer);
+    }
+
+    /* 방장 클라가 방에 접속한 인원들 모두 로딩 되었는지 확인한다 */
+    [PunRPC]
+    public void ReceiveLoadFinished(Player player)
+    {
+        _readyPlayers.Add(player);
+
+        int playerCount = PhotonNetwork.CurrentRoom.PlayerCount;
+
+        Debug.Log("playerCount : " + playerCount);
+        Debug.Log("ReadyPlayers : " + _readyPlayers.Count);
+        
+        if (_readyPlayers.Count == playerCount)
+        {
+            _gameManagerView.RPC("StartCountDown", RpcTarget.AllViaServer);
+        }
+    }
+    
+    [PunRPC]
+    public void StartCountDown()
+    {
+        StartCoroutine("CountDown");
+    }
+    
+    // ToDo : 카운트 다운 끝나면 움직이기, 실제 3초보단 살짝 길겠지만, 굳이 필요할까? 
+    IEnumerator CountDown()
+    {
+        while(startCountDownSeconds > 0)
+        {
+            StartCoroutine(mainTextController.ShowTextOneSecond(startCountDownSeconds.ToString()));
+            startCountDownSeconds--;
+            yield return new WaitForSeconds(1f);
+        }
+        
+        // 카트 움직이기
+        StartCoroutine(mainTextController.ShowTextOneSecond("GO!"));
         timeUIController.StartTimer();
     }
     
