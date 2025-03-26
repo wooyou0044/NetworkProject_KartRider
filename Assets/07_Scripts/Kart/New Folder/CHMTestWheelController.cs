@@ -1,105 +1,104 @@
-//using UnityEngine;
-
-//public class CHMTestWheelController : MonoBehaviour
-//{
-
-//    [Header("Steering Settings")]
-//    [Tooltip("ÃÖ¼Ò Á¶Çâ °¢µµ")]
-//    public float steerAngleFrontMin = -45f;
-//    [Tooltip("ÃÖ´ë Á¶Çâ °¢µµ")]
-//    public float steerAngleFrontMax = 45f;
-
-//    [Tooltip("½ºÅ°µå ¸¶Å© È¿°ú")]
-//    public GameObject[] skidMarks;
-
-//    public float maxTorque = 30f; // ÃÖ´ë ÅäÅ©
-//    public float maxSteerAngle = 30f; // ÃÖ´ë Á¶Çâ °¢µµ
-//    public Transform[] wheels; // ¹ÙÄû Æ®·£½ºÆû ¹è¿­ (0: ¿ŞÂÊ ¾Õ¹ÙÄû, 1: ¿À¸¥ÂÊ ¾Õ¹ÙÄû, 2: ¿ŞÂÊ µŞ¹ÙÄû, 3: ¿À¸¥ÂÊ µŞ¹ÙÄû)
-
-//    // Ä«Æ® ÄÁÆ®·Ñ·¯ ÂüÁ¶
-//    private TestCHMKart kartController;
-
-//    void Start()
-//    {
-//        // Ä«Æ® ÄÁÆ®·Ñ·¯ ÂüÁ¶ °¡Á®¿À±â
-//        kartController = GetComponentInParent<TestCHMKart>();
-
-//        // ½ºÅ°µå ¸¶Å© ÃÊ±â ºñÈ°¼ºÈ­
-//        SetSkidMarkActive(false);
-//    }
-
-
-//    public void SetSkidMarkActive(bool isActive)
-//    {
-//        foreach (GameObject skidMark in skidMarks)
-//        {
-//            skidMark.GetComponent<TrailRenderer>().emitting = isActive;
-//        }
-//    }
-
-//    public void UpdateAndRotateWheels(float steerInput, float motorInput, float speed, bool isDrifting)
-//    {
-//        float steeringSensitivity = 1.0f; // ÇÊ¿ä¿¡ µû¶ó Á¶Á¤
-
-//        // Àü¸é ¹ÙÄû(¿ŞÂÊ ¾Õ, ¿À¸¥ÂÊ ¾Õ)¸¦ Á¶ÇâÇÕ´Ï´Ù.
-//        if (wheels.Length >= 2)
-//        {
-//            // ¿ŞÂÊ ¾Õ¹ÙÄû
-//            float leftSteerAngle = Mathf.Lerp(steerAngleFrontMin, steerAngleFrontMax, (steerInput + 1f) / 2f) * steeringSensitivity;
-//            wheels[0].localRotation = Quaternion.Euler(0, leftSteerAngle-90, wheels[0].localRotation.eulerAngles.z);
-
-//            // ¿À¸¥ÂÊ ¾Õ¹ÙÄû
-//            float rightSteerAngle = Mathf.Lerp(steerAngleFrontMin, steerAngleFrontMax, (steerInput + 1f) / 2f) * steeringSensitivity;
-//            wheels[1].localRotation = Quaternion.Euler(0, rightSteerAngle-90, wheels[1].localRotation.eulerAngles.z);
-//        }
-
-//        // ÀüÃ¼ ¹ÙÄû¿¡ ´ëÇØ È¸Àü(È¸ÀüÃàÀº ·ÎÄÃ XÃà)À» Àû¿ëÇÕ´Ï´Ù.
-//        // È¸Àü°¢Àº ¼Óµµ¿Í motorInput(ÀüÁø ÀÔ·Â)À» ¹İ¿µÇÏµµ·Ï ÇÕ´Ï´Ù.
-//        float spinAngle = Mathf.Abs(speed) * Time.deltaTime * maxTorque; // (20f´Â ÀÓÀÇÀÇ »ó¼ö·Î »óÈ²¿¡ ¸Â°Ô Á¶Á¤)
-//        foreach (Transform wheel in wheels)
-//        {
-//            // ÀüÁøÀÌ¸é ¾ÕÀ¸·Î, ÈÄÁøÀÌ¸é ¹İ´ë·Î È¸ÀüÇÏµµ·Ï (ÇÊ¿ä ½Ã Ãß°¡ Á¶°Ç Ã³¸® °¡´É)
-//            wheel.Rotate(Vector3.forward, spinAngle, Space.Self);
-//        }
-
-//        // µå¸®ÇÁÆ® »óÅÂ¶ó¸é ½ºÅ°µå ¸¶Å© È¿°ú È°¼ºÈ­
-//        SetSkidMarkActive(isDrifting);
-//    }
-
-//}
 using UnityEngine;
 
 public class CHMTestWheelController : MonoBehaviour
 {
     [Header("Steering Settings")]
-    [Tooltip("ÃÖ¼Ò Á¶Çâ °¢µµ")]
+    [Tooltip("ìµœì†Œ ì¡°í–¥ ê°ë„")]
     public float steerAngleFrontMin = -45f;
-    [Tooltip("ÃÖ´ë Á¶Çâ °¢µµ")]
+    [Tooltip("ìµœëŒ€ ì¡°í–¥ ê°ë„")]
     public float steerAngleFrontMax = 45f;
 
-    [Tooltip("½ºÅ°µå ¸¶Å© È¿°ú")]
+    [Tooltip("ìŠ¤í‚¤ë“œ ë§ˆí¬ íš¨ê³¼")]
     public GameObject[] skidMarks;
 
-    public float maxTorque = 30f; // ÃÖ´ë ÅäÅ©
-    public float maxSteerAngle = 30f; // ÃÖ´ë Á¶Çâ °¢µµ
-    public Transform[] wheels; // ¹ÙÄû Æ®·£½ºÆû ¹è¿­ (0: ¿ŞÂÊ ¾Õ¹ÙÄû, 1: ¿À¸¥ÂÊ ¾Õ¹ÙÄû, 2: ¿ŞÂÊ µŞ¹ÙÄû, 3: ¿À¸¥ÂÊ µŞ¹ÙÄû)
+    public float maxTorque = 30f; // ìµœëŒ€ í† í¬
+    public float maxSteerAngle = 30f; // ìµœëŒ€ ì¡°í–¥ ê°ë„
+    public Transform[] wheels; // ë°”í€´ íŠ¸ëœìŠ¤í¼ ë°°ì—´ (0: ì™¼ìª½ ì•ë°”í€´, 1: ì˜¤ë¥¸ìª½ ì•ë°”í€´, 2: ì™¼ìª½ ë’·ë°”í€´, 3: ì˜¤ë¥¸ìª½ ë’·ë°”í€´)
+    public GameObject skidMark;
+    public Transform[] backWheels; // ë’· ë°”í€´ íŠ¸ëœìŠ¤í¼
+    public LayerMask groundLayer;
 
-    [Header("Anti-Roll Settings")]
-    [Tooltip("Â÷Ã¼ ·Ñ º¸Á¤¿¡ »ç¿ëÇÒ Èû (°ªÀÌ Å¬¼ö·Ï ·Ñ º¸Á¤ °­µµ°¡ °­ÇØÁı´Ï´Ù)")]
-    public float antiRollForce = 5000f;
 
-    // Ä«Æ® ÄÁÆ®·Ñ·¯ ¹× Rigidbody ÂüÁ¶
+    // ì¹´íŠ¸ ì»¨íŠ¸ë¡¤ëŸ¬ ì°¸ì¡°
     private TestCHMKart kartController;
-    private Rigidbody rb;
+    bool isGround;
+
+    SkidMark curLeftSkid;
+    SkidMark curRightSkid;
+
+    GameObject left;
+    GameObject right;
+    GameObject skidMarkManager;
+
+    [SerializeField] int poolSize = 50;
+    public SkidMarkPool skidMarkPool;
+
+    int curSkidMarkCount;
 
     void Start()
     {
-        // ºÎ¸ğ °´Ã¼¿¡¼­ Ä«Æ® ÄÁÆ®·Ñ·¯¿Í Rigidbody °¡Á®¿À±â
+        // ì¹´íŠ¸ ì»¨íŠ¸ë¡¤ëŸ¬ ì°¸ì¡° ê°€ì ¸ì˜¤ê¸°
         kartController = GetComponentInParent<TestCHMKart>();
-        rb = GetComponentInParent<Rigidbody>();
 
-        // ½ºÅ°µå ¸¶Å© ÃÊ±â ºñÈ°¼ºÈ­
+        // ìŠ¤í‚¤ë“œ ë§ˆí¬ ì´ˆê¸° ë¹„í™œì„±í™”
         SetSkidMarkActive(false);
+
+        skidMarkManager = GameObject.FindGameObjectWithTag("SkidMark");
+
+        skidMarkPool = new SkidMarkPool(skidMark, poolSize, skidMarkManager.transform);
+    }
+
+    void Update()
+    {
+        if(kartController.isDrifting == true && CheckGround())
+        {
+            if (curLeftSkid == null && curRightSkid == null)
+            {
+                //left = Instantiate(skidMark);
+                //left.transform.position += new Vector3(0, 0.04f, 0);
+                //curLeftSkid = left.GetComponent<SkidMark>();
+                //right = Instantiate(skidMark);
+                //right.transform.position += new Vector3(0, 0.04f, 0);
+                //curRightSkid = right.GetComponent<SkidMark>();
+
+                left = skidMarkPool.GetSkidMark();
+                left.transform.position += new Vector3(0, 0.06f, 0);
+                left.SetActive(true);
+                curLeftSkid = left.GetComponent<SkidMark>();
+
+                right = skidMarkPool.GetSkidMark();
+                right.transform.position += new Vector3(0, 0.06f, 0);
+                right.SetActive(true);
+                curRightSkid = right.GetComponent<SkidMark>();
+
+                skidMarkPool.ReturnSkidMark(left);
+                skidMarkPool.ReturnSkidMark(right);
+
+                if (curSkidMarkCount < 8)
+                {
+                    curSkidMarkCount += 2;
+                }
+                else
+                {
+                    Debug.Log("¸®¼Â");
+                    curLeftSkid.ResetSkidMarks();
+                    curRightSkid.ResetSkidMarks();
+                }
+            }
+
+            curLeftSkid.AddSkidMark(backWheels[0].position);
+            curRightSkid.AddSkidMark(backWheels[1].position);
+        }
+        else
+        {
+            curLeftSkid = null;
+            curRightSkid = null;
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        
     }
 
     public void SetSkidMarkActive(bool isActive)
@@ -111,33 +110,46 @@ public class CHMTestWheelController : MonoBehaviour
     }
 
     /// <summary>
-    /// ÀÔ·Â°ªÀ» ±â¹İÀ¸·Î ¹ÙÄûÀÇ È¸Àü ¹× Á¶Çâ, È¸Àü(spin) Ã³¸®ÇÏ°í ±âº» ¾ÈÆ¼·Ñ ±â´ÉÀ» Àû¿ëÇÕ´Ï´Ù.
+    /// ì…ë ¥ê°’ì„ ê¸°ë°˜ìœ¼ë¡œ ë°”í€´ì˜ íšŒì „ ë° ì¡°í–¥, íšŒì „(spin) ì²˜ë¦¬í•˜ê³  ê¸°ë³¸ ì•ˆí‹°ë¡¤ ê¸°ëŠ¥ì„ ì ìš©í•©ë‹ˆë‹¤.
     /// </summary>
     public void UpdateAndRotateWheels(float steerInput, float motorInput, float speed, bool isDrifting)
     {
-        float steeringSensitivity = 1.0f; // ÇÊ¿ä¿¡ µû¶ó Á¶Á¤
+        float steeringSensitivity = 1.0f; // í•„ìš”ì— ë”°ë¼ ì¡°ì •
 
-        // Àü¸é ¹ÙÄû(¿ŞÂÊ ¾Õ, ¿À¸¥ÂÊ ¾Õ) Á¶Çâ Ã³¸®
+        // ì „ë©´ ë°”í€´(ì™¼ìª½ ì•, ì˜¤ë¥¸ìª½ ì•) ì¡°í–¥ ì²˜ë¦¬
         if (wheels.Length >= 2)
         {
-            // ¿ŞÂÊ ¾Õ¹ÙÄû
+            // ì™¼ìª½ ì•ë°”í€´
             float leftSteerAngle = Mathf.Lerp(steerAngleFrontMin, steerAngleFrontMax, (steerInput + 1f) / 2f) * steeringSensitivity;
             wheels[0].localRotation = Quaternion.Euler(0, leftSteerAngle - 90, wheels[0].localRotation.eulerAngles.z);
 
-            // ¿À¸¥ÂÊ ¾Õ¹ÙÄû
+            // ì˜¤ë¥¸ìª½ ì•ë°”í€´
             float rightSteerAngle = Mathf.Lerp(steerAngleFrontMin, steerAngleFrontMax, (steerInput + 1f) / 2f) * steeringSensitivity;
             wheels[1].localRotation = Quaternion.Euler(0, rightSteerAngle - 90, wheels[1].localRotation.eulerAngles.z);
         }
 
-        // ¸ğµç ¹ÙÄû¿¡ ´ëÇØ È¸Àü(spin) Àû¿ë
+        // ëª¨ë“  ë°”í€´ì— ëŒ€í•´ íšŒì „(spin) ì ìš©
         float spinAngle = Mathf.Abs(speed) * Time.deltaTime * maxTorque;
         foreach (Transform wheel in wheels)
         {
-            // ÀüÁøÀÌ¸é ¾ÕÀ¸·Î, ÈÄÁøÀÌ¸é ¹İ´ë·Î È¸ÀüÇÏµµ·Ï Á¶°Ç Ãß°¡ °¡´É
+            // ì „ì§„ì´ë©´ ì•ìœ¼ë¡œ, í›„ì§„ì´ë©´ ë°˜ëŒ€ë¡œ íšŒì „í•˜ë„ë¡ ì¡°ê±´ ì¶”ê°€ ê°€ëŠ¥
             wheel.Rotate(Vector3.forward, spinAngle, Space.Self);
         }
+        // ë“œë¦¬í”„íŠ¸ ìƒíƒœë¼ë©´ ìŠ¤í‚¤ë“œ ë§ˆí¬ íš¨ê³¼ í™œì„±í™”
+        //SetSkidMarkActive(isDrifting);
+    }
 
-        // µå¸®ÇÁÆ® »óÅÂ¶ó¸é ½ºÅ°µå ¸¶Å© È°¼ºÈ­
-        SetSkidMarkActive(isDrifting);        
-    }   
+    bool CheckGround()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, 0.5f, groundLayer))
+        {
+            isGround = true;
+        }
+        else
+        {
+            isGround = false;
+        }
+        return isGround;
+    }
 }

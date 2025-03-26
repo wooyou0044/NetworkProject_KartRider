@@ -14,11 +14,52 @@ public class WheelController : MonoBehaviour
 
     [Tooltip("스키드 마크 효과")]
     public GameObject[] skidMarks;
+    public GameObject skidMark;
+
+    public Transform[] backWheelPos;
+
+    KartController kartCtrl;
+    SkidMark skidMarkCtrl;
+
+    GameObject skidBack1;
+    GameObject skidBack2;
+
+    void Awake()
+    {
+        kartCtrl = transform.GetComponentInParent<KartController>();
+        skidMarkCtrl = skidMark.GetComponent<SkidMark>();
+    }
 
     void Start()
     {
         // 스키드마크 초기 비활성화
         SetSkidMarkActive(false);
+    }
+
+    void Update()
+    {
+        if(kartCtrl == null)
+        {
+            kartCtrl = transform.GetComponentInParent<KartController>();
+        }
+        else
+        {
+            if(kartCtrl.isDrifting == true)
+            {
+                skidBack1 = Instantiate(skidMark, backWheelPos[0].position, backWheelPos[0].rotation);
+                skidBack2 = Instantiate(skidMark, backWheelPos[1].position, backWheelPos[1].rotation);
+                if(skidBack1 != null && skidBack2 != null)
+                {
+                    skidMarkCtrl.AddSkidMark(skidBack1.transform.position);
+                    skidMarkCtrl.AddSkidMark(skidBack2.transform.position);
+                }
+            }
+            else
+            {
+                skidBack1 = null;
+                skidBack2 = null;
+            }
+        }
     }
 
     public void SetSkidMarkActive(bool isActive)
