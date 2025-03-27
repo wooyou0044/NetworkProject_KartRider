@@ -39,13 +39,10 @@ MonoBehaviour:
   - DestroySpaceship
   - Fire
   - RespawnSpaceship
-  - UpdatePlayerPanel
-  - NotifyPlayerLeft
-  - UpdatePlayerPanelRPC
-  - UpdateUIForAllClients
-  - UpdateSlotForAllClients
-  - UpdateSlotForNewPlayer
-  - SetOwnInfo
+  - OnSomePlayerFinish
+  - StartTimer
+  - ReceiveLoadFinished
+  - StartCountDown
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
