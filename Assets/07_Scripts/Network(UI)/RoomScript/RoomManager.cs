@@ -4,7 +4,6 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
-using System;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
@@ -141,7 +140,9 @@ public class RoomManager : MonoBehaviourPunCallbacks
         if(PhotonNetwork.IsMasterClient)
         {
             //인 게임으로 씬이동
-            //PhotonNetwork.LoadLevel("InGameScene");
+            Hashtable roomProperties = PhotonNetwork.CurrentRoom.CustomProperties;
+            
+            PhotonNetwork.LoadLevel("DaisyCircuit");
         }
     }
 
