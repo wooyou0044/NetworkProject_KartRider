@@ -68,6 +68,7 @@ public class TestCHMCamer : MonoBehaviour
             targetOffset.y = initialOffset.y + horizontalInput * 0.3f; // 기울기 효과 추가
             float lerpFactor = kartController.isDrifting ? Time.fixedDeltaTime / (smoothTime * 1.5f) : Time.fixedDeltaTime / smoothTime;
             transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, lerpFactor); ;
+            Debug.Log(lerpFactor + "  :  "  + Time.fixedDeltaTime);
         }
         else if (kartController.isDrifting)
         {
