@@ -517,7 +517,7 @@ MonoBehaviour:
   boostEffTransform:
   - {fileID: 584411992615349258}
   - {fileID: 4998595415529498555}
-  boostEffect: {fileID: 1104941332586078395, guid: 4a69d44a569a45b47973e90f26fed014, type: 3}
+  boostEffect: {fileID: 1900756431413560, guid: 529eb4216865eba419c1a4a68d0b0388, type: 3}
 --- !u!1 &1556149449001999350
 GameObject:
   m_ObjectHideFlags: 0
