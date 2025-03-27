@@ -5,9 +5,8 @@ using UnityEngine;
 public class KartBodyController : MonoBehaviour
 {
     [SerializeField] GameObject[] lampTrail;
-    //[SerializeField] Transform[] boostEffTransform;
-    //[SerializeField] GameObject boostEffect;
-    [SerializeField] GameObject[] boostEffect;
+    [SerializeField] Transform[] boostEffTransform;
+    [SerializeField] GameObject boostEffect;
 
     void Start()
     {
@@ -15,8 +14,7 @@ public class KartBodyController : MonoBehaviour
 
         //foreach(Transform parentTrans in boostEffTransform)
         //{
-        //    //Instantiate(boostEffect, parentTrans);
-        //    //boost.transform.eulerAngles += new Vector3(0, 0,-90); 
+        //    GameObject boost = Instantiate(boostEffect, parentTrans);
         //}
 
         //SetBoostEffectActive(false);
@@ -37,14 +35,16 @@ public class KartBodyController : MonoBehaviour
 
     public void SetBoostEffectActive(bool isActive)
     {
-        //foreach(Transform transform in boostEffTransform)
-        //{
-        //    transform.GetChild(0).gameObject.SetActive(isActive);
-        //}
-
-        foreach (GameObject boost in boostEffect)
+        if (boostEffTransform[0].childCount == 0)
         {
-            boost.SetActive(isActive);
+            foreach (Transform parentTrans in boostEffTransform)
+            {
+                GameObject boost = Instantiate(boostEffect, parentTrans);
+            }
+        }
+        foreach(Transform transform in boostEffTransform)
+        {
+            transform.GetChild(0).gameObject.SetActive(isActive);
         }
     }
 }
