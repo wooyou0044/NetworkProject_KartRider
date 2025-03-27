@@ -173,56 +173,6 @@ public class TestCHMKart : MonoBehaviour
     }
     #endregion
 
-    #region [키입력 함수 ]
-
-    private void HandleDriftInput(float steerInput)
-    {
-        // LeftShift 키와 조향 입력이 있을 때 드리프트 시작
-        if (Input.GetKeyDown(KeyCode.LeftShift) && Mathf.Abs(steerInput) > 0)
-        {
-            StartDrift(steerInput * currentDriftThreshold);
-        }
-
-        // 드리프트 중 추가 입력으로 드리프트 각도 업데이트
-        if (isDrifting && Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            UpdateDriftAngle();
-        }
-    }
-
-    private void HandleBoostInput()
-    {
-        // LeftControl 키와 부스트 게이지 최대치 시 부스터 기본 발동
-        if (Input.GetKeyDown(KeyCode.LeftControl) && boostCount > 0)
-        {
-            // 램프 TrilRenderer 실행
-            kartBodyCtrl.SetLampTrailActive(true);
-            kartBodyCtrl.SetBoostEffectActive(true);
-
-            StartBoost(boostDuration);
-            boostCount--;
-            isBoostUsed = true;
-        }
-        // 부스트 게이지 충전
-        if (currentMotorInput != 0 || isDrifting)
-        {
-            ChargeBoostGauge();
-        }
-
-        if (boostGauge >= maxBoostGauge)
-        {
-            isBoostCreate = true;
-            boostGauge = 0;
-            chargeAmount = 0;
-            if (boostCount < 2)
-            {
-                boostCount++;
-            }
-        }
-    }
-
-    #endregion
-
     #region [드리프트 관련 함수]
 
     // 전역 변수 (필요한 곳에 선언)
@@ -429,6 +379,10 @@ public class TestCHMKart : MonoBehaviour
         // LeftControl 키와 부스트 게이지 최대치 시 부스터 기본 발동
         if (Input.GetKeyDown(KeyCode.LeftControl) && boostCount > 0)
         {
+            // 램프 TrilRenderer 실행
+            kartBodyCtrl.SetLampTrailActive(true);
+            kartBodyCtrl.SetBoostEffectActive(true);
+
             StartBoost(boostDuration);
             boostCount--;
             isBoostUsed = true;
