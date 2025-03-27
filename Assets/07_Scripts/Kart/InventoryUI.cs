@@ -36,7 +36,7 @@ public class InventoryUI : MonoBehaviour
 
     void Update()
     {
-        if (kartCtrl != null)
+        if (kartCtrl != null && kartCtrl.isRacingStart == true)
         {
             driftDurationImg.fillAmount = (kartCtrl.boostGauge / kartCtrl.maxBoostGauge);     
         }
