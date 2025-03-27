@@ -184,6 +184,7 @@ public class TestCHMKart : MonoBehaviour
         {
             // 램프 TrilRenderer 실행
             kartBodyCtrl.SetLampTrailActive(true);
+            kartBodyCtrl.SetBoostEffectActive(true);
 
             StartBoost(boostDuration);
             boostCount--;
@@ -389,7 +390,7 @@ public class TestCHMKart : MonoBehaviour
 
         // 램프 TrailRenderer 끄기
         kartBodyCtrl.SetLampTrailActive(false);
-
+        kartBodyCtrl.SetBoostEffectActive(false);
         // 감속이 끝났으면 부스터 종료 플래그 해제
         isBoostTriggered = false;
         Debug.Log("부스트 종료");
