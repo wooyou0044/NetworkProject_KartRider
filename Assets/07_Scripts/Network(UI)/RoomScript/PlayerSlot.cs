@@ -6,17 +6,18 @@ using Photon.Pun;
 public class PlayerSlot : MonoBehaviour
 {
     [SerializeField] public PlayerPanel playerPanel;
+    public int actorNumber;
+    public string playerName;
     public bool IsEmpty => playerPanel == null; // playerPanel이 null이면 true 반환
 
-    public void CreatePlayerPanel()
+    public PlayerPanel CreatePlayerPanel()
     {
         if (playerPanel == null) // 현재 슬롯이 비어있다면
         {
             var instancePanel = PhotonNetwork.Instantiate("PlayerPanelPrefab", transform.position, Quaternion.identity);
-            instancePanel.transform.SetParent(gameObject.transform);
             playerPanel = instancePanel.GetComponent<PlayerPanel>();
         }
-        //return playerPanel; // 생성된 패널 반환
+        return playerPanel; // 생성된 패널 반환
     }
 
     public void ClearPlayerPanel()
