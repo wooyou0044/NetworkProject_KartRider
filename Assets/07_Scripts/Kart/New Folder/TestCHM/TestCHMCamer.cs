@@ -42,7 +42,7 @@ public class TestCHMCamer : MonoBehaviour
         }
     }
 
-    private void LateUpdate()
+    private void FixedUpdate()
     {
         if (kartController == null || transposer == null) return;
 
@@ -66,9 +66,9 @@ public class TestCHMCamer : MonoBehaviour
             targetOffset.x = baseDistance * Mathf.Sin(basePanAngle);
             targetOffset.z = baseDistance * Mathf.Cos(basePanAngle);
             targetOffset.y = initialOffset.y + horizontalInput * 0.3f; // 기울기 효과 추가
-            float lerpFactor = kartController.isDrifting ? Time.fixedDeltaTime / (smoothTime * 1.5f) : Time.fixedDeltaTime / smoothTime;
+            float lerpFactor = kartController.isDrifting ? Time.deltaTime / (smoothTime * 1.5f) : Time.deltaTime / smoothTime;
             transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, lerpFactor); ;
-            Debug.Log(lerpFactor + "  :  "  + Time.fixedDeltaTime);
+            Debug.Log(lerpFactor + "  :  "  + Time.deltaTime);
         }
         else if (kartController.isDrifting)
         {
@@ -84,17 +84,17 @@ public class TestCHMCamer : MonoBehaviour
             targetOffset.z = baseDistance * Mathf.Cos(driftAngle);
             targetOffset.y = initialOffset.y;
 
-            transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, Time.fixedDeltaTime / smoothTime);
+            transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, Time.deltaTime / smoothTime);
         }
         else if (kartController.isBoostTriggered) // 부스터 상태
         {
             // 카메라 뒤로 밀리고 위로 상승
             targetOffset += new Vector3(0f, boostHeightOffset, -boostDistanceOffset);
-            transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, Time.fixedDeltaTime / (smoothTime * 0.5f)); // 더 빠르게 전환
+            transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, Time.deltaTime / (smoothTime * 0.5f)); // 더 빠르게 전환
         }
 
         // 부드러운 전환
-        transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, Time.fixedDeltaTime / smoothTime);
+        transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, Time.deltaTime / smoothTime);
     }
     public void SetKart(GameObject kart)
     {
