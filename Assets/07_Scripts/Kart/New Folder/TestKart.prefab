@@ -517,11 +517,7 @@ MonoBehaviour:
   boostEffTransform:
   - {fileID: 584411992615349258}
   - {fileID: 4998595415529498555}
-  boostEffect: {fileID: 1900756431413560, guid: 529eb4216865eba419c1a4a68d0b0388, type: 3}
-  collisionSpark: {fileID: 1845955007268882, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}
-  collisionTransform: {fileID: 1853964661691613909}
-  driftSparkWheelPos: []
-  driftSpark: {fileID: 4503612902121041701, guid: 5a936c83b1746f14f9100db745e94f04, type: 3}
+  boostEffect: {fileID: 1104941332586078395, guid: 4a69d44a569a45b47973e90f26fed014, type: 3}
 --- !u!1 &1556149449001999350
 GameObject:
   m_ObjectHideFlags: 0
@@ -736,13 +732,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1885437533536618837}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0.0029993344, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 33193124942127520}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2016994781492603055
 GameObject:
   m_ObjectHideFlags: 0
@@ -1156,39 +1152,7 @@ Transform:
   - {fileID: 8473259815821053925}
   - {fileID: 6092465942793641329}
   - {fileID: 7385067160572456117}
-  - {fileID: 1853964661691613909}
   m_Father: {fileID: 4469892382077261282}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &3361572996351455061
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1853964661691613909}
-  m_Layer: 0
-  m_Name: Collision
-  m_TagString: Untagged
-  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1853964661691613909
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3361572996351455061}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.01091, y: 0.00204, z: -0.00007}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 6232631162414825901}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3421317666391050503
 GameObject:
@@ -1638,6 +1602,7 @@ GameObject:
   - component: {fileID: 413315142395756821}
   - component: {fileID: 2680623755718992227}
   - component: {fileID: 1327599218726025444}
+  - component: {fileID: 6551908755377999284}
   - component: {fileID: 2115428642982953309}
   m_Layer: 3
   m_Name: TestKart
@@ -1714,6 +1679,66 @@ CapsuleCollider:
   m_Height: 3.5
   m_Direction: 2
   m_Center: {x: 0, y: 0.6, z: -0.1}
+--- !u!114 &6551908755377999284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4848290750487293163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43634f710fbcb074c91554ff99b28390, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheels: {fileID: 7441698397815003440}
+  kartBody: {fileID: 1257477183685040292}
+  maxSpeedKmh: 200
+  movementForce: 25
+  steerAngle: 40
+  decelerationRate: 2
+  minSteerMultiplier: 1
+  maxSteerMultiplier: 2
+  minDriftAngle: 20
+  maxDriftAngle: 360
+  minDriftDuration: 0.1
+  maxDriftDuration: 1
+  minDriftForceMultiplier: 1
+  maxDriftForceMultiplier: 20
+  driftSpeedReduction: 0.85
+  driftRecoverySpeed: 2
+  curveDriftSpeed: 5
+  boostDuration: 1.8
+  momentboostDuration: 1.2
+  maxBoostGauge: 100
+  boostChargeRate: 2
+  driftBoostChargeRate: 10
+  boostMaxSpeedKmh: 280
+  isDrifting: 0
+  currentDriftAngle: 0
+  accelerationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  maxAcceleration: 0
+  boxCastCenter: {x: 0, y: 0.5, z: 0}
+  boxCastSize: {x: 2.25, y: 0.5, z: 3.25}
+  boxCastDistance: 1
+  groundRayDistance: 0.8
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  jumpLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  boosterLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &2115428642982953309
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -918,6 +918,7 @@ GameObject:
   - component: {fileID: 8831265630031299715}
   - component: {fileID: 937722564442107245}
   - component: {fileID: 4876828977345756920}
+  - component: {fileID: 2310194773385157548}
   m_Layer: 5
   m_Name: Speed Gauge 1
   m_TagString: Untagged
@@ -1002,6 +1003,34 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2310194773385157548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3706023765644367189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43967c917e271df44b6e108d69040c2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kart: {fileID: 0}
+  speedDashBoard: {fileID: 3706023765644367189}
+  needle: {fileID: 8985260212178049095}
+  circleBack: {fileID: 8254397825659389256}
+  speedCircle: {fileID: 510031370954295256}
+  boostChangeUI:
+  - {fileID: 1203655456523541529}
+  - {fileID: 8303360623486469736}
+  - {fileID: 7510075183008803195}
+  boostColor: {r: 1, g: 0.3254902, b: 0, a: 1}
+  originColor: {r: 1, g: 1, b: 1, a: 1}
+  colorAlpha:
+  - 0.8
+  - 0.6
+  - 1
+  speedTxt: {fileID: 1891795605445798044}
 --- !u!1 &3716147525294591908
 GameObject:
   m_ObjectHideFlags: 0
