@@ -36,6 +36,7 @@ public class TestCHMKart : MonoBehaviour
     [SerializeField] private float boostChargeRate = 5f;        // 기본 부스트 충전 속도
     [SerializeField] private float driftBoostChargeRate = 10f;   // 드리프트 중 부스트 충전 속도
     [SerializeField] private float boostMaxSpeedKmh = 280f;        // 부스트 상태의 최대 속도
+
     private float boostSpeed;         // 부스트 활성화 시 속도 
 
     #endregion
@@ -74,6 +75,9 @@ public class TestCHMKart : MonoBehaviour
     private PhotonView _photonView;
 
     KartBodyController kartBodyCtrl;
+
+    bool isSparkOn;
+    float inputKey;
 
     #endregion
 
@@ -248,6 +252,13 @@ public class TestCHMKart : MonoBehaviour
         Vector3 driftDirection = curveRotation * Vector3.forward;
         rigid.velocity = Vector3.Lerp(rigid.velocity, driftDirection * initialDriftSpeed, Time.deltaTime * 5f);
 
+        if(isSparkOn == true)
+        {
+            inputKey = steerInput;
+            kartBodyCtrl.SetDriftSparkActive(true, steerInput);
+            isSparkOn = false;
+        }
+
         //Debug.Log($"[CurveDrift] 새 각도={currentDriftAngle:F2}, 입력={steerInput:F2}");
     }
 
@@ -266,6 +277,12 @@ public class TestCHMKart : MonoBehaviour
         Vector3 driftDirection = driftRotation * Vector3.forward;
         rigid.velocity = Vector3.Lerp(rigid.velocity, driftDirection * initialDriftSpeed, Time.deltaTime * 5f);
 
+        if(isSparkOn == true)
+        {
+            inputKey = steerInput;
+            kartBodyCtrl.SetDriftSparkActive(true, steerInput);
+            isSparkOn = false;
+        }
         //Debug.Log($"[DoubleDrift] 현재 각도={currentDriftAngle:F2}");
     }
 
@@ -284,6 +301,7 @@ public class TestCHMKart : MonoBehaviour
         initialDriftSpeed = 0f;
         RecoverDriftAngle();
 
+        kartBodyCtrl.SetDriftSparkActive(false, inputKey);
         //Debug.Log("[EndDrift] 드리프트 종료");
     }
 
@@ -339,6 +357,7 @@ public class TestCHMKart : MonoBehaviour
                 // 좌쉬프트 + 반대 입력 -> 커브 드리프트 실행
                 if (Input.GetKey(KeyCode.LeftShift))
                 {
+                    isSparkOn = true;
                     CurveDrift(steerInput);
                     //Debug.Log("커브 드리프트 실행: 좌쉬프트 + 반대 입력");
                 }
@@ -348,6 +367,7 @@ public class TestCHMKart : MonoBehaviour
             // 같은 방향 + 좌쉬프트 -> 더블 드리프트 실행
             if (Input.GetKey(KeyCode.LeftShift))
             {
+                isSparkOn = true;
                 DoubleDrift(steerInput);
             }
             else
@@ -733,6 +753,8 @@ public class TestCHMKart : MonoBehaviour
 
             rigid.velocity = reflectedVelocity * bounceFactor;
             Debug.Log($"벽 충돌 처리: 반사된 속도 = {rigid.velocity}");
+
+            kartBodyCtrl.SetCollisonSparkActive(true);
         }
     }
 
