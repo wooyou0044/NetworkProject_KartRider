@@ -8,6 +8,7 @@ public class TestCHMKart : MonoBehaviour
 
     [Header("카트 구성 요소")]
     [SerializeField] private GameObject wheels;   // 바퀴 오브젝트
+    [SerializeField] GameObject kartBody; // 카트 바디 오브젝트
 
     [Header("이동 설정")]
     [SerializeField] private float maxSpeedKmh = 200f;           // 최대 속도
@@ -34,8 +35,8 @@ public class TestCHMKart : MonoBehaviour
     [SerializeField] public int maxBoostGauge = 100;           // 최대 부스트 게이지
     [SerializeField] private float boostChargeRate = 5f;        // 기본 부스트 충전 속도
     [SerializeField] private float driftBoostChargeRate = 10f;   // 드리프트 중 부스트 충전 속도
-    //[SerializeField] private float boostMaxSpeedKmh = 280f;        // 부스트 상태의 최대 속도
-    //private float boostSpeed;         // 부스트 활성화 시 속도 
+    [SerializeField] private float boostMaxSpeedKmh = 280f;        // 부스트 상태의 최대 속도
+    private float boostSpeed;         // 부스트 활성화 시 속도 
 
     #endregion
 
@@ -46,6 +47,7 @@ public class TestCHMKart : MonoBehaviour
     public bool isBoostCreate { get; set; }    // 드리프트 아이템 생성 가능 여부
     public float boostGauge { get; private set; }                // 현재 부스트 게이지
     public bool isBoostUsed { get; set; }
+    public bool isRacingStart { get; set; }
 
     private float driftDuration;  // 부스터 지속 시간
     private CHMTestWheelController wheelCtrl;  // 바퀴 제어 스크립트
@@ -66,11 +68,12 @@ public class TestCHMKart : MonoBehaviour
     private float chargeAmount;
     
 
-
     /* Network Instantiate */
     private Transform _playerParent;
     private Transform _tr;
     private PhotonView _photonView;
+
+    KartBodyController kartBodyCtrl;
 
     #endregion
 
@@ -79,6 +82,7 @@ public class TestCHMKart : MonoBehaviour
     private void Awake()
     {
         wheelCtrl = wheels.GetComponent<CHMTestWheelController>(); // 바퀴 컨트롤러 참조
+        kartBodyCtrl = kartBody.GetComponent<KartBodyController>();
         rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
 
         /* TODO : 포톤 붙일때 수정해주기 */
@@ -122,6 +126,11 @@ public class TestCHMKart : MonoBehaviour
             return;
         }
 
+        if (isRacingStart == false)
+        {
+            return;
+        }
+
         // 입력값 읽어오기
         currentSteerInput = Input.GetAxis("Horizontal");
         currentMotorInput = Input.GetAxis("Vertical");
@@ -155,7 +164,7 @@ public class TestCHMKart : MonoBehaviour
         // 레이캐스트로 지면 체크
         if (CheckIfGrounded())
         {
-            Debug.Log("현재 지면 위에 있습니다.");
+            //Debug.Log("현재 지면 위에 있습니다.");
         }
         else
         {
@@ -204,7 +213,7 @@ public class TestCHMKart : MonoBehaviour
         CancelInvoke(nameof(EndDrift));
         Invoke(nameof(EndDrift), totalDriftDuration);
 
-        Debug.Log($"[StartDrift] 초기 각도={currentDriftAngle:F2}, 새 지속시간={driftDuration:F2}, 누적 지속시간={totalDriftDuration:F2}");
+        //Debug.Log($"[StartDrift] 초기 각도={currentDriftAngle:F2}, 새 지속시간={driftDuration:F2}, 누적 지속시간={totalDriftDuration:F2}");
     }
 
     // 기본 드리프트 각도 업데이트
@@ -222,7 +231,7 @@ public class TestCHMKart : MonoBehaviour
         Vector3 driftDirection = driftRotation * Vector3.forward;
         rigid.velocity = Vector3.Lerp(rigid.velocity, driftDirection * initialDriftSpeed, Time.deltaTime * 5f);
 
-        Debug.Log($"[UpdateDriftAngle] 현재 각도={currentDriftAngle:F2}");
+        //Debug.Log($"[UpdateDriftAngle] 현재 각도={currentDriftAngle:F2}");
     }
 
     // 커브 드리프트 처리
@@ -239,7 +248,7 @@ public class TestCHMKart : MonoBehaviour
         Vector3 driftDirection = curveRotation * Vector3.forward;
         rigid.velocity = Vector3.Lerp(rigid.velocity, driftDirection * initialDriftSpeed, Time.deltaTime * 5f);
 
-        Debug.Log($"[CurveDrift] 새 각도={currentDriftAngle:F2}, 입력={steerInput:F2}");
+        //Debug.Log($"[CurveDrift] 새 각도={currentDriftAngle:F2}, 입력={steerInput:F2}");
     }
 
     // 더블 드리프트 처리
@@ -257,7 +266,7 @@ public class TestCHMKart : MonoBehaviour
         Vector3 driftDirection = driftRotation * Vector3.forward;
         rigid.velocity = Vector3.Lerp(rigid.velocity, driftDirection * initialDriftSpeed, Time.deltaTime * 5f);
 
-        Debug.Log($"[DoubleDrift] 현재 각도={currentDriftAngle:F2}");
+        //Debug.Log($"[DoubleDrift] 현재 각도={currentDriftAngle:F2}");
     }
 
     // 드리프트 종료 처리 (연계 종료되면 호출됨)
@@ -275,7 +284,7 @@ public class TestCHMKart : MonoBehaviour
         initialDriftSpeed = 0f;
         RecoverDriftAngle();
 
-        Debug.Log("[EndDrift] 드리프트 종료");
+        //Debug.Log("[EndDrift] 드리프트 종료");
     }
 
     // 드리프트 종료 후 각도 복구 처리
@@ -304,7 +313,7 @@ public class TestCHMKart : MonoBehaviour
         CancelInvoke(nameof(EndDrift));
         Invoke(nameof(EndDrift), totalDriftDuration);
 
-        Debug.Log($"[ChainDrift] 추가 지속시간={newDriftDuration:F2}, 누적 지속시간={totalDriftDuration:F2}");
+       // Debug.Log($"[ChainDrift] 추가 지속시간={newDriftDuration:F2}, 누적 지속시간={totalDriftDuration:F2}");
     }
 
     // 현재 연계 시간이 아직 남아있는지 확인 (항상 true를 반환해도 됨)
@@ -325,13 +334,13 @@ public class TestCHMKart : MonoBehaviour
             {
                 // 0.5초 후 드리프트 종료 예약
                 Invoke(nameof(EndDrift), 0.2f);
-                Debug.Log("반대 방향 입력: 0.5초 후 드리프트 종료 예약");
+                //Debug.Log("반대 방향 입력: 0.5초 후 드리프트 종료 예약");
 
                 // 좌쉬프트 + 반대 입력 -> 커브 드리프트 실행
                 if (Input.GetKey(KeyCode.LeftShift))
                 {
                     CurveDrift(steerInput);
-                    Debug.Log("커브 드리프트 실행: 좌쉬프트 + 반대 입력");
+                    //Debug.Log("커브 드리프트 실행: 좌쉬프트 + 반대 입력");
                 }
                 return;
             }
@@ -369,7 +378,8 @@ public class TestCHMKart : MonoBehaviour
     {
         // LeftControl 키와 부스트 게이지 최대치 시 부스터 기본 발동
         if (Input.GetKeyDown(KeyCode.LeftControl) && boostCount > 0)
-        {
+        {          
+
             StartBoost(boostDuration);
             boostCount--;
             isBoostUsed = true;
@@ -424,6 +434,10 @@ public class TestCHMKart : MonoBehaviour
 
         //Debug.Log("순간 부스트 활성화!");
         isBoostTriggered = true;
+        // 램프 TrilRenderer 실행
+        kartBodyCtrl.SetLampTrailActive(true);
+        kartBodyCtrl.SetBoostEffectActive(true);
+
 
         StartCoroutine(InstantBoostCoroutine()); // 순간 부스터 실행
     }
@@ -437,7 +451,7 @@ public class TestCHMKart : MonoBehaviour
         // [Phase 1] 부스터 가속 단계
         while (timer < boostDuration)
         {
-            timer += Time.fixedDeltaTime;
+            timer += Time.fixedDeltaTime; // FixedUpdate 주기에 맞춰 타이머 업데이트
 
             // 현재 속도에 비례한 추가 힘 계산
             float currentSpeed = rigid.velocity.magnitude;
@@ -446,18 +460,20 @@ public class TestCHMKart : MonoBehaviour
             // 추가 힘을 차량의 전방 방향으로 적용
             rigid.AddForce(boostForce, ForceMode.Acceleration);
 
-            yield return null;
+            yield return new WaitForFixedUpdate(); // FixedUpdate와 동기화
         }
 
         EndBoost(); // 부스터 종료 처리
-        //Debug.Log("순간 부스터 종료!");
+                    // Debug.Log("순간 부스터 종료!");
     }
     private void EndBoost()
     {
         if (!isBoostTriggered) return; // 부스트가 이미 종료된 경우 무시
 
         //Debug.Log("부스트 종료: 속도 서서히 감소 시작");
-        isBoostTriggered = false; // 부스트 상태 비활성화       
+        isBoostTriggered = false; // 부스트 상태 비활성화
+        kartBodyCtrl.SetLampTrailActive(false);
+        kartBodyCtrl.SetBoostEffectActive(false);
     }
 
 
@@ -465,8 +481,8 @@ public class TestCHMKart : MonoBehaviour
     private void ChargeBoostGauge()
     {
         chargeAmount += isDrifting
-            ? driftBoostChargeRate * Time.fixedDeltaTime  // 드리프트 중 충전 속도
-            : boostChargeRate * Time.fixedDeltaTime;       // 일반 충전 속도
+            ? driftBoostChargeRate * Time.deltaTime  // 드리프트 중 충전 속도
+            : boostChargeRate * Time.deltaTime;       // 일반 충전 속도
 
         boostGauge = Mathf.Clamp(chargeAmount, 0, maxBoostGauge);
         if (boostGauge >= maxBoostGauge)
@@ -482,8 +498,11 @@ public class TestCHMKart : MonoBehaviour
     {
         if (isBoostTriggered) return; // 이미 부스트 중이면 무시
 
-        //Debug.Log("기본 부스트 활성화!");
+        Debug.Log("기본 부스트 활성화!");
         isBoostTriggered = true;
+        // 램프 TrilRenderer 실행
+        kartBodyCtrl.SetLampTrailActive(true);
+        kartBodyCtrl.SetBoostEffectActive(true);
 
         StartCoroutine(BoostCoroutine(duration)); // 기본 부스터 실행
     }
@@ -496,7 +515,7 @@ public class TestCHMKart : MonoBehaviour
         // [Phase 1] 부스터 가속 단계
         while (timer < duration)
         {
-            timer += Time.fixedDeltaTime;
+            timer += Time.fixedDeltaTime;  // FixedDeltaTime 사용
 
             // 현재 속도에 비례한 추가 힘 계산
             float currentSpeed = rigid.velocity.magnitude;
@@ -505,11 +524,15 @@ public class TestCHMKart : MonoBehaviour
             // 추가 힘을 차량의 전방 방향으로 적용
             rigid.AddForce(boostForce, ForceMode.Acceleration);
 
-            yield return null;
+            yield return new WaitForFixedUpdate();  // FixedUpdate와 동기화
         }
 
-        EndBoost(); // 부스터 종료 처리
-        //Debug.Log("기본 부스터 종료!");
+        // 램프 TrailRenderer 끄기
+        kartBodyCtrl.SetLampTrailActive(false);
+        kartBodyCtrl.SetBoostEffectActive(false);
+        // 감속이 끝났으면 부스터 종료 플래그 해제
+        isBoostTriggered = false;
+        Debug.Log("부스트 종료");
     }
     #endregion
 
@@ -725,11 +748,11 @@ public class TestCHMKart : MonoBehaviour
         {
             Vector3 horizontalVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z) * 1.2f;
             rigid.velocity = new Vector3(horizontalVelocity.x, rigid.velocity.y, horizontalVelocity.z);
-            Debug.Log($"ProcessJumpCollision: 경사각 {slopeAngle:F2}° 보정됨. (1.2배)");
+            //Debug.Log($"ProcessJumpCollision: 경사각 {slopeAngle:F2}° 보정됨. (1.2배)");
         }
         else
         {
-            Debug.Log($"ProcessJumpCollision: 경사각 {slopeAngle:F2}° (보정 없음)");
+            //Debug.Log($"ProcessJumpCollision: 경사각 {slopeAngle:F2}° (보정 없음)");
         }
     }
 
@@ -749,7 +772,7 @@ public class TestCHMKart : MonoBehaviour
     {
         Vector3 horizontalVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
         rigid.velocity = horizontalVelocity;
-        Debug.Log("ProcessGroundCollision: 지면 충돌 시 수평 속력 유지");
+       // Debug.Log("ProcessGroundCollision: 지면 충돌 시 수평 속력 유지");
     }
 
     /// <summary>
