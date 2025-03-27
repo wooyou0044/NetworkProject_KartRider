@@ -35,6 +35,8 @@ public class GameManager : MonoBehaviour
     // 방장이 가지고 있는 준비된 참가자들 리스트
     private List<Player> _readyPlayers;
 
+    TestCHMKart kartCtrl;
+
     private void Awake()
     {
         _readyPlayers = new List<Player>();
@@ -61,6 +63,8 @@ public class GameManager : MonoBehaviour
     public void InstantiateObject()
     {
         GameObject kart = PhotonNetwork.Instantiate(kartPrefab.name, Vector3.zero, Quaternion.identity);
+        // kart에 붙어 있는 Controller 가져오기
+        kartCtrl = kart.GetComponent<TestCHMKart>();
         PhotonNetwork.Instantiate(characterPrefab.name, Vector3.zero, Quaternion.identity);
         StartCoroutine(PlaceToMap(kart));
     }
@@ -125,6 +129,7 @@ public class GameManager : MonoBehaviour
         
         // 카트 움직이기
         StartCoroutine(mainTextController.ShowTextOneSecond("GO!"));
+        kartCtrl.isRacingStart = true;
         timeUIController.StartTimer();
     }
     
