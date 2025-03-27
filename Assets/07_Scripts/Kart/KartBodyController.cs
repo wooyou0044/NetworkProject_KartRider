@@ -12,12 +12,13 @@ public class KartBodyController : MonoBehaviour
     {
         SetLampTrailActive(false);
 
-        //foreach(Transform parentTrans in boostEffTransform)
-        //{
-        //    GameObject boost = Instantiate(boostEffect, parentTrans);
-        //}
+        foreach (Transform parentTrans in boostEffTransform)
+        {
+            GameObject boost = Instantiate(boostEffect, parentTrans);
+            boost.transform.eulerAngles += new Vector3(0, 0, -90);
+        }
 
-        //SetBoostEffectActive(false);
+        SetBoostEffectActive(false);
     }
 
     void Update()
@@ -35,13 +36,13 @@ public class KartBodyController : MonoBehaviour
 
     public void SetBoostEffectActive(bool isActive)
     {
-        if (boostEffTransform[0].childCount == 0)
-        {
-            foreach (Transform parentTrans in boostEffTransform)
-            {
-                GameObject boost = Instantiate(boostEffect, parentTrans);
-            }
-        }
+        //if (boostEffTransform[0].childCount == 0)
+        //{
+        //    foreach (Transform parentTrans in boostEffTransform)
+        //    {
+        //        GameObject boost = Instantiate(boostEffect, parentTrans);
+        //    }
+        //}
         foreach(Transform transform in boostEffTransform)
         {
             transform.GetChild(0).gameObject.SetActive(isActive);

@@ -378,10 +378,7 @@ public class TestCHMKart : MonoBehaviour
     {
         // LeftControl 키와 부스트 게이지 최대치 시 부스터 기본 발동
         if (Input.GetKeyDown(KeyCode.LeftControl) && boostCount > 0)
-        {
-            // 램프 TrilRenderer 실행
-            kartBodyCtrl.SetLampTrailActive(true);
-            kartBodyCtrl.SetBoostEffectActive(true);
+        {          
 
             StartBoost(boostDuration);
             boostCount--;
@@ -437,6 +434,10 @@ public class TestCHMKart : MonoBehaviour
 
         //Debug.Log("순간 부스트 활성화!");
         isBoostTriggered = true;
+        // 램프 TrilRenderer 실행
+        kartBodyCtrl.SetLampTrailActive(true);
+        kartBodyCtrl.SetBoostEffectActive(true);
+
 
         StartCoroutine(InstantBoostCoroutine()); // 순간 부스터 실행
     }
@@ -470,7 +471,9 @@ public class TestCHMKart : MonoBehaviour
         if (!isBoostTriggered) return; // 부스트가 이미 종료된 경우 무시
 
         //Debug.Log("부스트 종료: 속도 서서히 감소 시작");
-        isBoostTriggered = false; // 부스트 상태 비활성화       
+        isBoostTriggered = false; // 부스트 상태 비활성화
+        kartBodyCtrl.SetLampTrailActive(false);
+        kartBodyCtrl.SetBoostEffectActive(false);
     }
 
 
@@ -497,6 +500,9 @@ public class TestCHMKart : MonoBehaviour
 
         Debug.Log("기본 부스트 활성화!");
         isBoostTriggered = true;
+        // 램프 TrilRenderer 실행
+        kartBodyCtrl.SetLampTrailActive(true);
+        kartBodyCtrl.SetBoostEffectActive(true);
 
         StartCoroutine(BoostCoroutine(duration)); // 기본 부스터 실행
     }
