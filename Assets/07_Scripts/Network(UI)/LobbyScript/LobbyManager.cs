@@ -9,9 +9,7 @@ using Photon.Realtime;
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] private LobbyUIManager lobbyUiMgr;
-    [SerializeField] private RoomEntry roomEntry;
 
-    private List<RoomInfo> currentRoomList = new List<RoomInfo>();
     private List<RoomEntry> roomEntryList = new List<RoomEntry>();
     private Dictionary<string, RoomEntry> roomEntryMap = new Dictionary<string, RoomEntry>();    
     private Queue<string> availableRoomNumbers = new Queue<string>(); // 방 번호 관리 Queue

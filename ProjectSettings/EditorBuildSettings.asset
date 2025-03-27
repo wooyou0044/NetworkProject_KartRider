@@ -14,7 +14,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/01_Scenes/Network(UI)/RoomScene.unity
     guid: a986bea4165f7e04d991cca6e97e7d70
-  m_Scenes:
   - enabled: 1
     path: Assets/01_Scenes/Map/DaisyCircuit.unity
     guid: a9c132bccc23c4dbd938fc352852f6f2

@@ -9,7 +9,9 @@ public class TitleUI : MonoBehaviour
     [Header("로그인 파넬 모음")]
     public GameObject loginPanel;
     public TMP_InputField loginEmailField;
-    public TMP_InputField loginpasswordField;    
+    public TMP_InputField loginpasswordField;
+    public Button loingBtn;
+    public Button signUpBtn;
 
     [Header("회원가입 판넬 모음")]
     public GameObject signUpPanel;
@@ -69,8 +71,9 @@ public class TitleUI : MonoBehaviour
         }
     }
 
+    //모든 메세지 숨기기
     public void HideMessages()
-    {//모든 메세지 숨기기
+    {
         errorMessage.gameObject.SetActive(false);
         successMessage.gameObject.SetActive(false);
     }
@@ -102,11 +105,20 @@ public class TitleUI : MonoBehaviour
         createNickNamePanel.SetActive(isActive);
     }
     /// <summary>
-    /// 특정 버튼 활성화 여부 설정
-    /// 일단 사용은 회원가입 때만 사용함
+    ///  회원가입에서 버튼 활성화 여부 설정
     /// </summary>
     /// <param name="isInteractable"> 버튼 활성화 여부</param>
-    public void SetButtonsInteractable(bool isInteractable)
+    public void SetLogInButtonsInteractable(bool isInteractable)
+    {
+        loingBtn.interactable = isInteractable;
+        signUpBtn.interactable = isInteractable;
+    }
+
+    /// <summary>
+    ///  회원가입에서 버튼 활성화 여부 설정
+    /// </summary>
+    /// <param name="isInteractable"> 버튼 활성화 여부</param>
+    public void SetsignUpInteractable(bool isInteractable)
     {
         signUpCompleteBtn.interactable = isInteractable; 
         signUpLoingToBtn.interactable = isInteractable;
