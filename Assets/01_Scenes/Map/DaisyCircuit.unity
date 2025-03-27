@@ -939,6 +939,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1814992196}
     m_Modifications:
+    - target: {fileID: 831753420727018800, guid: 780680a15c2b0c54eac111a73e1949d9, type: 3}
+      propertyPath: boostSpeed
+      value: 
+      objectReference: {fileID: 693573299}
     - target: {fileID: 5712156789170202466, guid: 780680a15c2b0c54eac111a73e1949d9, type: 3}
       propertyPath: m_Name
       value: ItemStorage
@@ -1326,6 +1330,11 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &693573299 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6239328576350901702, guid: c41c01bc589fbac42a0d7b163bf9d50f, type: 3}
+  m_PrefabInstance: {fileID: 1050273772}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &784157036
 Mesh:
   m_ObjectHideFlags: 0
@@ -4313,10 +4322,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
