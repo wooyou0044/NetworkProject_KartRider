@@ -107,8 +107,7 @@ public class AuthManager : MonoBehaviour
                 message = "이메일 혹은 비밀번호를 잘못 입력하셨거나\n 등록되지 않은 이메일 입니다.";
                 break;
         }        
-        titleUI.ShowMessage(titleUI.errorMessage, message, true);                
-        titleUI.InitializeLogin();//다시 로그인 하는 것 처럼 타이틀 창 초기화
+        titleUI.ShowMessage(titleUI.errorMessage, message, true);
     }
 
     void LoginSuccess(FirebaseUser user)
@@ -138,6 +137,7 @@ public class AuthManager : MonoBehaviour
             if (SceneCont.Instance.Oper.progress < 0.9f)
             {
                 titleUI.lodingBar.value = SceneCont.Instance.Oper.progress;
+                yield return new WaitUntil(predicate: () => serverCon.Connect());
             }
             else
             {
@@ -146,7 +146,6 @@ public class AuthManager : MonoBehaviour
                 break;
             }
         }
-        yield return new WaitUntil(predicate: () => serverCon.Connect());
         if (!serverCon.Connect())
         {
             //커넥트 오류시

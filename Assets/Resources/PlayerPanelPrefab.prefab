@@ -187,8 +187,8 @@ RectTransform:
   - {fileID: 6047943252797385543}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -267,7 +267,6 @@ MonoBehaviour:
   playerImg: {fileID: 1348480863874753204}
   PlayerNameText: {fileID: 8147758119063562579}
   playerIcon: {fileID: 7201783258846162909}
-  pv: {fileID: 0}
 --- !u!1 &7727254937546306735
 GameObject:
   m_ObjectHideFlags: 0
@@ -302,8 +301,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 23.449017, y: -137.3675}
-  m_SizeDelta: {x: -46.898033, y: -274.735}
+  m_AnchoredPosition: {x: 23.187, y: -137.15}
+  m_SizeDelta: {x: 253.51, y: 45.204}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5443146588284572905
 CanvasRenderer:
