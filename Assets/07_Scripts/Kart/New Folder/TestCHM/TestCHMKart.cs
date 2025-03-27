@@ -126,10 +126,10 @@ public class TestCHMKart : MonoBehaviour
             return;
         }
 
-        //if(isRacingStart == false)
-        //{
-        //    return;
-        //}
+        if (isRacingStart == false)
+        {
+            return;
+        }
 
         // 입력값 읽어오기
         currentSteerInput = Input.GetAxis("Horizontal");

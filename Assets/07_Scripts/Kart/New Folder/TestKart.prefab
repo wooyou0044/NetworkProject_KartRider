@@ -1602,7 +1602,6 @@ GameObject:
   - component: {fileID: 413315142395756821}
   - component: {fileID: 2680623755718992227}
   - component: {fileID: 1327599218726025444}
-  - component: {fileID: 6551908755377999284}
   - component: {fileID: 2115428642982953309}
   m_Layer: 3
   m_Name: TestKart
@@ -1679,66 +1678,6 @@ CapsuleCollider:
   m_Height: 3.5
   m_Direction: 2
   m_Center: {x: 0, y: 0.6, z: -0.1}
---- !u!114 &6551908755377999284
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4848290750487293163}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 43634f710fbcb074c91554ff99b28390, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wheels: {fileID: 7441698397815003440}
-  kartBody: {fileID: 1257477183685040292}
-  maxSpeedKmh: 200
-  movementForce: 25
-  steerAngle: 40
-  decelerationRate: 2
-  minSteerMultiplier: 1
-  maxSteerMultiplier: 2
-  minDriftAngle: 20
-  maxDriftAngle: 360
-  minDriftDuration: 0.1
-  maxDriftDuration: 1
-  minDriftForceMultiplier: 1
-  maxDriftForceMultiplier: 20
-  driftSpeedReduction: 0.85
-  driftRecoverySpeed: 2
-  curveDriftSpeed: 5
-  boostDuration: 1.8
-  momentboostDuration: 1.2
-  maxBoostGauge: 100
-  boostChargeRate: 2
-  driftBoostChargeRate: 10
-  boostMaxSpeedKmh: 280
-  isDrifting: 0
-  currentDriftAngle: 0
-  accelerationCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  maxAcceleration: 0
-  boxCastCenter: {x: 0, y: 0.5, z: 0}
-  boxCastSize: {x: 2.25, y: 0.5, z: 3.25}
-  boxCastDistance: 1
-  groundRayDistance: 0.8
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 1024
-  jumpLayer:
-    serializedVersion: 2
-    m_Bits: 512
-  boosterLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!114 &2115428642982953309
 MonoBehaviour:
   m_ObjectHideFlags: 0
