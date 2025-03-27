@@ -17,7 +17,7 @@ public class SkidMarkPool
         for(int i=0; i<poolSize; i++)
         {
             GameObject skidMark = Object.Instantiate(skidMarkPrefab, parent);
-            skidMark.SetActive(false);
+            //skidMark.SetActive(false);
             unusedPool.Enqueue(skidMark);
         }
     }

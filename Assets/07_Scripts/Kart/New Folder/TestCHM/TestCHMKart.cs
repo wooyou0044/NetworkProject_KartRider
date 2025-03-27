@@ -8,6 +8,7 @@ public class TestCHMKart : MonoBehaviour
 
     [Header("카트 구성 요소")]
     [SerializeField] private GameObject wheels;   // 바퀴 오브젝트
+    [SerializeField] GameObject kartBody; // 카트 바디 오브젝트
 
     [Header("이동 설정")]
     [SerializeField] private float maxSpeedKmh = 200f;           // 최대 속도
@@ -46,6 +47,7 @@ public class TestCHMKart : MonoBehaviour
     public bool isBoostCreate { get; set; }    // 드리프트 아이템 생성 가능 여부
     public float boostGauge { get; private set; }                // 현재 부스트 게이지
     public bool isBoostUsed { get; set; }
+    public bool isRacingStart { get; set; }
 
     private float driftDuration;  // 부스터 지속 시간
     private CHMTestWheelController wheelCtrl;  // 바퀴 제어 스크립트
@@ -66,11 +68,12 @@ public class TestCHMKart : MonoBehaviour
     private float chargeAmount;
     
 
-
     /* Network Instantiate */
     private Transform _playerParent;
     private Transform _tr;
     private PhotonView _photonView;
+
+    KartBodyController kartBodyCtrl;
 
     #endregion
 
@@ -79,6 +82,7 @@ public class TestCHMKart : MonoBehaviour
     private void Awake()
     {
         wheelCtrl = wheels.GetComponent<CHMTestWheelController>(); // 바퀴 컨트롤러 참조
+        kartBodyCtrl = kartBody.GetComponent<KartBodyController>();
         rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
 
         /* TODO : 포톤 붙일때 수정해주기 */
@@ -122,6 +126,11 @@ public class TestCHMKart : MonoBehaviour
             return;
         }
 
+        //if(isRacingStart == false)
+        //{
+        //    return;
+        //}
+
         // 입력값 읽어오기
         currentSteerInput = Input.GetAxis("Horizontal");
         currentMotorInput = Input.GetAxis("Vertical");
@@ -162,6 +171,56 @@ public class TestCHMKart : MonoBehaviour
             //Debug.Log("현재 공중 상태입니다.");
         }
     }
+    #endregion
+
+    #region [키입력 함수 ]
+
+    private void HandleDriftInput(float steerInput)
+    {
+        // LeftShift 키와 조향 입력이 있을 때 드리프트 시작
+        if (Input.GetKeyDown(KeyCode.LeftShift) && Mathf.Abs(steerInput) > 0)
+        {
+            StartDrift(steerInput * currentDriftThreshold);
+        }
+
+        // 드리프트 중 추가 입력으로 드리프트 각도 업데이트
+        if (isDrifting && Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            UpdateDriftAngle();
+        }
+    }
+
+    private void HandleBoostInput()
+    {
+        // LeftControl 키와 부스트 게이지 최대치 시 부스터 기본 발동
+        if (Input.GetKeyDown(KeyCode.LeftControl) && boostCount > 0)
+        {
+            // 램프 TrilRenderer 실행
+            kartBodyCtrl.SetLampTrailActive(true);
+            kartBodyCtrl.SetBoostEffectActive(true);
+
+            StartBoost(boostDuration);
+            boostCount--;
+            isBoostUsed = true;
+        }
+        // 부스트 게이지 충전
+        if (currentMotorInput != 0 || isDrifting)
+        {
+            ChargeBoostGauge();
+        }
+
+        if (boostGauge >= maxBoostGauge)
+        {
+            isBoostCreate = true;
+            boostGauge = 0;
+            chargeAmount = 0;
+            if (boostCount < 2)
+            {
+                boostCount++;
+            }
+        }
+    }
+
     #endregion
 
     #region [드리프트 관련 함수]
@@ -508,8 +567,12 @@ public class TestCHMKart : MonoBehaviour
             yield return new WaitForFixedUpdate();  // FixedUpdate와 동기화
         }
 
-        EndBoost(); // 부스터 종료 처리
-        Debug.Log("기본 부스터 종료!");
+        // 램프 TrailRenderer 끄기
+        kartBodyCtrl.SetLampTrailActive(false);
+        kartBodyCtrl.SetBoostEffectActive(false);
+        // 감속이 끝났으면 부스터 종료 플래그 해제
+        isBoostTriggered = false;
+        Debug.Log("부스트 종료");
     }
     #endregion
 

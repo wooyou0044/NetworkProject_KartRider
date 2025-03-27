@@ -134,7 +134,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4784646851838524419, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: poolSize
-      value: 20
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 4784646851838524419, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: skidMark
@@ -297,9 +297,6 @@ PrefabInstance:
     - {fileID: 6165037171512218186, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4848290750487293163, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4902261966647448000}
     - targetCorrespondingSourceObject: {fileID: 4848290750487293163, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3506412311101806673}
@@ -485,10 +482,5 @@ MonoBehaviour:
 --- !u!1 &7909417058560826372 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8297530388290519152, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
-  m_PrefabInstance: {fileID: 2226285670538550388}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &8764957354587669828 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7441698397815003440, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
   m_PrefabInstance: {fileID: 2226285670538550388}
   m_PrefabAsset: {fileID: 0}
