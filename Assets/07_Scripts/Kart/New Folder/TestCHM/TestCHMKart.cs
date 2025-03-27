@@ -34,8 +34,8 @@ public class TestCHMKart : MonoBehaviour
     [SerializeField] public int maxBoostGauge = 100;           // 최대 부스트 게이지
     [SerializeField] private float boostChargeRate = 5f;        // 기본 부스트 충전 속도
     [SerializeField] private float driftBoostChargeRate = 10f;   // 드리프트 중 부스트 충전 속도
-    //[SerializeField] private float boostMaxSpeedKmh = 280f;        // 부스트 상태의 최대 속도
-    //private float boostSpeed;         // 부스트 활성화 시 속도 
+    [SerializeField] private float boostMaxSpeedKmh = 280f;        // 부스트 상태의 최대 속도
+    private float boostSpeed;         // 부스트 활성화 시 속도 
 
     #endregion
 
@@ -437,7 +437,7 @@ public class TestCHMKart : MonoBehaviour
         // [Phase 1] 부스터 가속 단계
         while (timer < boostDuration)
         {
-            timer += Time.fixedDeltaTime;
+            timer += Time.fixedDeltaTime; // FixedUpdate 주기에 맞춰 타이머 업데이트
 
             // 현재 속도에 비례한 추가 힘 계산
             float currentSpeed = rigid.velocity.magnitude;
@@ -446,11 +446,11 @@ public class TestCHMKart : MonoBehaviour
             // 추가 힘을 차량의 전방 방향으로 적용
             rigid.AddForce(boostForce, ForceMode.Acceleration);
 
-            yield return null;
+            yield return new WaitForFixedUpdate(); // FixedUpdate와 동기화
         }
 
         EndBoost(); // 부스터 종료 처리
-        //Debug.Log("순간 부스터 종료!");
+                    // Debug.Log("순간 부스터 종료!");
     }
     private void EndBoost()
     {
@@ -496,7 +496,7 @@ public class TestCHMKart : MonoBehaviour
         // [Phase 1] 부스터 가속 단계
         while (timer < duration)
         {
-            timer += Time.deltaTime;
+            timer += Time.fixedDeltaTime;  // FixedDeltaTime 사용
 
             // 현재 속도에 비례한 추가 힘 계산
             float currentSpeed = rigid.velocity.magnitude;
@@ -505,7 +505,7 @@ public class TestCHMKart : MonoBehaviour
             // 추가 힘을 차량의 전방 방향으로 적용
             rigid.AddForce(boostForce, ForceMode.Acceleration);
 
-            yield return null;
+            yield return new WaitForFixedUpdate();  // FixedUpdate와 동기화
         }
 
         EndBoost(); // 부스터 종료 처리
