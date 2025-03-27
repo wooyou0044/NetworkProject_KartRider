@@ -1705,7 +1705,7 @@ MonoBehaviour:
   inventoryUI: {fileID: 2144984437}
   timeUIController: {fileID: 333115318}
   mainTextController: {fileID: 1203804154}
-  miniMapController: {fileID: 500467822}
+  mnMapController: {fileID: 500467822}
   mapManager: {fileID: 1236464623}
   kartPrefab: {fileID: 6750277665416376479, guid: b1aff00853afc7641ae0d58aebea703b, type: 3}
   characterPrefab: {fileID: 3662294271039095178, guid: 92e11ca434aeb40b0aaa867626d01af8, type: 3}
