@@ -465,8 +465,8 @@ public class TestCHMKart : MonoBehaviour
     private void ChargeBoostGauge()
     {
         chargeAmount += isDrifting
-            ? driftBoostChargeRate * Time.fixedDeltaTime  // 드리프트 중 충전 속도
-            : boostChargeRate * Time.fixedDeltaTime;       // 일반 충전 속도
+            ? driftBoostChargeRate * Time.deltaTime  // 드리프트 중 충전 속도
+            : boostChargeRate * Time.deltaTime;       // 일반 충전 속도
 
         boostGauge = Mathf.Clamp(chargeAmount, 0, maxBoostGauge);
         if (boostGauge >= maxBoostGauge)
