@@ -19,7 +19,6 @@ public class RoomManager : MonoBehaviourPunCallbacks
         photonView = GetComponent<PhotonView>();
         yield return new WaitUntil(() => PhotonNetwork.IsConnectedAndReady);
         RoomInfoUpdate();
-        //AssignLocalPlayerToSlot();
         JoinRoom();
         InitializeUI();
     }
@@ -31,18 +30,12 @@ public class RoomManager : MonoBehaviourPunCallbacks
             roomUIManger.startBtn.gameObject.SetActive(true);
             roomUIManger.readyBtn.gameObject.SetActive(false);
             roomUIManger.startBtn.interactable = true;
-            Debug.Log(PhotonNetwork.LocalPlayer + " 누구세요?");
-            SyncSlotsForNewPlayer(PhotonNetwork.LocalPlayer, PhotonNetwork.LocalPlayer.ActorNumber - 1);
         }
         else
         {
             roomUIManger.startBtn.gameObject.SetActive(false);
             roomUIManger.readyBtn.gameObject.SetActive(true);
         }
-    }
-    
-    private void AssignLocalPlayerToSlot()
-    {
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
@@ -55,53 +48,15 @@ public class RoomManager : MonoBehaviourPunCallbacks
     }
     public void JoinRoom()
     {
-        Player[] playerList = PhotonNetwork.PlayerList;
-        for (int i = 0; i < playerList.Length; i++)
-        {
-            if (i < playerSlots.Length) //슬롯 개수 확인
-            {
-                playerSlots[i].playerPanel = playerSlots[i].CreatePlayerPanel();
-                playerSlots[i].actorNumber = playerList[i].ActorNumber; //액터 넘버 할당
-                playerSlots[i].playerName = playerList[i].NickName;
-            }
-        }
+        var a = PhotonNetwork.Instantiate("PlayerPanelPrefab", transform.position, Quaternion.identity);        
     }
     public override void OnPlayerEnteredRoom(Player newPlayer)
-    {        
-            SyncSlotsForNewPlayer(newPlayer, newPlayer.ActorNumber - 1);        
-    }
-   
-    private void SyncSlotsForNewPlayer(Player newPlayer, int slotIndex)
     {
-        photonView.RPC("UpdateSlotForNewPlayer", RpcTarget.AllBuffered , newPlayer.ActorNumber, newPlayer.NickName, slotIndex);
-    }
-    [PunRPC]
-    public void UpdateSlotForNewPlayer(int actorNumber, string playerName, int slotIndex)
-    {
-        Debug.Log(playerName +"접니다." + slotIndex +"슬롯 인덱스" + actorNumber +"엑트넘버");
-        Debug.Log(playerSlots[slotIndex] + "슬롯 넘버");
-        Debug.Log(playerSlots[slotIndex].actorNumber + "슬롯 액터 넘버");
-        Debug.Log(playerSlots[slotIndex].playerName + "슬롯 플레이어 이름");        
-        Debug.Log(playerSlots[slotIndex].playerPanel + "오브젝트");
-        playerSlots[slotIndex].actorNumber = actorNumber; //액터 넘버 할당
-        playerSlots[slotIndex].playerName = playerName;
-        if (PhotonNetwork.IsMasterClient)
-        {
-            if (playerSlots[slotIndex].actorNumber == actorNumber)
-            {
-                Debug.Log("들어왔음");
-                playerSlots[slotIndex].actorNumber = actorNumber; //액터 넘버 할당
-                playerSlots[slotIndex].playerPanel.transform.SetParent(playerSlots[slotIndex].transform);
-                playerSlots[slotIndex].playerPanel.PlayerNameText.text = playerName;
-            }
-        }
+        //플레이어 입장시 처리 해야할 것들
     }
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            //ResetAndBroadcastUI();
-        }
+        
     }
     
     public void OutRoomBtn()
