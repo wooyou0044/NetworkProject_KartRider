@@ -155,7 +155,7 @@ public class TestCHMKart : MonoBehaviour
         // 레이캐스트로 지면 체크
         if (CheckIfGrounded())
         {
-            Debug.Log("현재 지면 위에 있습니다.");
+            //Debug.Log("현재 지면 위에 있습니다.");
         }
         else
         {
@@ -204,7 +204,7 @@ public class TestCHMKart : MonoBehaviour
         CancelInvoke(nameof(EndDrift));
         Invoke(nameof(EndDrift), totalDriftDuration);
 
-        Debug.Log($"[StartDrift] 초기 각도={currentDriftAngle:F2}, 새 지속시간={driftDuration:F2}, 누적 지속시간={totalDriftDuration:F2}");
+        //Debug.Log($"[StartDrift] 초기 각도={currentDriftAngle:F2}, 새 지속시간={driftDuration:F2}, 누적 지속시간={totalDriftDuration:F2}");
     }
 
     // 기본 드리프트 각도 업데이트
@@ -222,7 +222,7 @@ public class TestCHMKart : MonoBehaviour
         Vector3 driftDirection = driftRotation * Vector3.forward;
         rigid.velocity = Vector3.Lerp(rigid.velocity, driftDirection * initialDriftSpeed, Time.deltaTime * 5f);
 
-        Debug.Log($"[UpdateDriftAngle] 현재 각도={currentDriftAngle:F2}");
+        //Debug.Log($"[UpdateDriftAngle] 현재 각도={currentDriftAngle:F2}");
     }
 
     // 커브 드리프트 처리
@@ -239,7 +239,7 @@ public class TestCHMKart : MonoBehaviour
         Vector3 driftDirection = curveRotation * Vector3.forward;
         rigid.velocity = Vector3.Lerp(rigid.velocity, driftDirection * initialDriftSpeed, Time.deltaTime * 5f);
 
-        Debug.Log($"[CurveDrift] 새 각도={currentDriftAngle:F2}, 입력={steerInput:F2}");
+        //Debug.Log($"[CurveDrift] 새 각도={currentDriftAngle:F2}, 입력={steerInput:F2}");
     }
 
     // 더블 드리프트 처리
@@ -257,7 +257,7 @@ public class TestCHMKart : MonoBehaviour
         Vector3 driftDirection = driftRotation * Vector3.forward;
         rigid.velocity = Vector3.Lerp(rigid.velocity, driftDirection * initialDriftSpeed, Time.deltaTime * 5f);
 
-        Debug.Log($"[DoubleDrift] 현재 각도={currentDriftAngle:F2}");
+        //Debug.Log($"[DoubleDrift] 현재 각도={currentDriftAngle:F2}");
     }
 
     // 드리프트 종료 처리 (연계 종료되면 호출됨)
@@ -275,7 +275,7 @@ public class TestCHMKart : MonoBehaviour
         initialDriftSpeed = 0f;
         RecoverDriftAngle();
 
-        Debug.Log("[EndDrift] 드리프트 종료");
+        //Debug.Log("[EndDrift] 드리프트 종료");
     }
 
     // 드리프트 종료 후 각도 복구 처리
@@ -304,7 +304,7 @@ public class TestCHMKart : MonoBehaviour
         CancelInvoke(nameof(EndDrift));
         Invoke(nameof(EndDrift), totalDriftDuration);
 
-        Debug.Log($"[ChainDrift] 추가 지속시간={newDriftDuration:F2}, 누적 지속시간={totalDriftDuration:F2}");
+       // Debug.Log($"[ChainDrift] 추가 지속시간={newDriftDuration:F2}, 누적 지속시간={totalDriftDuration:F2}");
     }
 
     // 현재 연계 시간이 아직 남아있는지 확인 (항상 true를 반환해도 됨)
@@ -325,13 +325,13 @@ public class TestCHMKart : MonoBehaviour
             {
                 // 0.5초 후 드리프트 종료 예약
                 Invoke(nameof(EndDrift), 0.2f);
-                Debug.Log("반대 방향 입력: 0.5초 후 드리프트 종료 예약");
+                //Debug.Log("반대 방향 입력: 0.5초 후 드리프트 종료 예약");
 
                 // 좌쉬프트 + 반대 입력 -> 커브 드리프트 실행
                 if (Input.GetKey(KeyCode.LeftShift))
                 {
                     CurveDrift(steerInput);
-                    Debug.Log("커브 드리프트 실행: 좌쉬프트 + 반대 입력");
+                    //Debug.Log("커브 드리프트 실행: 좌쉬프트 + 반대 입력");
                 }
                 return;
             }
@@ -482,7 +482,7 @@ public class TestCHMKart : MonoBehaviour
     {
         if (isBoostTriggered) return; // 이미 부스트 중이면 무시
 
-        //Debug.Log("기본 부스트 활성화!");
+        Debug.Log("기본 부스트 활성화!");
         isBoostTriggered = true;
 
         StartCoroutine(BoostCoroutine(duration)); // 기본 부스터 실행
@@ -496,7 +496,7 @@ public class TestCHMKart : MonoBehaviour
         // [Phase 1] 부스터 가속 단계
         while (timer < duration)
         {
-            timer += Time.fixedDeltaTime;
+            timer += Time.deltaTime;
 
             // 현재 속도에 비례한 추가 힘 계산
             float currentSpeed = rigid.velocity.magnitude;
@@ -509,7 +509,7 @@ public class TestCHMKart : MonoBehaviour
         }
 
         EndBoost(); // 부스터 종료 처리
-        //Debug.Log("기본 부스터 종료!");
+        Debug.Log("기본 부스터 종료!");
     }
     #endregion
 
@@ -725,11 +725,11 @@ public class TestCHMKart : MonoBehaviour
         {
             Vector3 horizontalVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z) * 1.2f;
             rigid.velocity = new Vector3(horizontalVelocity.x, rigid.velocity.y, horizontalVelocity.z);
-            Debug.Log($"ProcessJumpCollision: 경사각 {slopeAngle:F2}° 보정됨. (1.2배)");
+            //Debug.Log($"ProcessJumpCollision: 경사각 {slopeAngle:F2}° 보정됨. (1.2배)");
         }
         else
         {
-            Debug.Log($"ProcessJumpCollision: 경사각 {slopeAngle:F2}° (보정 없음)");
+            //Debug.Log($"ProcessJumpCollision: 경사각 {slopeAngle:F2}° (보정 없음)");
         }
     }
 
@@ -749,7 +749,7 @@ public class TestCHMKart : MonoBehaviour
     {
         Vector3 horizontalVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
         rigid.velocity = horizontalVelocity;
-        Debug.Log("ProcessGroundCollision: 지면 충돌 시 수평 속력 유지");
+       // Debug.Log("ProcessGroundCollision: 지면 충돌 시 수평 속력 유지");
     }
 
     /// <summary>
