@@ -7,7 +7,7 @@ public class MiniMapController : MonoBehaviour
     public Camera miniMapCamera;
     public Transform toFollow;
 
-    [Range(100f, 1000f)] public float upPosition;
+    [Range(100f, 250f)] public float upPosition;
     
     public void SetFollower(Transform someKart)
     {
@@ -25,7 +25,7 @@ public class MiniMapController : MonoBehaviour
     {
         Vector3 upPos = new Vector3(0, upPosition, 0);
         miniMapCamera.transform.position = syncTarget.transform.position + upPos;
-    }
+   }
 
     // Update is called once per frame
     void LateUpdate()
