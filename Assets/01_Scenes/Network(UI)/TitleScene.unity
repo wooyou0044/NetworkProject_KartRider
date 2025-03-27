@@ -1491,6 +1491,8 @@ MonoBehaviour:
   loginPanel: {fileID: 685512523}
   loginEmailField: {fileID: 48776940}
   loginpasswordField: {fileID: 1684095035}
+  loingBtn: {fileID: 833918782}
+  signUpBtn: {fileID: 1043710063}
   signUpPanel: {fileID: 704806290}
   signUpEmailField: {fileID: 2006445801}
   signUpPasswordField: {fileID: 208965811}
