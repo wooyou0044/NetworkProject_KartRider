@@ -172,6 +172,7 @@ public class TestCHMKart : MonoBehaviour
         }
     }
     #endregion
+
     #region [드리프트 관련 함수]
 
     // 전역 변수 (필요한 곳에 선언)
@@ -381,6 +382,7 @@ public class TestCHMKart : MonoBehaviour
             // 램프 TrilRenderer 실행
             kartBodyCtrl.SetLampTrailActive(true);
             kartBodyCtrl.SetBoostEffectActive(true);
+
             StartBoost(boostDuration);
             boostCount--;
             isBoostUsed = true;
