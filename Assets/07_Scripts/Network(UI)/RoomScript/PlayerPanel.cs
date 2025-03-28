@@ -22,6 +22,9 @@ public class PlayerPanel : MonoBehaviourPun
 
     private void Start()
     {
+        startBtn = GameObject.Find("StartBtn").GetComponent<Button>();
+        readyBtn = GameObject.Find("ReadyBtn").GetComponent<Button>();
+        readyCanCelBtn = GameObject.Find("ReadyCanCelBtn").GetComponent<Button>();
         if (photonView.IsMine)
         {
             GetComponent<PhotonView>().RPC("SetOwnInfo", RpcTarget.AllBuffered);
@@ -38,7 +41,7 @@ public class PlayerPanel : MonoBehaviourPun
             if(roomManager.playerSlots[i].playerPanel == null)
             {
                 roomManager.playerSlots[i].playerPanel = GetComponent<PlayerPanel>();
-                readyImage.gameObject.SetActive(false);
+                //readyImage.gameObject.SetActive(false);
                 transform.SetParent(roomManager.playerSlots[i].transform);
                 break;
             }
@@ -52,16 +55,16 @@ public class PlayerPanel : MonoBehaviourPun
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            startBtn = GameObject.Find("StartBtn").GetComponent<Button>();
             startBtn.gameObject.SetActive(true);
+            readyBtn.gameObject.SetActive(false);
+            readyCanCelBtn.gameObject.SetActive(false);
             startBtn.interactable = true;
         }
         else
         {
-            readyBtn = GameObject.Find("StartBtn").GetComponent<Button>();
-            readyCanCelBtn = GameObject.Find("StartBtn").GetComponent<Button>();            
             startBtn.gameObject.SetActive(false);
             readyBtn.gameObject.SetActive(true);
+            readyCanCelBtn.gameObject.SetActive(false);
         }
     }
 
