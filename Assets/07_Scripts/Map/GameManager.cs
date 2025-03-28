@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public InventoryUI inventoryUI;
     public TimeUIController timeUIController;
     public MainTextController mainTextController;
+    public MiniMapController mnMapController;
     
     [Header("인게임 요소들 매니저")]
     public MapManager mapManager;
@@ -77,6 +78,7 @@ public class GameManager : MonoBehaviour
         virtualCamera.gameObject.GetComponent<TestCHMCamer>().SetKart(kart);
         kartUIController.SetKart(kart);
         inventoryUI.SetKart(kart);
+        mnMapController.SetFollower(kart.transform);
         
         // ToDo : 랜덤으로 설정해줄거면 actorNumber 대신 다른걸로 [0~7 숫자]
         Player kartOwner = kart.GetPhotonView().Owner;
