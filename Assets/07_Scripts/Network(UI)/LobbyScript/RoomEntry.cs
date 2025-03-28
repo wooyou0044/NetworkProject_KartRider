@@ -1,4 +1,5 @@
 using Photon.Realtime;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -60,7 +61,8 @@ public class RoomEntry : MonoBehaviour
     {
         return roomInfo.CustomProperties.ContainsKey("Password") &&
                        !string.IsNullOrEmpty(roomInfo.CustomProperties["Password"] as string); ; // 비밀번호 확인
-    }    
+    }
+   
     //룸에 패스워드가 있다면 패스워드 아이콘을 띄움
     public void SetLockIcon(bool isPassword)
     {
