@@ -192,11 +192,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             }
             else
             {
+                SceneCont.Instance.Oper.allowSceneActivation = true;
                 break;
             }
             yield return null;
         }
-        SceneCont.Instance.Oper.allowSceneActivation = true;
     }
     /// <summary>
     /// 로비입장이 완료 되었다면 룸리스트 업데이트 코루틴 시작
