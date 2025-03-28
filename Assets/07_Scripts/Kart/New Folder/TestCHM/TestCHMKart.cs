@@ -2,7 +2,7 @@ using System.Collections;
 using Photon.Pun;
 using UnityEngine;
 
-public class TestCHMKart : MonoBehaviour
+public partial class TestCHMKart : MonoBehaviour
 {
     #region Serialized Fields
 
@@ -45,9 +45,9 @@ public class TestCHMKart : MonoBehaviour
 
     public float speedKM { get; private set; }     // 현재 속력 (km/h 단위)
     public bool isBoostTriggered { get; set; } // 부스트 활성화 여부
-    public bool isBoostCreate { get; set; }    // 드리프트 아이템 생성 가능 여부
+    //public bool isBoostCreate { get; set; }    // 드리프트 아이템 생성 가능 여부
     public float boostGauge { get; private set; }                // 현재 부스트 게이지
-    public bool isBoostUsed { get; set; }
+    public bool isItemUsed { get; set; }
     public bool isRacingStart { get; set; }
 
     private float driftDuration;  // 부스터 지속 시간
@@ -62,7 +62,7 @@ public class TestCHMKart : MonoBehaviour
     private float lockedYRotation = 0f;        // 드리프트 시 고정되는 Y 회전값
     private float currentMotorInput;
     private float currentSteerInput;
-    public int boostCount { get; private set; }
+    //public int boostCount { get; private set; }
     // 내부적으로 사용할 m/s 단위 변수
     private float maxSpeed;      // 최대 속도 (m/s)
     private Vector3 speed;       // 현재 속도 벡터
@@ -75,6 +75,11 @@ public class TestCHMKart : MonoBehaviour
     private PhotonView _photonView;
 
     KartBodyController kartBodyCtrl;
+    KartInventory inventory;
+    AudioSource audioSource;
+
+    [SerializeField] AudioClip driftAudioClip;
+    [SerializeField] AudioClip boostAudioClip;
 
     bool isSparkOn;
     float inputKey;
@@ -87,6 +92,8 @@ public class TestCHMKart : MonoBehaviour
     {
         wheelCtrl = wheels.GetComponent<CHMTestWheelController>(); // 바퀴 컨트롤러 참조
         kartBodyCtrl = kartBody.GetComponent<KartBodyController>();
+        inventory = GetComponent<KartInventory>();
+
         rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
 
         /* TODO : 포톤 붙일때 수정해주기 */
@@ -94,6 +101,9 @@ public class TestCHMKart : MonoBehaviour
         _photonView = GetComponent<PhotonView>();
         _playerParent = GameObject.Find("Players").transform;
         transform.parent = _playerParent;
+
+        audioSource = GetComponent<AudioSource>();
+
     }
     private void FixedUpdate()
     {
@@ -157,7 +167,7 @@ public class TestCHMKart : MonoBehaviour
         HandleDriftInput(currentSteerInput);
 
         // 부스트 입력 처리
-        HandleBoostInput();
+        HandleItemInput();
 
         if (PerformBoxCast(groundLayer | wallLayer | jumpLayer | boosterLayer))
 
@@ -256,9 +266,10 @@ public class TestCHMKart : MonoBehaviour
         {
             inputKey = steerInput;
             kartBodyCtrl.SetDriftSparkActive(true, steerInput);
+            //audioSource.PlayOneShot(driftAudioClip);
+            PlayDriftEffectSound();
             isSparkOn = false;
         }
-
         //Debug.Log($"[CurveDrift] 새 각도={currentDriftAngle:F2}, 입력={steerInput:F2}");
     }
 
@@ -281,6 +292,8 @@ public class TestCHMKart : MonoBehaviour
         {
             inputKey = steerInput;
             kartBodyCtrl.SetDriftSparkActive(true, steerInput);
+            //audioSource.PlayOneShot(driftAudioClip);
+            PlayDriftEffectSound();
             isSparkOn = false;
         }
         //Debug.Log($"[DoubleDrift] 현재 각도={currentDriftAngle:F2}");
@@ -302,6 +315,7 @@ public class TestCHMKart : MonoBehaviour
         RecoverDriftAngle();
 
         kartBodyCtrl.SetDriftSparkActive(false, inputKey);
+        audioSource.Stop();
         //Debug.Log("[EndDrift] 드리프트 종료");
     }
 
@@ -394,33 +408,6 @@ public class TestCHMKart : MonoBehaviour
 
     #region [부스터 관련 함수]
 
-    private void HandleBoostInput()
-    {
-        // LeftControl 키와 부스트 게이지 최대치 시 부스터 기본 발동
-        if (Input.GetKeyDown(KeyCode.LeftControl) && boostCount > 0)
-        {          
-
-            StartBoost(boostDuration);
-            boostCount--;
-            isBoostUsed = true;
-        }
-        // 부스트 게이지 충전
-        if (currentMotorInput != 0 || isDrifting)
-        {
-            ChargeBoostGauge();
-        }
-
-        if (boostGauge >= maxBoostGauge)
-        {
-            isBoostCreate = true;
-            boostGauge = 0;
-            chargeAmount = 0;
-            if (boostCount < 2)
-            {
-                boostCount++;
-            }
-        }
-    }
     // 드리프트 종료 후 바로 부스트 입력을 받기 위한 코루틴
     private IEnumerator PostDriftBoostCoroutine()
     {
@@ -457,8 +444,10 @@ public class TestCHMKart : MonoBehaviour
         // 램프 TrilRenderer 실행
         kartBodyCtrl.SetLampTrailActive(true);
         kartBodyCtrl.SetBoostEffectActive(true);
+        kartBodyCtrl.SetBoostWindEffectActive(true);
 
-
+        // 가속 소리 설정
+        PlayBoostEffectSound();
         StartCoroutine(InstantBoostCoroutine()); // 순간 부스터 실행
     }
 
@@ -494,6 +483,10 @@ public class TestCHMKart : MonoBehaviour
         isBoostTriggered = false; // 부스트 상태 비활성화
         kartBodyCtrl.SetLampTrailActive(false);
         kartBodyCtrl.SetBoostEffectActive(false);
+        kartBodyCtrl.SetBoostWindEffectActive(false);
+
+        audioSource.Stop();
+        audioSource.loop = false;
     }
 
 
@@ -523,6 +516,9 @@ public class TestCHMKart : MonoBehaviour
         // 램프 TrilRenderer 실행
         kartBodyCtrl.SetLampTrailActive(true);
         kartBodyCtrl.SetBoostEffectActive(true);
+        kartBodyCtrl.SetBoostWindEffectActive(true);
+
+        PlayBoostEffectSound();
 
         StartCoroutine(BoostCoroutine(duration)); // 기본 부스터 실행
     }
@@ -550,6 +546,11 @@ public class TestCHMKart : MonoBehaviour
         // 램프 TrailRenderer 끄기
         kartBodyCtrl.SetLampTrailActive(false);
         kartBodyCtrl.SetBoostEffectActive(false);
+        kartBodyCtrl.SetBoostWindEffectActive(false);
+
+        audioSource.Stop();
+        audioSource.loop = false;
+
         // 감속이 끝났으면 부스터 종료 플래그 해제
         isBoostTriggered = false;
         Debug.Log("부스트 종료");
@@ -854,5 +855,4 @@ public class TestCHMKart : MonoBehaviour
     }
 
     #endregion
-
 }

@@ -11,9 +11,10 @@ public class KartBodyController : MonoBehaviour
     [SerializeField] Transform collisionTransform;
     [SerializeField] Transform[] driftSparkWheelPos;
     [SerializeField] GameObject driftSpark;
-    [SerializeField] TestCHMKart kart;
+    [SerializeField] GameObject windEffect;
 
     GameObject spark;
+    GameObject wind;
     GameObject[] driftSparkObject;
 
     int input;
@@ -28,6 +29,8 @@ public class KartBodyController : MonoBehaviour
             boost.transform.eulerAngles += new Vector3(0, 0, -90);
         }
         spark = Instantiate(collisionSpark, collisionTransform);
+        wind = Instantiate(windEffect, collisionTransform);
+        wind.transform.eulerAngles += new Vector3(0, -90, 0);
         for(int i=0; i< driftSparkWheelPos.Length; i++)
         {
             driftSparkObject[i] = Instantiate(driftSpark, driftSparkWheelPos[i]);
@@ -37,6 +40,7 @@ public class KartBodyController : MonoBehaviour
         SetLampTrailActive(false);
         SetBoostEffectActive(false);
         SetCollisonSparkActive(false);
+        SetBoostWindEffectActive(false);
     }
 
     void Update()
@@ -101,6 +105,11 @@ public class KartBodyController : MonoBehaviour
                 driftSparkObject[1].SetActive(false);
             }
         }
+    }
+
+    public void SetBoostWindEffectActive(bool isActive)
+    {
+        wind.SetActive(isActive);
     }
 
 }
