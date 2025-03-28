@@ -4,31 +4,35 @@ using UnityEngine;
 public class DollyRealKart : MonoBehaviour
 {
     private float _trackPosition;
+    private float _trackPosToLength;
+    private CinemachineSmoothPath _dollyPath;
+    
+    public Transform trackingObject;
 
-    public CinemachinePathBase dollyTrack;
-    public Transform toFollow;
-
-    private void Start()
+    public CinemachineSmoothPath DollyPath
     {
-        if (dollyTrack == null)
-        {
-            Debug.LogError("돌리 카트 에러 발생!!!");
-        }
+        get => _dollyPath;
+        set => _dollyPath = value;
     }
 
-    public float GetTrackPosition()
+    public float GetTrackPosToLength()
     {
-        return _trackPosition;
+        return _trackPosToLength;
     }
     
     public void CalculateTrackPosition()
     {
-        _trackPosition = dollyTrack.FindClosestPoint(toFollow.position,0, -1, 1);
+        _trackPosition = _dollyPath.FindClosestPoint(trackingObject.position,0, -1, 1);
+        _trackPosToLength = (_trackPosition / _dollyPath.m_Waypoints.Length) * _dollyPath.PathLength;
     }
 
     private void FixedUpdate()
     {
+        if (_dollyPath == null)
+        {
+            return;
+        }
+
         CalculateTrackPosition();
-        Debug.Log(GetTrackPosition());
     }
 }
