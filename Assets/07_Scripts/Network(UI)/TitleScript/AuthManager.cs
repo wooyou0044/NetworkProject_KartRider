@@ -10,8 +10,9 @@ public class AuthManager : MonoBehaviour
 {
     public TitleUI titleUI;
     public ServerConnect serverCon;
-    private bool nickNameCheck = false;
 
+    //시작과 동시에 파이어베이스의 어스의 정보와 데이터베이스 정보를
+    //만든 게임서버 파이어베이스 정보와 연결함
     private void Awake()
     {
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
@@ -153,6 +154,14 @@ public class AuthManager : MonoBehaviour
             {
                 titleUI.lodingBar.value = SceneCont.Instance.Oper.progress;
                 yield return new WaitUntil(predicate: () => serverCon.Connect());
+                if (!serverCon.Connect())
+                {
+                    //커넥트 오류시
+                    titleUI.ShowMessage(titleUI.errorMessage, "서버 접속 실패 다시 로그인해주세요.", true);
+                    yield return new WaitForSeconds(2f);
+                    titleUI.InitializeLogin();//다시 로그인 하는 것 처럼 타이틀 창 초기화
+                    yield break;
+                }
             }
             else
             {
@@ -160,14 +169,6 @@ public class AuthManager : MonoBehaviour
                 titleUI.lodingBar.value = 1f;
                 break;
             }
-        }
-        if (!serverCon.Connect())
-        {
-            //커넥트 오류시
-            titleUI.ShowMessage(titleUI.errorMessage, "서버 접속 실패 다시 로그인해주세요.", true);
-            yield return new WaitForSeconds(2f);
-            titleUI.InitializeLogin();//다시 로그인 하는 것 처럼 타이틀 창 초기화
-            yield break;
         }
         SceneCont.Instance.Oper.allowSceneActivation = true;
     }

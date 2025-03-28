@@ -84,13 +84,5 @@ public class LobbyUIManager : MonoBehaviour
     {
         lockRoomPanel.SetActive(false);
     }
-
-    public void ClearRoomList()
-    {
-        foreach (Transform child in roomListPanel.transform)
-        {
-            Destroy(child.gameObject);
-        }
-    }
 }
 

@@ -6,6 +6,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Threading;
 
 
 public class LobbyManager : MonoBehaviourPunCallbacks
@@ -13,11 +14,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     [SerializeField] private LobbyUIManager lobbyUiMgr;
 
     private List<RoomInfo> roomInfos = new List<RoomInfo>();
-    private List<RoomEntry> roomEntryList = new List<RoomEntry>();
     private Dictionary<string, RoomEntry> roomEntryMap = new Dictionary<string, RoomEntry>();    
     private Queue<string> availableRoomNumbers = new Queue<string>(); // 방 번호 관리 Queue
     private HashSet<string> usedRoomNumbers = new HashSet<string>(); // 사용 중인 방 번호 추적
-
+    private Coroutine roomListUpdateCor;
     /// <summary>
     /// 스타트를 코루틴으로 하여 연결수립을 대기
     /// 타이틀 씬에서 넘어오면서 씬 변경에 대한 안정성을 보장 받기 위한 작업
@@ -28,7 +28,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         yield return new WaitUntil(() => PhotonNetwork.IsConnectedAndReady);
         PhotonNetwork.JoinLobby();
-        InitializeRoomNumber(); //방 번호 초기화
+        InitializeRoomNumber(); //방 번호 초기화        
     }
     
     /// <summary>
@@ -175,7 +175,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     /// </summary>
     public override void OnJoinedRoom()
     {
-        //PhotonNetwork.PlayerList[0].SetCustomProperties(new Hashtable() { { "키1", "문자열" }, { "키2", 1 } });
         StartCoroutine(LoadJoinRoom("RoomScene"));
     }
     /// <summary>
@@ -189,22 +188,29 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         {
             if (SceneCont.Instance.Oper.progress < 0.9f)
             {
-                //로비 > 룸 이동에 프로그래스바를 만들 필요가 있을까..?
+                //로비에서 룸으로 이동에 프로그래스바를 만들 필요가 있을까..?
             }
             else
             {
                 break;
             }
             yield return null;
-            SceneCont.Instance.Oper.allowSceneActivation = true;
         }
+        SceneCont.Instance.Oper.allowSceneActivation = true;
     }
     /// <summary>
-    /// 로비입장이 완료 되었다면 호출되는 메서드
+    /// 로비입장이 완료 되었다면 룸리스트 업데이트 코루틴 시작
     /// </summary>
     public override void OnJoinedLobby()
     {
-        Debug.Log("로비에 들어옴");
+        roomListUpdateCor = StartCoroutine(RoomListUpdateCor());
+    }
+    /// <summary>
+    /// 로비에서 나갈 때 룸리스트 업데이트 코루틴 멈추기
+    /// </summary>
+    public override void OnLeftLobby()
+    {
+        StopCoroutine(roomListUpdateCor);
     }
     /// <summary>
     /// 로비에서 보이는 룸을 업데이트 함
@@ -212,17 +218,30 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     /// <param name="roomList"></param>
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        roomInfos = roomList;
-        //RoomListUpdate(roomList);
+        //RoomListUpdate(roomList); //변화가 감지되면 자동으로 업데이트(최적화 문제로 빼겠습니다.)
+        roomInfos = roomList; //룸에 변화가 감지되면 룹 리스트에 새로 업데이트
     }
+    /// <summary>
+    /// 리셋 버튼을 누르면 유저 임의로 로비Room 업데이트
+    /// </summary>
     public void RoomListUpdateBtn()
     {
         RoomListUpdate(roomInfos);
     }
+    /// <summary>
+    ///15초 마다 룸 리스트 자동으로 업데이트 되도록 설계함
+    ///시간은 바꿔도 됩니다.
+    /// </summary>
+    /// <example waitForSec = new WaitForSeconds(s);> s에 원하는 시간초 넣으면 됨 </example>
     IEnumerator RoomListUpdateCor()
     {
+        WaitForSeconds waitForSec = new WaitForSeconds(15f);
 
-        yield return null;
+        while (PhotonNetwork.InLobby)
+        {
+            RoomListUpdate(roomInfos);
+            yield return waitForSec;
+        }
     }
     /// <summary>
     /// 포톤에서 OnRoomListUpdate가 호출 되면 전체적인 룸 리스트 업데이트를 진행함
@@ -264,7 +283,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             Destroy(entryToRemove.gameObject);
 
             // 리스트와 매핑에서 제거
-            roomEntryList.Remove(entryToRemove);
             roomEntryMap.Remove(roomName);
         }
     }
@@ -291,7 +309,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         var roomEntry = Instantiate(lobbyUiMgr.roomPrefab, lobbyUiMgr.roomListPanel.transform); //룸 오브젝트 생성
         var roomEntryScript = roomEntry.GetComponent<RoomEntry>(); //생성된 룸에 RoomEntry 스크립트 컴포넌트 담기
-        roomEntryList.Add(roomEntryScript); //룸 엔트리를 리스트에 추가
         roomEntryMap.Add(roomInfo.Name, roomEntryScript);//방정보와 진짜오브젝트와 맵핑(딕셔너리만 있어도 되긴함)
         
         if (roomEntryScript != null)
@@ -303,6 +320,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
             roomEntry.onClick.AddListener(() =>
             {
+                //FirstOrDefault 를 통해 roomInfos안의 roomInfo들을 보고 이름이 맞는 것들 중
+                //있다면 해당 객체를 반환해주고 없다면 null을 반환해 줌
                 roomInfo = roomInfos.FirstOrDefault(r => r.Name == roomEntryScript.name);
                 if (hasPassword)
                 {
@@ -330,10 +349,16 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             });
         }
     }
+    /// <summary>
+    /// 방에 비밀번호가 있을 경우 실행될 메서드
+    /// 방과 패스워드가 맞다면 입장, 입장 실패시 오류메세지
+    /// </summary>
+    /// <param name="roomName">방이름</param>
+    /// <param name="correctPassword">패스워드</param>
     public void ShowPasswordPrompt(string roomName, string correctPassword)
     {
         lobbyUiMgr.LockRoomPasswrodPanelActive(true);
-
+        
         lobbyUiMgr.lockRoomConnectBtn.onClick.AddListener(() =>
         {
             string enteredPassword = lobbyUiMgr.lockRoomPasswordInputField.text;
@@ -345,6 +370,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             }
             else
             {
+                RoomListUpdate(roomInfos);
                 lobbyUiMgr.RoomJoinFaildeText("입력한 비밀번호가 일치하지 않습니다.");
             }
         });
