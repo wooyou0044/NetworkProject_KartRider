@@ -8,8 +8,7 @@ public class RankManager : MonoBehaviourPunCallbacks
     {
         public int BfRank;
         public int Rank;
-    
-        public int Lap;
+        
         public float TotalPos;
     }
 
@@ -37,14 +36,9 @@ public class RankManager : MonoBehaviourPunCallbacks
         return _myRankData.TotalPos;
     }
     
-    public void SetLap(int lap)
-    {
-        _myRankData.Lap = lap;
-    }
-    
     public void SetDollyPos(float dollyPos)
     {
-        float calculatedPos = dollyPos * _myRankData.Lap;
+        float calculatedPos = dollyPos * _mapManager.MyCurrentLap;
         _myRankData.TotalPos = calculatedPos;
     }    
 
