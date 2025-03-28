@@ -35,46 +35,56 @@ public class LobbyUIManager : MonoBehaviour
     {
         InitializeLobby();
     }
+    //로비 초기화
     public void InitializeLobby()
-    {//로비 초기화
+    {
         createRoomPanel.SetActive(false);
         roomNumberJoinPanel.SetActive(false);        
         roomJoinFaildePanel.SetActive(false);
         lockRoomPanel.SetActive(false);
     }
+    //방 생성 버튼 클릭시 활성화
     public void CreateRoomPanleCon()
-    {//방 생성 버튼 클릭시 활성화
+    {
         createRoomPanel.SetActive(true);
     }
+    //대기방 입장 클릭시 활성화
     public void RoomNumberJoinPanelCon()
-    {//대기방 입장 클릭시 활성화
+    {
         roomNumberJoinPanel.SetActive(true);
     }
+    //방 만들기 취소 클릭시 비활성화
     public void CreateRoomPanleCancelCon()
-    {//방 만들기 취소 클릭시 비활성화
+    {
         createRoomPanel.SetActive(false);
     }
+    //대기방 입장 취소 클릭시 비활성화
     public void RoomNumberJoinPanelCancelCon()
-    {//대기방 입장 취소 클릭시 비활성화
+    {
         roomNumberJoinPanel.SetActive(false);
     }
+    //비밀번호가 걸린 방 입장시 
     public void LockRoomPasswrodPanelActive(bool active)
-    {//비밀번호가 걸린 방 입장시 
+    {
         lockRoomPanel.SetActive(active);
     }
+    //UI 패널 또는 팝업 활성화
     public void RoomJoinFaildeText(string message)
-    {//UI 패널 또는 팝업 활성화
+    {
         roomJoinFaildePanel.SetActive(true);
-        roomJoinFaildeText.text = message; //텍스트 설정
+        roomJoinFaildeText.text = message; //텍스트 처리
     }
+    //룸 입장 실패시 뜨는 판넬 비활성화 버튼
     public void RoomJoinFaildeBtn()
     {
         roomJoinFaildePanel.SetActive(false);
     }
+    //비밀번호 입력창 비활성화
     public void LockRoomPanelCancelBtn()
     {
         lockRoomPanel.SetActive(false);
     }
+
     public void ClearRoomList()
     {
         foreach (Transform child in roomListPanel.transform)
