@@ -433,6 +433,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 4880079824083908303}
   - {fileID: 3399476450935887924}
+  - {fileID: 6506751187867568956}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -493,6 +494,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c04df1d6211fd4fceb95fea63e77910a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  kartRankData:
+    bfRank: 0
+    rank: 0
+    lap: 0
+    totalPos: 0
 --- !u!1 &7909417058560826372 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8297530388290519152, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}

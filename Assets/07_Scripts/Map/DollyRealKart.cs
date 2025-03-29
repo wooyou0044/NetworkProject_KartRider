@@ -1,3 +1,4 @@
+using System;
 using Cinemachine;
 using UnityEngine;
 
@@ -9,10 +10,14 @@ public class DollyRealKart : MonoBehaviour
     
     public Transform trackingObject;
 
+    public void Awake()
+    {
+        _dollyPath = FindObjectOfType<CinemachineSmoothPath>();
+    }
+
     public CinemachineSmoothPath DollyPath
     {
         get => _dollyPath;
-        set => _dollyPath = value;
     }
 
     public float GetTrackPosToLength()

@@ -3,7 +3,7 @@ using Photon.Pun;
 using UnityEngine;
 
 [RequireComponent(typeof(DollyRealKart), typeof(TestCHMKart), typeof(PhotonView))]
-public class RankManager : MonoBehaviour
+public class RankManager : MonoBehaviour, IPunObservable
 {
     [Serializable]
     public struct RankData
@@ -20,7 +20,9 @@ public class RankManager : MonoBehaviour
     /* 랭크 데이터 위해 필요한 카트 설정 */
     private TestCHMKart _kart;
     private DollyRealKart _dollyRealKart;
-    private PhotonView _pv;    
+    private PhotonView _pv;
+    
+    private float _cachedDollyPos;
     
     public int GetLap()
     {
@@ -61,6 +63,12 @@ public class RankManager : MonoBehaviour
     // 현재 위치값을 가지고 랩 수와 더해 실제 지나온 위치를 계산한다
     public void SetDollyPos(float dollyPos)
     {
+        // 널 포인터 방지용 방어코드
+        if (_dollyRealKart.DollyPath == null)
+        {
+            return;
+        }
+        
         float pastLength = (GetLap() - 1) * _dollyRealKart.DollyPath.PathLength;
         float calculatedPos = pastLength + dollyPos;
         kartRankData.totalPos = calculatedPos;
@@ -84,15 +92,42 @@ public class RankManager : MonoBehaviour
         Debug.Log("랭킹 바뀜");
     }
 
-    public void FixedUpdate()
+    private void FixedUpdate()
     {
-        // 널포인터 나는 케이스 있어서 방어처리
-        if(_dollyRealKart.DollyPath == null)
+        // 널 포인터 방어코드
+        if (_dollyRealKart.DollyPath == null)
         {
             return;
         }
         
-        SetDollyPos(_dollyRealKart.CalculateTrackPosition());
-        Debug.Log(GetTotalPos());
+        _cachedDollyPos = _dollyRealKart.CalculateTrackPosition();
+        SetDollyPos(_cachedDollyPos);
+    }
+    
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) 
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(_cachedDollyPos);
+            // Debug.Log("Send : " + _cachedDollyPos);
+        }
+        else
+        {
+            // 무시할 예외 조건들 설정
+            if (!_pv.Owner.Equals(info.photonView.Owner))
+            {
+                return;
+            }
+
+            if (stream.Count == 0)
+            {
+                return;
+            }
+                
+            float otherDollyPos = (float)stream.ReceiveNext();
+            SetDollyPos(otherDollyPos);
+                
+            // Debug.Log("Receive from : " + info + "pos : " + otherDollyPos);
+        }
     }
 }

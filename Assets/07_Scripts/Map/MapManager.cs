@@ -176,10 +176,6 @@ public class MapManager : MonoBehaviourPunCallbacks
     // 카트 맵에 위치하면서 맵 매니저와 관련한 부분들 초기화
     public void PlaceToStartPos(int randomNum, GameObject playerKart)
     {
-        // 돌리 카트에 돌리 경로 설정
-        DollyRealKart dollyKart = playerKart.GetComponent<DollyRealKart>();
-        dollyKart.DollyPath = dollyPath;
-
         Rigidbody kartRigid = playerKart.GetComponent<Rigidbody>();
         Transform startingPoint = startPos[randomNum];
         myLastcheckPoint = startingPoint;
