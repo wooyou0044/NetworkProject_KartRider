@@ -20,19 +20,16 @@ public class DollyRealKart : MonoBehaviour
         return _trackPosToLength;
     }
     
-    public void CalculateTrackPosition()
+    public float CalculateTrackPosition()
     {
+        if (DollyPath == null)
+        {
+            Debug.LogError("Dolly Path is not set");
+            return 0f;
+        }
+        
         _trackPosition = _dollyPath.FindClosestPoint(trackingObject.position,0, -1, 1);
         _trackPosToLength = (_trackPosition / _dollyPath.m_Waypoints.Length) * _dollyPath.PathLength;
-    }
-
-    private void FixedUpdate()
-    {
-        if (_dollyPath == null)
-        {
-            return;
-        }
-
-        CalculateTrackPosition();
+        return _trackPosToLength;
     }
 }

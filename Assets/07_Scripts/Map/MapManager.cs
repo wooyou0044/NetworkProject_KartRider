@@ -92,7 +92,10 @@ public class MapManager : MonoBehaviourPunCallbacks
     // 완전 종료 필요할 경우에 게임 매니저 호출.
     public void OnTouchFinishLine(Collider kart, GameObject line)
     {
-        if (!kart.gameObject.GetPhotonView().IsMine)
+        PhotonView pv = kart.gameObject.GetPhotonView();
+        TestCHMKart kartCtrl = kart.GetComponent<TestCHMKart>();
+        
+        if (pv == null || !pv.IsMine)
         {
             return;
         }
@@ -110,11 +113,15 @@ public class MapManager : MonoBehaviourPunCallbacks
             _myCurrentLap = MyCurrentLap + 1;
             myLastcheckPoint = finishLine;
             ResetAllCheckPoints();
+            pv.RPC("SetLap", RpcTarget.All, MyCurrentLap);
         }
         else
         {
             ResetAllCheckPoints();
             _gameManager.OnFinished();
+            
+            // 조작 안되게 하고 더 할 처리 필요한것 있는지 확인
+            kartCtrl.isRacingStart = false;
         }
         
         onFinishEvent.Invoke();
@@ -165,8 +172,8 @@ public class MapManager : MonoBehaviourPunCallbacks
         
         kartRigid.isKinematic = false;        
     }
-
-    /* ToDo: 플레이어 카트의 리지드 바디 찾아서 설정해주기 */ 
+    
+    // 카트 맵에 위치하면서 맵 매니저와 관련한 부분들 초기화
     public void PlaceToStartPos(int randomNum, GameObject playerKart)
     {
         // 돌리 카트에 돌리 경로 설정
