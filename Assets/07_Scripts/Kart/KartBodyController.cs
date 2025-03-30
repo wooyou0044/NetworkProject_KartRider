@@ -10,11 +10,14 @@ public class KartBodyController : MonoBehaviour
     [SerializeField] GameObject collisionSpark;
     [SerializeField] Transform collisionTransform;
     [SerializeField] Transform[] driftSparkWheelPos;
+    [SerializeField] Transform shieldEffectBodyPos;
     [SerializeField] GameObject driftSpark;
     [SerializeField] GameObject windEffect;
+    [SerializeField] GameObject shieldEffect;
 
     GameObject spark;
     GameObject wind;
+    GameObject shield;
     GameObject[] driftSparkObject;
 
     int input;
@@ -36,6 +39,7 @@ public class KartBodyController : MonoBehaviour
             driftSparkObject[i] = Instantiate(driftSpark, driftSparkWheelPos[i]);
             driftSparkObject[i].SetActive(false);
         }
+        shield = Instantiate(shieldEffect, shieldEffectBodyPos.position, Quaternion.identity);
 
         SetLampTrailActive(false);
         SetBoostEffectActive(false);
@@ -110,6 +114,11 @@ public class KartBodyController : MonoBehaviour
     public void SetBoostWindEffectActive(bool isActive)
     {
         wind.SetActive(isActive);
+    }
+
+    public void SetShieldEffectActive(bool isActive)
+    {
+        shield.SetActive(isActive);
     }
 
 }
