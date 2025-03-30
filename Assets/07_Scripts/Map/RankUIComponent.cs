@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,4 +18,12 @@ public class RankUIComponent : MonoBehaviour
 
     [Header("캐릭터 아이콘 표시")]
     public Image Icon;
+
+    private RankManager _rankManager;
+
+    public RankManager RankManager
+    {
+        get => _rankManager;
+        set => _rankManager = value;
+    }
 }

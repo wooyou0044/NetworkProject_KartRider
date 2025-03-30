@@ -127,7 +127,7 @@ public class GameManager : MonoBehaviour
     // ToDo : 카운트 다운 끝나면 움직이기, 실제 3초보단 살짝 길겠지만, 굳이 필요할까? 
     IEnumerator CountDown()
     {
-        rankUIController.InitRankUI(this);
+        rankUIController.InitRankUI();
         yield return new WaitForSeconds(0.5f);
         while(startCountDownSeconds > 0)
         {
@@ -144,7 +144,7 @@ public class GameManager : MonoBehaviour
     
     /* 누군가 피니시 라인에 들어왔다 (최종 골인) */
     // 1. 리타이어 카운트 세기
-    // 2. 진짜 누가 이겼는지 확인 필요
+    // 2. 진짜 누가 이겼는지 확인 필요 (할라나?)
     [PunRPC]
     public void OnSomePlayerFinish(Player player)
     {

@@ -119,6 +119,7 @@ public class MapManager : MonoBehaviourPunCallbacks
         {
             ResetAllCheckPoints();
             _gameManager.OnFinished();
+            pv.RPC("SetFinish", RpcTarget.All, true);
             
             // 조작 안되게 하고 더 할 처리 필요한것 있는지 확인
             kartCtrl.isRacingStart = false;

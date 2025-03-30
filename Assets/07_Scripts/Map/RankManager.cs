@@ -13,6 +13,8 @@ public class RankManager : MonoBehaviour, IPunObservable
 
         public int lap;
         public float totalPos;
+
+        public bool isFinish;
     }
     
     public RankData kartRankData;
@@ -37,8 +39,8 @@ public class RankManager : MonoBehaviour, IPunObservable
         {
             kartRankData.lap = lap;            
         }
-    }    
-    
+    }
+
     public int GetRank()
     {
         return kartRankData.rank;
@@ -48,11 +50,6 @@ public class RankManager : MonoBehaviour, IPunObservable
     {
         kartRankData.bfRank = kartRankData.rank;
         kartRankData.rank = rank;
-        
-        if(kartRankData.bfRank != kartRankData.rank)
-        {
-            OnRankChanged();
-        }
     }
     
     public float GetTotalPos()
@@ -73,6 +70,16 @@ public class RankManager : MonoBehaviour, IPunObservable
         float calculatedPos = pastLength + dollyPos;
         kartRankData.totalPos = calculatedPos;
     }
+    
+    public bool GetFinish()
+    {
+        return kartRankData.isFinish;
+    }
+    
+    public void SetFinish(bool isFinish)
+    {
+        kartRankData.isFinish = isFinish;
+    }
 
     private void Awake()
     {
@@ -85,11 +92,6 @@ public class RankManager : MonoBehaviour, IPunObservable
     {
         kartRankData.rank = 1;
         kartRankData.bfRank = 1;
-    }
-    
-    public void OnRankChanged()
-    {
-        Debug.Log("랭킹 바뀜");
     }
 
     private void FixedUpdate()
