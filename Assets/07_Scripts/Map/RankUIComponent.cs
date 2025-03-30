@@ -5,6 +5,8 @@ using UnityEngine.UI;
 /* RankUI를 편하게 조정할수 있도록 담아두는 스크립트 */
 public class RankUIComponent : MonoBehaviour
 {
+    public RectTransform rectTransform;
+    
     [Header("나인지 화살표 표시")]
     public Image playerIndicator;
 

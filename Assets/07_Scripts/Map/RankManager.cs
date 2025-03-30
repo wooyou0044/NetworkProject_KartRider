@@ -41,6 +41,11 @@ public class RankManager : MonoBehaviour, IPunObservable
         }
     }
 
+    public int GetBfRank()
+    {
+        return kartRankData.bfRank;
+    }        
+    
     public int GetRank()
     {
         return kartRankData.rank;

@@ -552,6 +552,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0322978eb115d43569bd41d2d1829e20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rectTransform: {fileID: 2266154524207460751}
   playerIndicator: {fileID: 9213292909718979011}
   rankTextBg: {fileID: 5623962881678190848}
   rankText: {fileID: 7644446860015565077}

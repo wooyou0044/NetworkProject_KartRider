@@ -90,16 +90,18 @@ public class RankUIController : MonoBehaviour
         _kartDict.Add(kart, rankUIComponent);
     }
     
+    // 리타이어 될때까지 랭크 갱신
     private IEnumerator RankUpdate()
     {
         while (_gameManager.retireCountDownSeconds > 0)
         {
-            MoveRankByDistance();
+            SortRankByDistance();
             yield return new WaitForSeconds(0.5f);            
         }
     }
 
-    private void MoveRankByDistance()
+    // 간 거리에 따라 랭크 정렬하기
+    private void SortRankByDistance()
     {
         List<GameObject> sortedKartList = new List<GameObject>(_kartList);
         sortedKartList.Sort((kart1, kart2) =>
@@ -115,6 +117,48 @@ public class RankUIController : MonoBehaviour
             rank++;
             _kartDict[kart].RankManager.SetRank(rank);
             _kartDict[kart].rankText.text = rank.ToString();
+
+            int bfRank = _kartDict[kart].RankManager.GetBfRank();
+            int currentRank = _kartDict[kart].RankManager.GetRank();
+            // 랭크가 변동될때만 UI 갱신
+            if (bfRank != currentRank)
+            {
+                StartCoroutine(UpdateRankUI(_kartDict[kart], bfRank, currentRank));                
+            }
         }
+    }
+
+    // 랭크 UI 부드럽게 이동
+    private IEnumerator UpdateRankUI(RankUIComponent kartRank, int bfRank, int rank)
+    {
+        RectTransform rankElementTransform = kartRank.rectTransform;
+
+        float duration = 0.25f;
+        float elapsedTime = 0f;
+
+        Vector2 currentPos = GetRankElementPos(bfRank);
+        Vector2 toChangePos = GetRankElementPos(rank);        
+        
+        while (elapsedTime < duration)
+        {
+            rankElementTransform.anchoredPosition = Vector2.Lerp(currentPos, toChangePos, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+        
+        rankElementTransform.anchoredPosition = toChangePos;
+    }
+    
+    private Vector2 GetRankElementPos(int rank)
+    {
+        Vector2 cellSize = gridRoot.cellSize;
+        Vector2 spacing = gridRoot.spacing;        
+        
+        float fixedY = -cellSize.y / 2;
+        float cellSizeY = cellSize.y * rank;
+        float spacingY = spacing.y * (rank - 1);
+        float changedPosY = -(fixedY + cellSizeY + spacingY);
+
+        return new Vector2(cellSize.x / 2, changedPosY);
     }
 }
