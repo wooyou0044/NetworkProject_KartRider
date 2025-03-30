@@ -55,6 +55,7 @@ public class PhotonConnectManager : MonoBehaviourPunCallbacks
         }
     }
 
+    // 테스트용, 이럴 일 없겠지만 누군가 방에 참가했을 때
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         foreach (var player in PhotonNetwork.PlayerList)
@@ -64,6 +65,9 @@ public class PhotonConnectManager : MonoBehaviourPunCallbacks
         
         Debug.Log("roomName : " + PhotonNetwork.CurrentRoom.Name);
         Debug.Log("currentPlayers : " + PhotonNetwork.PlayerList.Length);
+        
+        // RPC로 뉴비에게 카트의 랩 정보 세팅해줌
+        _gameManager.kartCtrl.gameObject.GetPhotonView().RPC("SetLap", newPlayer, _gameManager.mapManager.MyCurrentLap);
     }
 
     /* 테스트용 방 곧바로 입장시, 바로 카트 생성해준다. */
@@ -75,5 +79,5 @@ public class PhotonConnectManager : MonoBehaviourPunCallbacks
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
         Debug.Log("방 참여 실패, code : " + returnCode + " msg : " + message);
-    }    
+    }
 }

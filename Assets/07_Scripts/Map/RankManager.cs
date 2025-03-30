@@ -18,9 +18,7 @@ public class RankManager : MonoBehaviour, IPunObservable
     }
     
     public RankData kartRankData;
-
-    /* 랭크 데이터 위해 필요한 카트 설정 */
-    private TestCHMKart _kart;
+    
     private DollyRealKart _dollyRealKart;
     private PhotonView _pv;
     
@@ -89,14 +87,13 @@ public class RankManager : MonoBehaviour, IPunObservable
     private void Awake()
     {
         _dollyRealKart = GetComponent<DollyRealKart>();
-        _kart = GetComponent<TestCHMKart>();
         _pv = GetComponent<PhotonView>();
     }
 
     private void Start()
     {
-        kartRankData.rank = 1;
-        kartRankData.bfRank = 1;
+        kartRankData.rank = 0;
+        kartRankData.bfRank = 0;
     }
 
     private void FixedUpdate()

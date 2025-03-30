@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
 
     // 방장이 가지고 있는 준비된 참가자들 리스트
     private List<Player> _readyPlayers;
-    private TestCHMKart kartCtrl;
+    public TestCHMKart kartCtrl;
 
     private void Awake()
     {

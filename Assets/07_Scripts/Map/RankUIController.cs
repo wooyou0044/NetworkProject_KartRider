@@ -139,6 +139,8 @@ public class RankUIController : MonoBehaviour
         Vector2 currentPos = GetRankElementPos(bfRank);
         Vector2 toChangePos = GetRankElementPos(rank);        
         
+        // Debug.Log("Player : " + kartRank.namePlate.text + "Rank :" + bfRank + " -> " + rank);
+        
         while (elapsedTime < duration)
         {
             rankElementTransform.anchoredPosition = Vector2.Lerp(currentPos, toChangePos, elapsedTime / duration);
