@@ -24,6 +24,7 @@ public class PhotonConnectManager : MonoBehaviourPunCallbacks
     public void TestConnectPhotonServer()
     {
         PhotonNetwork.GameVersion = _gameVersion;
+        PhotonNetwork.NickName = "테스트" + Random.Range(0, 1000);
         
         if (!PhotonNetwork.IsConnected)
         {
