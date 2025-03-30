@@ -38,7 +38,8 @@ public class GameManager : MonoBehaviour
 
     // 방장이 가지고 있는 준비된 참가자들 리스트
     private List<Player> _readyPlayers;
-    public TestCHMKart kartCtrl;
+    // 포톤 instantiate한 카트 인스턴스
+    [HideInInspector] public TestCHMKart kartCtrl;
 
     private void Awake()
     {
