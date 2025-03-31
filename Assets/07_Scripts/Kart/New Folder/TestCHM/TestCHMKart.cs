@@ -108,6 +108,8 @@ public partial class TestCHMKart : MonoBehaviour
 
         audioSource = GetComponent<AudioSource>();
 
+        // 임시
+        itemNetCtrl = GameObject.Find("ItemManager").GetComponent<ItemNetController>();
     }
 
     private void FixedUpdate()

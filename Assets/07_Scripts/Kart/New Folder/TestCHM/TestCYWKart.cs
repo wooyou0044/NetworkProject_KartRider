@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Realtime;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -20,6 +22,8 @@ public partial class TestCHMKart : MonoBehaviour
 
     bool isUsingShield;
     bool isOneUsedShield;
+
+    ItemNetController itemNetCtrl;
 
     public bool isKartRotating { get; set; }
 
@@ -92,7 +96,8 @@ public partial class TestCHMKart : MonoBehaviour
                 break;
             case ItemType.barricade:
                 // 임시로 => 1등 앞에 생겨야 함
-                MakeBarricade();
+                //MakeBarricade();
+                itemNetCtrl.RequestBarricade(_photonView.ViewID);
                 break;
             case ItemType.waterFly:
                 // 임시로
@@ -170,7 +175,8 @@ public partial class TestCHMKart : MonoBehaviour
         isUsingShield = false;
     }
 
-    public void MakeBarricade()
+    [PunRPC]
+    void MakeBarricade()
     {
         GameObject barricade = Resources.Load<GameObject>("Items/Barricade");
         GameObject barricadePrefab = Instantiate(barricade, frontBarricadePos.position, Quaternion.identity);

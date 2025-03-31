@@ -50,7 +50,6 @@ public class TestCHMCamer : MonoBehaviour
         {
             if (kartController.isKartRotating == true)
             {
-                Debug.Log("isKartRotating µé¾î¿È");
                 if (virtualCamera.Follow != null)
                 {
                     virtualCamera.Follow = null;
@@ -58,7 +57,6 @@ public class TestCHMCamer : MonoBehaviour
             }
             else
             {
-                Debug.Log("isKartRotatingÀº False µé¾î¿È");
                 if (virtualCamera.Follow == null)
                 {
                     virtualCamera.Follow = target;
