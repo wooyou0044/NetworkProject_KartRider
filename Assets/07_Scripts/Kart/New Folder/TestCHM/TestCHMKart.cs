@@ -38,12 +38,14 @@ public partial class TestCHMKart : MonoBehaviour
     [SerializeField] private float driftBoostChargeRate = 10f;   // 드리프트 중 부스트 충전 속도
     [SerializeField] private float boostMaxSpeedKmh = 280f;        // 부스트 상태의 최대 속도
 
+
     private float boostSpeed;         // 부스트 활성화 시 속도 
 
     #endregion
 
     #region Private Fields
 
+    public Animator playerCharAni { get; set; }       
     public float speedKM { get; private set; }     // 현재 속력 (km/h 단위)
     public bool isBoostTriggered { get; set; } // 부스트 활성화 여부
     //public bool isBoostCreate { get; set; }    // 드리프트 아이템 생성 가능 여부

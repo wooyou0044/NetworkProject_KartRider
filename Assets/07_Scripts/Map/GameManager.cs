@@ -75,8 +75,8 @@ public class GameManager : MonoBehaviour
         GameObject kart = PhotonNetwork.Instantiate(kartPrefab.name, Vector3.zero, Quaternion.identity);
         // kart에 붙어 있는 Controller 가져오기
         kartCtrl = kart.GetComponent<TestCHMKart>();
-        PhotonNetwork.Instantiate(characterPrefab.name, Vector3.zero, Quaternion.identity);
-        GameObject playerChar = PhotonNetwork.Instantiate(characterPrefab.name, Vector3.zero, Quaternion.identity);
+        //PhotonNetwork.Instantiate(characterPrefab.name, Vector3.zero, Quaternion.identity);
+        GameObject playerChar = PhotonNetwork.Instantiate(characterSo.characterName, Vector3.zero, Quaternion.identity);
         kartCtrl.playerCharAni = playerChar.GetComponent<Animator>();
         StartCoroutine(PlaceToMap(kart));
     }
