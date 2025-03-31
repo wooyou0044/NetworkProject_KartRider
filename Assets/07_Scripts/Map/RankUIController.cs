@@ -14,6 +14,9 @@ public class RankUIController : MonoBehaviour
     private List<GameObject> _kartList;
     // 현재 카트와 랭크 UI를 매칭시켜주는 딕셔너리
     private Dictionary<GameObject, RankUIComponent> _kartDict;
+
+    // 순차 정렬된 카트리스트 저장용
+    private List<GameObject> _sortedKartList;
     
     public void Awake()
     {
@@ -27,6 +30,7 @@ public class RankUIController : MonoBehaviour
         {
             _kartList.Add(child.gameObject);
         }
+        _sortedKartList = new List<GameObject>(_kartList);
     }
 
     // 전체 유저의 랭크 UI 그려주기
@@ -103,8 +107,7 @@ public class RankUIController : MonoBehaviour
     // 간 거리에 따라 랭크 정렬하기
     private void SortRankByDistance()
     {
-        List<GameObject> sortedKartList = new List<GameObject>(_kartList);
-        sortedKartList.Sort((kart1, kart2) =>
+        _sortedKartList.Sort((kart1, kart2) =>
         {
             float kartPos1 = _kartDict[kart1].RankManager.GetTotalPos();
             float kartPos2 = _kartDict[kart2].RankManager.GetTotalPos();
@@ -112,7 +115,7 @@ public class RankUIController : MonoBehaviour
         });
 
         int rank = 0;
-        foreach (var kart in sortedKartList)
+        foreach (var kart in _sortedKartList)
         {
             rank++;
             _kartDict[kart].RankManager.SetRank(rank);
@@ -162,5 +165,11 @@ public class RankUIController : MonoBehaviour
         float changedPosY = -(fixedY + cellSizeY + spacingY);
 
         return new Vector2(cellSize.x / 2, changedPosY);
+    }
+    
+    // Players 하위에 있는 GameObject에서, 해당 순위를 찾아서 반환해준다.
+    public GameObject GetKartObjectByRank(int rank)
+    {
+        return _sortedKartList[rank - 1];
     }
 }
