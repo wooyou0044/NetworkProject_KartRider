@@ -115,10 +115,16 @@ public class RankUIController : MonoBehaviour
             float kartPos2 = _kartDict[kart2].RankManager.GetTotalPos();
             return kartPos2.CompareTo(kartPos1);
         });
-
+        
         int rank = 0;
         foreach (var kart in _sortedKartList)
         {
+            // 랭크 업데이트 하는 도중 나갔을때 방어코드 추가
+            if (_kartDict[kart] == null)
+            {
+                continue;
+            }
+            
             rank++;
             _kartDict[kart].RankManager.SetRank(rank);
             _kartDict[kart].rankText.text = rank.ToString();

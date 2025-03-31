@@ -120,12 +120,9 @@ public class GameManager : MonoBehaviour
     }
     
     /* 방장에게 누군가 나갔다고 전달 */
-    [PunRPC]
     public void RemoveReadyPlayer(Player player)
     {
-        Debug.Log(player);
         _readyPlayers.Remove(player);
-        Debug.Log(_readyPlayers.Count);
     }
     
     [PunRPC]
