@@ -118,6 +118,11 @@ public partial class TestCHMKart : MonoBehaviour
         maxSpeed = maxSpeedKmh / 3.6f; // 일반 최대 속도
                                        //boostMaxSpeed = boostMaxSpeedKmh / 3.6f; // 부스트 최대 속도
                                        //currentMaxSpeed = isBoostTriggered ? boostMaxSpeed : maxSpeed;
+        // 입력값 읽어오기
+        currentSteerInput = Input.GetAxis("Horizontal");
+        currentMotorInput = Input.GetAxis("Vertical");
+        // 이동 처리
+        HandleKartMovement(currentMotorInput, currentSteerInput);
 
         
 
@@ -149,11 +154,6 @@ public partial class TestCHMKart : MonoBehaviour
             return;
         }
 
-        // 입력값 읽어오기
-        currentSteerInput = Input.GetAxis("Horizontal");
-        currentMotorInput = Input.GetAxis("Vertical");
-        // 이동 처리
-        HandleKartMovement(currentMotorInput, currentSteerInput);
         // 드리프트 상태에 따라 복구 처리
         if (!isDrifting)
         {
@@ -684,13 +684,13 @@ public partial class TestCHMKart : MonoBehaviour
         if (speedKM > 0.1f)
         {
             // 드리프트 상태에서 다른 각도 제한 적용
-            float maxSteerAngle = isDrifting ? 360f : 90f;  // 드리프트 중에는 60도, 기본은 90도
+            float maxSteerAngle = isDrifting ? 360f : 180f;  // 드리프트 중에는 60도, 기본은 90도
 
             // 목표 각도 계산
             float targetSteerAngle = steerInput * steerAngle * steeringMultiplier;
 
             // 부드러운 보간으로 현재 각도를 목표 각도로 점진적으로 변경
-            currentSteerAngle = Mathf.Lerp(currentSteerAngle, targetSteerAngle, Time.deltaTime * 30f);
+            currentSteerAngle = Mathf.Lerp(currentSteerAngle, targetSteerAngle, Time.fixedDeltaTime * 10f);
 
             // 각도를 -maxSteerAngle에서 +maxSteerAngle로 제한
             currentSteerAngle = Mathf.Clamp(currentSteerAngle, -maxSteerAngle, maxSteerAngle);
