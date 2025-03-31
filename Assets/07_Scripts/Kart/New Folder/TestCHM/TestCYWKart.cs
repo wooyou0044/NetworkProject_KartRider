@@ -76,8 +76,12 @@ public partial class TestCHMKart : MonoBehaviour
                 StartBoost(boostDuration);
                 break;
             case ItemType.banana:
-                ThrowBanana();
-                _photonView.RPC("ThrowBanana", RpcTarget.Others);
+                //ThrowBanana();
+                //_photonView.RPC("ThrowBanana", RpcTarget.Others);
+                Vector3 spawnPos = backThrowPos.position;
+                Quaternion spawnRot = backThrowPos.rotation;
+
+                _photonView.RPC("ThrowBanana", RpcTarget.All, spawnPos, spawnRot);
                 break;
             case ItemType.shield:
                 isUsingShield = true;
@@ -95,10 +99,19 @@ public partial class TestCHMKart : MonoBehaviour
         }
     }
 
-    void ThrowBanana()
+    //void ThrowBanana()
+    //{
+    //    GameObject banana = Resources.Load<GameObject>("Items/Banana");
+    //    GameObject bananaPrefab = Instantiate(banana, backThrowPos.position, Quaternion.identity);
+    //    Vector3 backwardDir = -transform.forward;
+    //    bananaPrefab.transform.position += backwardDir + Vector3.up;
+    //}
+
+    [PunRPC]
+    void ThrowBanana(Vector3 position, Quaternion rotation)
     {
         GameObject banana = Resources.Load<GameObject>("Items/Banana");
-        GameObject bananaPrefab = Instantiate(banana, backThrowPos.position, Quaternion.identity);
+        GameObject bananaPrefab = Instantiate(banana, position, rotation);
         Vector3 backwardDir = -transform.forward;
         bananaPrefab.transform.position += backwardDir + Vector3.up;
     }
