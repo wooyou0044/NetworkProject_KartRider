@@ -22,11 +22,11 @@ public class CharacterManager : MonoBehaviour
         {
             if (owner.Equals(kart.gameObject.GetComponent<PhotonView>().Owner))
             {
-                Transform characterTr = kart.transform.GetChild(0).GetChild(0).GetChild(0);
+                Transform characterTr = kart.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
                 transform.parent = characterTr;
                 transform.position = characterTr.position;
                 
-                Quaternion characterDeafultRot = Quaternion.Euler(-90, 90, 0);
+                Quaternion characterDeafultRot = Quaternion.Euler(0, 180, 0);
                 transform.rotation = characterDeafultRot;
                 break;
             }
