@@ -50,6 +50,8 @@ public class RankUIController : MonoBehaviour
         foreach (var kart in _kartList)
         {
             GameObject rankElement = Instantiate(rankElementPrefab, gridRoot.transform);
+            // 랭크 나타내는 UI 객체에 Player의 TagObject를 담아둔다.
+            kart.gameObject.GetPhotonView().Owner.TagObject = rankElement;
             SetPlayerRankUI(rankElement, kart);
         }
 

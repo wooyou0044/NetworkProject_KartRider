@@ -6,13 +6,16 @@ using UnityEngine;
 public class PhotonConnectManager : MonoBehaviourPunCallbacks
 {
     private string _gameVersion = "1";
-    private string _testRoomName = "scTestRoom";
+    private string _testRoomName = "scRankTestRoom";
     private string _testLobbyName = "scTestLobby";
+
     private GameManager _gameManager;
+    private RankUIController _rankUIController;
     
     void Awake()
     {
         _gameManager = FindObjectOfType<GameManager>();
+        _rankUIController = FindObjectOfType<RankUIController>();
     }
     
     void Start()
@@ -69,6 +72,18 @@ public class PhotonConnectManager : MonoBehaviourPunCallbacks
         // RPC로 뉴비에게 카트의 랩 정보 세팅해줌
         _gameManager.kartCtrl.gameObject.GetPhotonView().RPC("SetLap", newPlayer, _gameManager.mapManager.MyCurrentLap);
     }
+
+    public override void OnLeftRoom()
+    {
+        _gameManager.gameObject.GetPhotonView().RPC("RemoveReadyPlayer", RpcTarget.MasterClient, PhotonNetwork.LocalPlayer);
+    }
+    
+    // public override void OnPlayerLeftRoom(Player otherPlayer)
+    // {
+    //     Debug.Log("플레이어 나감 : " + otherPlayer.NickName);
+    //     Destroy((GameObject)otherPlayer.TagObject);
+    //     _rankUIController.InitRankUI();
+    // }
 
     /* 테스트용 방 곧바로 입장시, 바로 카트 생성해준다. */
     public override void OnJoinedRoom()
