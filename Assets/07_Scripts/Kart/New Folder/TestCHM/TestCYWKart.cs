@@ -77,7 +77,7 @@ public partial class TestCHMKart : MonoBehaviour
                 break;
             case ItemType.banana:
                 ThrowBanana();
-                _photonView.RPC("ThrowBanana", RpcTarget.Others);
+                _photonView.RPC("ThrowBanana", RpcTarget.OthersBuffered);
                 break;
             case ItemType.shield:
                 isUsingShield = true;
@@ -95,10 +95,12 @@ public partial class TestCHMKart : MonoBehaviour
         }
     }
 
+    [PunRPC]
     void ThrowBanana()
     {
         GameObject banana = Resources.Load<GameObject>("Items/Banana");
         GameObject bananaPrefab = Instantiate(banana, backThrowPos.position, Quaternion.identity);
+        //GameObject bananaPrefab = PhotonNetwork.Instantiate("Items/Banana", backThrowPos.position, Quaternion.identity);
         Vector3 backwardDir = -transform.forward;
         bananaPrefab.transform.position += backwardDir + Vector3.up;
     }
@@ -106,6 +108,7 @@ public partial class TestCHMKart : MonoBehaviour
     IEnumerator ThreadBanana(float duration)
     {
         isRacingStart = false;
+        rigid.centerOfMass = new Vector3(0, -0.5f, 0);
         originAngularDrag = rigid.angularDrag;
         rigid.angularDrag = 0.05f;
         float timer = 0f;
