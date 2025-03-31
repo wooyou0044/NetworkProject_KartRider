@@ -7,6 +7,7 @@ public enum ItemType
     banana,
     shield,
     barricade,
+    waterFly,
     booster,
 }
 

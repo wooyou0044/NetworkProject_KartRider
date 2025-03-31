@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -9,10 +10,13 @@ public partial class TestCHMKart : MonoBehaviour
     [SerializeField] Transform backThrowPos;
     [SerializeField] Transform frontBarricadePos;
     [SerializeField] float shieldDuration;
+    [SerializeField] float exitWaterFlyTime;
+    [SerializeField] GameObject waterBombParticle;
 
     GameObject damage;
 
     float originAngularDrag;
+    Vector3 playerPastPos;
 
     bool isUsingShield;
     bool isOneUsedShield;
@@ -73,6 +77,7 @@ public partial class TestCHMKart : MonoBehaviour
                 break;
             case ItemType.banana:
                 ThrowBanana();
+                _photonView.RPC("ThrowBanana", RpcTarget.Others);
                 break;
             case ItemType.shield:
                 isUsingShield = true;
@@ -83,13 +88,15 @@ public partial class TestCHMKart : MonoBehaviour
                 // 임시로 => 1등 앞에 생겨야 함
                 MakeBarricade();
                 break;
+            case ItemType.waterFly:
+                // 임시로
+                StuckInWaterFly();
+                break;
         }
     }
 
     void ThrowBanana()
     {
-        //GameObject banana = Instantiate(inventory.haveItem[0].itemObject, backThrowPos.position, Quaternion.identity);
-        //Instantiate(inventory.haveItem[0].itemObject, backThrowPos.position, Quaternion.identity);
         GameObject banana = Resources.Load<GameObject>("Items/Banana");
         GameObject bananaPrefab = Instantiate(banana, backThrowPos.position, Quaternion.identity);
         Vector3 backwardDir = -transform.forward;
@@ -104,7 +111,7 @@ public partial class TestCHMKart : MonoBehaviour
         float timer = 0f;
         while(timer < duration)
         {
-            Debug.Log(timer);
+            //Debug.Log(timer);
             rigid.AddTorque(Vector3.up * 500f, ForceMode.Impulse);
             timer += Time.deltaTime;
             yield return null;
@@ -154,6 +161,31 @@ public partial class TestCHMKart : MonoBehaviour
         Vector3 direction = transform.position - barricadePrefab.transform.position;
         direction.y = 0;
         barricadePrefab.transform.rotation = Quaternion.LookRotation(direction);
+    }
+
+    public void StuckInWaterFly()
+    {
+        playerPastPos = transform.position;
+        GameObject waterFly = Resources.Load<GameObject>("Items/WaterFly");
+        GameObject waterFlyPrefab = Instantiate(waterFly, transform.position, Quaternion.identity);
+        waterFlyPrefab.transform.position += new Vector3(0, 5, 0);
+        gameObject.transform.parent = waterFlyPrefab.transform;
+        transform.localPosition = Vector3.zero;
+        rigid.isKinematic = true;
+        isRacingStart = false;
+        // 임시
+        StartCoroutine(ExitInWaterFly(waterFlyPrefab));
+    }
+
+    IEnumerator ExitInWaterFly(GameObject waterFly)
+    {
+        yield return new WaitForSeconds(exitWaterFlyTime);
+        gameObject.transform.parent = _playerParent;
+        transform.localPosition = playerPastPos;
+        rigid.isKinematic = false;
+        isRacingStart = true;
+        Instantiate(waterBombParticle, waterFly.transform.position, Quaternion.identity);
+        waterFly.SetActive(false);
     }
 
     void OnTriggerEnter(Collider other)
