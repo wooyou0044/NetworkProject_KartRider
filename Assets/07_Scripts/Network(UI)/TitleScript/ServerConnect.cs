@@ -13,7 +13,7 @@ public class ServerConnect : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.ConnectUsingSettings();//유저 세팅값으로 서버연결
     }
-    
+    //연결 확인을 불값으로 반환 해주는 메서드
     public bool Connect()
     {
         bool isConnectedToMaster = PhotonNetwork.NetworkClientState == ClientState.ConnectedToMasterServer;

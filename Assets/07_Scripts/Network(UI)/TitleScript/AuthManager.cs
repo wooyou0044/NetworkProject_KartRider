@@ -10,8 +10,9 @@ public class AuthManager : MonoBehaviour
 {
     public TitleUI titleUI;
     public ServerConnect serverCon;
-    private bool nickNameCheck = false;
 
+    //시작과 동시에 파이어베이스의 어스의 정보와 데이터베이스 정보를
+    //만든 게임서버 파이어베이스 정보와 연결함
     private void Awake()
     {
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
@@ -27,6 +28,14 @@ public class AuthManager : MonoBehaviour
                 Debug.LogError("파이어베이스 오류" + dependStatus + "사용 불가");
             }
         });
+    }
+    
+    //유저프로파일 삭제하는 버튼 테스트 때만 사용하고 삭제할 예정
+    public void DeletuserProfile()
+    {//프로파일에 저장한 유저 닉네임 초기화하기
+        var nickNameTask = FirebaseDBManager.Instance.DbRef.Child("users")
+            .Child(FirebaseDBManager.Instance.User.UserId)
+            .Child("isLoggedIn").SetValueAsync(false);
     }
 
     /// <summary>
@@ -54,6 +63,7 @@ public class AuthManager : MonoBehaviour
             titleUI.SetLogInButtonsInteractable(true);
             yield break;
         }
+
         FirebaseDBManager.Instance.User = loginTask.Result.User;
 
         var userLoginTask = FirebaseDBManager.Instance.DbRef.Child("users")
@@ -63,7 +73,6 @@ public class AuthManager : MonoBehaviour
         if (userLoginTask.Exception != null)
         {
             titleUI.ShowMessage(titleUI.errorMessage, "로그인 상태 확인 실패 다시 로그인하세요.", true);
-            titleUI.ShowMessage(titleUI.errorMessage, "서버 접속 실패 다시 로그인해주세요.", true);
             yield return new WaitForSeconds(1f);
             titleUI.SetLogInButtonsInteractable(true);
             titleUI.InitializeLogin();//다시 로그인 하는 것 처럼 타이틀 창 초기화
@@ -145,6 +154,14 @@ public class AuthManager : MonoBehaviour
             {
                 titleUI.lodingBar.value = SceneCont.Instance.Oper.progress;
                 yield return new WaitUntil(predicate: () => serverCon.Connect());
+                if (!serverCon.Connect())
+                {
+                    //커넥트 오류시
+                    titleUI.ShowMessage(titleUI.errorMessage, "서버 접속 실패 다시 로그인해주세요.", true);
+                    yield return new WaitForSeconds(2f);
+                    titleUI.InitializeLogin();//다시 로그인 하는 것 처럼 타이틀 창 초기화
+                    yield break;
+                }
             }
             else
             {
@@ -152,14 +169,6 @@ public class AuthManager : MonoBehaviour
                 titleUI.lodingBar.value = 1f;
                 break;
             }
-        }
-        if (!serverCon.Connect())
-        {
-            //커넥트 오류시
-            titleUI.ShowMessage(titleUI.errorMessage, "서버 접속 실패 다시 로그인해주세요.", true);
-            yield return new WaitForSeconds(2f);
-            titleUI.InitializeLogin();//다시 로그인 하는 것 처럼 타이틀 창 초기화
-            yield break;
         }
         SceneCont.Instance.Oper.allowSceneActivation = true;
     }
@@ -248,16 +257,6 @@ public class AuthManager : MonoBehaviour
         titleUI.ToggleCreateNickNamePanel(false);
     }
 
-
-    //유저프로파일 삭제하는 버튼 테스트 때만 사용하기 서버 커넥트 연결할 때 삭제하기
-    public void DeletuserProfile()
-    {//프로파일에 저장한 유저 닉네임 초기화하기
-        var nickNameTask = FirebaseDBManager.Instance.DbRef.Child("users")
-            .Child(FirebaseDBManager.Instance.User.UserId)
-            .Child("isLoggedIn").SetValueAsync(false);
-        UserProfile userProfile = new UserProfile { DisplayName = null };
-        var user = FirebaseDBManager.Instance.User.UpdateUserProfileAsync(userProfile);
-    }
 
     /// <summary>
     /// 회원 가입 버튼 연결 됨

@@ -25,11 +25,6 @@ public class RoomUIManager : MonoBehaviour
     [Header("맵(트랙변경) 버튼")]
     [SerializeField] public Button MapChangeBtn;    
 
-    [Header("준비 버튼")]
-    [SerializeField] public Button startBtn;
-    [SerializeField] public Button readyBtn;
-    [SerializeField] public Button readyCanCelBtn;
-
     [Header("방 나가기 버튼")]
     [SerializeField] public Button exitBtn;
 
