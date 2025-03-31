@@ -664,7 +664,7 @@ public partial class TestCHMKart : MonoBehaviour
         Vector3 targetVelocity = transform.forward * motorInput * currentMaxSpeed;
 
         // 점진적으로 가속도 기반으로 속도 증가
-        Vector3 smoothedVelocity = Vector3.Lerp(new Vector3(rigid.velocity.x, 0f, rigid.velocity.z), targetVelocity * currentAcceleration, Time.fixedDeltaTime * 0.25f);
+        Vector3 smoothedVelocity = Vector3.Lerp(new Vector3(rigid.velocity.x, 0f, rigid.velocity.z), targetVelocity * currentAcceleration, Time.deltaTime * 0.25f);
 
         // Y축 속도는 유지
         smoothedVelocity.y = rigid.velocity.y;
@@ -690,7 +690,7 @@ public partial class TestCHMKart : MonoBehaviour
             float targetSteerAngle = steerInput * steerAngle * steeringMultiplier;
 
             // 부드러운 보간으로 현재 각도를 목표 각도로 점진적으로 변경
-            currentSteerAngle = Mathf.Lerp(currentSteerAngle, targetSteerAngle, Time.deltaTime * 30f);
+            currentSteerAngle = Mathf.Lerp(currentSteerAngle, targetSteerAngle, Time.deltaTime * 50f);
 
             // 각도를 -maxSteerAngle에서 +maxSteerAngle로 제한
             currentSteerAngle = Mathf.Clamp(currentSteerAngle, -maxSteerAngle, maxSteerAngle);
