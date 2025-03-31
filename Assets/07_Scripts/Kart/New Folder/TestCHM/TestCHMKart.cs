@@ -619,12 +619,12 @@ public partial class TestCHMKart : MonoBehaviour
         float driftSpeed = initialDriftSpeed * driftSpeedReduction;
 
         // 조향 입력에 민감도를 적용하여 누적 회전을 보정합니다.
-        lockedYRotation += steerInput * ((steerAngle / 2.5f) * steeringMultiplier) * Time.fixedDeltaTime;
+        lockedYRotation += steerInput * ((steerAngle / 2.5f) * steeringMultiplier) * Time.deltaTime;
         Quaternion driftRotation = Quaternion.Euler(0f, lockedYRotation, 0f);
         Vector3 driftDirection = driftRotation * Vector3.forward;
 
         // 현재 속도를 부드럽게 드리프트 방향으로 전환합니다.
-        rigid.velocity = Vector3.Lerp(rigid.velocity, driftDirection * driftSpeed, Time.fixedDeltaTime * 10f);
+        rigid.velocity = Vector3.Lerp(rigid.velocity, driftDirection * driftSpeed, Time.deltaTime * 10f);
 
         // 측면 힘을 추가하여 드리프트 느낌을 강화합니다.
         Vector3 lateralForce = transform.right * steerInput * driftForceMultiplier * movementForce;
@@ -664,7 +664,7 @@ public partial class TestCHMKart : MonoBehaviour
         Vector3 targetVelocity = transform.forward * motorInput * currentMaxSpeed;
 
         // 점진적으로 가속도 기반으로 속도 증가
-        Vector3 smoothedVelocity = Vector3.Lerp(new Vector3(rigid.velocity.x, 0f, rigid.velocity.z), targetVelocity * currentAcceleration, Time.fixedDeltaTime * 0.25f);
+        Vector3 smoothedVelocity = Vector3.Lerp(new Vector3(rigid.velocity.x, 0f, rigid.velocity.z), targetVelocity * currentAcceleration, Time.deltaTime * 0.25f);
 
         // Y축 속도는 유지
         smoothedVelocity.y = rigid.velocity.y;
@@ -690,13 +690,13 @@ public partial class TestCHMKart : MonoBehaviour
             float targetSteerAngle = steerInput * steerAngle * steeringMultiplier;
 
             // 부드러운 보간으로 현재 각도를 목표 각도로 점진적으로 변경
-            currentSteerAngle = Mathf.Lerp(currentSteerAngle, targetSteerAngle, Time.deltaTime * 30f);
+            currentSteerAngle = Mathf.Lerp(currentSteerAngle, targetSteerAngle, Time.deltaTime * 50f);
 
             // 각도를 -maxSteerAngle에서 +maxSteerAngle로 제한
             currentSteerAngle = Mathf.Clamp(currentSteerAngle, -maxSteerAngle, maxSteerAngle);
 
             // 회전 처리
-            Vector3 turnDirection = Quaternion.Euler(0, currentSteerAngle * Time.fixedDeltaTime, 0) * transform.forward;
+            Vector3 turnDirection = Quaternion.Euler(0, currentSteerAngle * Time.deltaTime, 0) * transform.forward;
             rigid.MoveRotation(Quaternion.LookRotation(turnDirection));
         }
     }

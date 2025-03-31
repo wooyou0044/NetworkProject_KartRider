@@ -23,7 +23,7 @@ public partial class TestCHMKart : MonoBehaviour
 
     private void HandleItemInput()
     {
-        // LeftControl Å°¿Í ºÎ½ºÆ® °ÔÀÌÁö ÃÖ´ëÄ¡ ½Ã ºÎ½ºÅÍ ±âº» ¹ßµ¿
+        // LeftControl í‚¤ì™€ ë¶€ìŠ¤íŠ¸ ê²Œì´ì§€ ìµœëŒ€ì¹˜ ì‹œ ë¶€ìŠ¤í„° ê¸°ë³¸ ë°œë™
         if (Input.GetKeyDown(KeyCode.LeftControl) && inventory.itemNum > 0)
         {
             //StartBoost(boostDuration);
@@ -31,7 +31,7 @@ public partial class TestCHMKart : MonoBehaviour
             inventory.RemoveItem();
             isItemUsed = true;
         }
-        // ºÎ½ºÆ® °ÔÀÌÁö ÃæÀü
+        // ë¶€ìŠ¤íŠ¸ ê²Œì´ì§€ ì¶©ì „
         if (currentMotorInput != 0 || isDrifting)
         {
             ChargeBoostGauge();
@@ -52,7 +52,7 @@ public partial class TestCHMKart : MonoBehaviour
         }
     }
 
-    #region Ä«Æ® È¿°úÀ½
+    #region ì¹´íŠ¸ íš¨ê³¼ìŒ
     void PlayDriftEffectSound()
     {
         audioSource.clip = driftAudioClip;
@@ -76,8 +76,12 @@ public partial class TestCHMKart : MonoBehaviour
                 StartBoost(boostDuration);
                 break;
             case ItemType.banana:
-                ThrowBanana();
-                _photonView.RPC("ThrowBanana", RpcTarget.OthersBuffered);
+                //ThrowBanana();
+                //_photonView.RPC("ThrowBanana", RpcTarget.Others);
+                Vector3 spawnPos = backThrowPos.position;
+                Quaternion spawnRot = backThrowPos.rotation;
+
+                _photonView.RPC("ThrowBanana", RpcTarget.All, spawnPos, spawnRot);
                 break;
             case ItemType.shield:
                 isUsingShield = true;
@@ -85,22 +89,29 @@ public partial class TestCHMKart : MonoBehaviour
                 StartCoroutine(OffShield());
                 break;
             case ItemType.barricade:
-                // ÀÓ½Ã·Î => 1µî ¾Õ¿¡ »ı°Ü¾ß ÇÔ
+                // ì„ì‹œë¡œ => 1ë“± ì•ì— ìƒê²¨ì•¼ í•¨
                 MakeBarricade();
                 break;
             case ItemType.waterFly:
-                // ÀÓ½Ã·Î
+                // ì„ì‹œë¡œ
                 StuckInWaterFly();
                 break;
         }
     }
 
+    //void ThrowBanana()
+    //{
+    //    GameObject banana = Resources.Load<GameObject>("Items/Banana");
+    //    GameObject bananaPrefab = Instantiate(banana, backThrowPos.position, Quaternion.identity);
+    //    Vector3 backwardDir = -transform.forward;
+    //    bananaPrefab.transform.position += backwardDir + Vector3.up;
+    //}
+
     [PunRPC]
-    void ThrowBanana()
+    void ThrowBanana(Vector3 position, Quaternion rotation)
     {
         GameObject banana = Resources.Load<GameObject>("Items/Banana");
-        GameObject bananaPrefab = Instantiate(banana, backThrowPos.position, Quaternion.identity);
-        //GameObject bananaPrefab = PhotonNetwork.Instantiate("Items/Banana", backThrowPos.position, Quaternion.identity);
+        GameObject bananaPrefab = Instantiate(banana, position, rotation);
         Vector3 backwardDir = -transform.forward;
         bananaPrefab.transform.position += backwardDir + Vector3.up;
     }
@@ -176,7 +187,7 @@ public partial class TestCHMKart : MonoBehaviour
         transform.localPosition = Vector3.zero;
         rigid.isKinematic = true;
         isRacingStart = false;
-        // ÀÓ½Ã
+        // ì„ì‹œ
         StartCoroutine(ExitInWaterFly(waterFlyPrefab));
     }
 
