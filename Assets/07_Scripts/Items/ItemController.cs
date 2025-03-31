@@ -20,8 +20,15 @@ public class ItemController : MonoBehaviour
     {
         if(collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
-            rb.isKinematic = true;
-            col.isTrigger = true;
+            if(item.itemType == ItemType.banana)
+            {
+                rb.isKinematic = true;
+                col.isTrigger = true;
+            }
+            if(item.itemType == ItemType.barricade)
+            {
+                rb.constraints = RigidbodyConstraints.FreezeAll;
+            }
         }
     }
 }

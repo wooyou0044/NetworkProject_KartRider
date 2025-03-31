@@ -2,14 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public partial class TestCHMKart : MonoBehaviour
 {
     [SerializeField] Transform backThrowPos;
+    [SerializeField] Transform frontBarricadePos;
+    [SerializeField] float shieldDuration;
 
     GameObject damage;
 
     float originAngularDrag;
+
+    bool isUsingShield;
+    bool isOneUsedShield;
 
     private void HandleItemInput()
     {
@@ -68,14 +74,26 @@ public partial class TestCHMKart : MonoBehaviour
             case ItemType.banana:
                 ThrowBanana();
                 break;
+            case ItemType.shield:
+                isUsingShield = true;
+                kartBodyCtrl.SetShieldEffectActive(true);
+                StartCoroutine(OffShield());
+                break;
+            case ItemType.barricade:
+                // 임시로 => 1등 앞에 생겨야 함
+                MakeBarricade();
+                break;
         }
     }
 
     void ThrowBanana()
     {
-        GameObject banana = Instantiate(inventory.haveItem[0].itemObject, backThrowPos.position, Quaternion.identity);
+        //GameObject banana = Instantiate(inventory.haveItem[0].itemObject, backThrowPos.position, Quaternion.identity);
+        //Instantiate(inventory.haveItem[0].itemObject, backThrowPos.position, Quaternion.identity);
+        GameObject banana = Resources.Load<GameObject>("Items/Banana");
+        GameObject bananaPrefab = Instantiate(banana, backThrowPos.position, Quaternion.identity);
         Vector3 backwardDir = -transform.forward;
-        banana.transform.position += backwardDir * 2 + Vector3.up;
+        bananaPrefab.transform.position += backwardDir + Vector3.up;
     }
 
     IEnumerator ThreadBanana(float duration)
@@ -107,6 +125,37 @@ public partial class TestCHMKart : MonoBehaviour
         }
     }
 
+    IEnumerator OffShield()
+    {
+        if(isUsingShield == false)
+        {
+            yield break;
+        }
+        float timer = 0;
+        while(timer < shieldDuration)
+        {
+            if (isUsingShield == false)
+            {
+                yield break;
+            }
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        isUsingShield = false;
+    }
+
+    public void MakeBarricade()
+    {
+        GameObject barricade = Resources.Load<GameObject>("Items/Barricade");
+        GameObject barricadePrefab = Instantiate(barricade, frontBarricadePos.position, Quaternion.identity);
+       
+        Vector3 forwardDir = transform.forward;
+        barricadePrefab.transform.position += forwardDir * 7 + Vector3.up;
+        Vector3 direction = transform.position - barricadePrefab.transform.position;
+        direction.y = 0;
+        barricadePrefab.transform.rotation = Quaternion.LookRotation(direction);
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if(other == null)
@@ -116,7 +165,14 @@ public partial class TestCHMKart : MonoBehaviour
         if(other.CompareTag("ItemBox"))
         {
             ItemController ctrl = other.GetComponent<ItemController>();
-            DamageItem(ctrl.item.itemType);
+            if(isUsingShield == false)
+            {
+                DamageItem(ctrl.item.itemType);
+            }
+            else
+            {
+                isUsingShield = false;
+            }
             other.gameObject.SetActive(false);
         }
     }

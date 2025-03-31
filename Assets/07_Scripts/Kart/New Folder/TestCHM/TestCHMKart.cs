@@ -184,6 +184,14 @@ public partial class TestCHMKart : MonoBehaviour
         {
             //Debug.Log("현재 공중 상태입니다.");
         }
+
+        if(isUsingShield == false)
+        {
+            if(kartBodyCtrl.shield.activeSelf == true)
+            {
+                kartBodyCtrl.SetShieldEffectActive(false);
+            }
+        }
     }
     #endregion
 
@@ -747,6 +755,10 @@ public partial class TestCHMKart : MonoBehaviour
     {
         if (lastHit.collider != null)
         {
+            if(lastHit.collider.CompareTag("ItemBox"))
+            {
+                lastHit.collider.gameObject.GetComponent<BarricadeController>().OffBarricade();
+            }
             // 현재 속도를 가져온 후, lastHit.normal을 기준으로 반사
             Vector3 incomingVelocity = rigid.velocity;
             Vector3 reflectedVelocity = Vector3.Reflect(incomingVelocity, lastHit.normal);

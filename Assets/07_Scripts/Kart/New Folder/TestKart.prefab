@@ -523,8 +523,10 @@ MonoBehaviour:
   driftSparkWheelPos:
   - {fileID: 3395335430761523191}
   - {fileID: 6374713261397151615}
+  shieldEffectBodyPos: {fileID: 8887275532626141900}
   driftSpark: {fileID: 4503612902121041701, guid: 5a936c83b1746f14f9100db745e94f04, type: 3}
   windEffect: {fileID: 6354686006975832417, guid: 8ba61049d6d48464d81e1c7030773377, type: 3}
+  shieldEffect: {fileID: 7314526620251459061, guid: ccf28ea29cf499744ac31bab90073aba, type: 3}
 --- !u!1 &1556149449001999350
 GameObject:
   m_ObjectHideFlags: 0
@@ -1798,6 +1800,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  backThrowPos: {fileID: 0}
 --- !u!114 &873466291264580667
 MonoBehaviour:
   m_ObjectHideFlags: 0

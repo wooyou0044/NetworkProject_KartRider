@@ -16,11 +16,14 @@ public class ItemBoxController : MonoBehaviour
     void Start()
     {
         // 아이템 개수
-        //count = (int)ItemType.shield + 1;
+        //count = (int)ItemType.booster + 1;
         //int rand = Random.Range(0, count);
         //curItem = items[rand];
 
-        curItem = items[0];
+        //curItem = items[3];
+
+        //int rand = Random.Range(0, 3);
+        curItem = items[2];
     }
 
     public void GetItem()

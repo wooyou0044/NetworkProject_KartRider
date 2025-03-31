@@ -127,9 +127,9 @@ MonoBehaviour:
   destroyParticle: {fileID: 552473030911201985, guid: 0b374fb39a0f5fc4ea6361bbd2e59b8d, type: 3}
   items:
   - {fileID: 11400000, guid: 02febfb833017a14e8be4d60b1064eb8, type: 2}
-  - {fileID: 11400000, guid: 1c96c6e0551bd1a46873028e45836543, type: 2}
-  - {fileID: 11400000, guid: 9b7fc3076abcc184a8c549d74778f2f3, type: 2}
   - {fileID: 11400000, guid: 1bf5cf69d311a244a8ca279b75af6aa2, type: 2}
+  - {fileID: 11400000, guid: 9b7fc3076abcc184a8c549d74778f2f3, type: 2}
+  - {fileID: 11400000, guid: 1c96c6e0551bd1a46873028e45836543, type: 2}
 --- !u!1 &2110946358397875088
 GameObject:
   m_ObjectHideFlags: 0

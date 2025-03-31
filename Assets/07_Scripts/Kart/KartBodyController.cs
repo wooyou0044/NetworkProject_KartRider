@@ -17,7 +17,7 @@ public class KartBodyController : MonoBehaviour
 
     GameObject spark;
     GameObject wind;
-    GameObject shield;
+    public GameObject shield { get; set; }
     GameObject[] driftSparkObject;
 
     int input;
@@ -39,12 +39,14 @@ public class KartBodyController : MonoBehaviour
             driftSparkObject[i] = Instantiate(driftSpark, driftSparkWheelPos[i]);
             driftSparkObject[i].SetActive(false);
         }
-        shield = Instantiate(shieldEffect, shieldEffectBodyPos.position, Quaternion.identity);
+        shield = Instantiate(shieldEffect, shieldEffectBodyPos);
+        //shield.transform.position -= new Vector3(0, 0.05f, 0);
 
         SetLampTrailActive(false);
         SetBoostEffectActive(false);
         SetCollisonSparkActive(false);
         SetBoostWindEffectActive(false);
+        SetShieldEffectActive(false);
     }
 
     void Update()

@@ -5,9 +5,9 @@ using UnityEngine;
 public enum ItemType
 {
     banana,
-    booster,
-    barricade,
     shield,
+    barricade,
+    booster,
 }
 
 [CreateAssetMenu(fileName = "NewItemData", menuName = "ItemData", order = 1)]
