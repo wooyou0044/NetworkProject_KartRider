@@ -117,6 +117,22 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2298240412038944371}
     - target: {fileID: 2115428642982953309, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: boostDuration
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2115428642982953309, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: boxCastSize.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2115428642982953309, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: boxCastSize.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2115428642982953309, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: boxCastSize.z
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2115428642982953309, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: boostAudioClip
       value: 
       objectReference: {fileID: 8300000, guid: deb096898ad68f24397a797979f5674b, type: 3}
@@ -144,6 +160,18 @@ PrefabInstance:
       propertyPath: waterBombParticle
       value: 
       objectReference: {fileID: 3223031359271505891, guid: 155410a7086d1d34ca48c448dfc33156, type: 3}
+    - target: {fileID: 2115428642982953309, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: maxSteerMultiplier
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2115428642982953309, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: momentboostDuration
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2115428642982953309, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: maxDriftForceMultiplier
+      value: 150
+      objectReference: {fileID: 0}
     - target: {fileID: 2680623755718992227, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: m_Drag
       value: 0.1

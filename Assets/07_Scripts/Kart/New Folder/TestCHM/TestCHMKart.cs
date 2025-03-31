@@ -114,10 +114,13 @@ public partial class TestCHMKart : MonoBehaviour
     {
         if (!_photonView.IsMine) return;
 
+        if (isRacingStart == false)
+        {
+            return;
+        }
+
         // 최대 속도 계산
-        maxSpeed = maxSpeedKmh / 3.6f; // 일반 최대 속도
-                                       //boostMaxSpeed = boostMaxSpeedKmh / 3.6f; // 부스트 최대 속도
-                                       //currentMaxSpeed = isBoostTriggered ? boostMaxSpeed : maxSpeed;
+        maxSpeed = maxSpeedKmh / 3.6f; // 일반 최대 속도                                      
         // 입력값 읽어오기
         currentSteerInput = Input.GetAxis("Horizontal");
         currentMotorInput = Input.GetAxis("Vertical");
@@ -139,7 +142,7 @@ public partial class TestCHMKart : MonoBehaviour
         }
 
         // 중력 강화 처리
-        ApplyEnhancedGravity();
+        //ApplyEnhancedGravity();
     }
 
     private void Update()
@@ -158,9 +161,7 @@ public partial class TestCHMKart : MonoBehaviour
         if (!isDrifting)
         {
             RecoverDriftAngle();
-        }
-
-
+        }    
         // 현재 속도 갱신 (Y축 제외) 및 km/h 변환
         speed = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
         speedKM = speed.magnitude * 3.6f;
@@ -183,15 +184,12 @@ public partial class TestCHMKart : MonoBehaviour
         }
 
         // 레이캐스트로 지면 체크
-        if (CheckIfGrounded())
+        if (!CheckIfGrounded())
         {
-            //Debug.Log("현재 지면 위에 있습니다.");
+            MaintainHorizontalSpeed();
+            ApplyEnhancedGravity();
         }
-        else
-        {
-            //Debug.Log("현재 공중 상태입니다.");
-        }
-
+        
         if(isUsingShield == false)
         {
             if(kartBodyCtrl.shield.activeSelf == true)
@@ -690,7 +688,7 @@ public partial class TestCHMKart : MonoBehaviour
             float targetSteerAngle = steerInput * steerAngle * steeringMultiplier;
 
             // 부드러운 보간으로 현재 각도를 목표 각도로 점진적으로 변경
-            currentSteerAngle = Mathf.Lerp(currentSteerAngle, targetSteerAngle, Time.fixedDeltaTime * 10f);
+            currentSteerAngle = Mathf.Lerp(currentSteerAngle, targetSteerAngle, Time.fixedDeltaTime * 20f);
 
             // 각도를 -maxSteerAngle에서 +maxSteerAngle로 제한
             currentSteerAngle = Mathf.Clamp(currentSteerAngle, -maxSteerAngle, maxSteerAngle);
@@ -735,6 +733,7 @@ public partial class TestCHMKart : MonoBehaviour
     [SerializeField] private Vector3 boxCastSize = new Vector3(1, 1, 1); // 박스 크기
     [SerializeField] private float boxCastDistance = 1f;                 // 박스 캐스트 거리
     [SerializeField] private float groundRayDistance = 0.8f;             // 지면 레이캐스트 거리
+    [SerializeField] private float maxSlopeAngle = 10f;             // 지면 레이캐스트 거리
 
     [Header("레이어 설정")]
     [SerializeField] private LayerMask wallLayer;     // 벽 레이어
@@ -786,7 +785,23 @@ public partial class TestCHMKart : MonoBehaviour
             }
         }
     }
+    private void MaintainHorizontalSpeed()
+    {
+        if (!CheckIfGrounded()) // 공중 상태일 경우
+        {
+            // 현재 수평 속도를 계산
+            Vector3 horizontalVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
 
+            // 수평 속도를 유지 (속도가 일정 값 이하로 떨어지지 않도록 설정)
+            if (horizontalVelocity.magnitude < 10f) // 10f는 최소 유지 속도
+            {
+                horizontalVelocity = horizontalVelocity.normalized * 10f;
+            }
+
+            // 기존 속도를 유지하며, 중력 방향 속도는 그대로 유지
+            rigid.velocity = new Vector3(horizontalVelocity.x, rigid.velocity.y, horizontalVelocity.z);
+        }
+    }
     /// <summary>
     /// 벽과 충돌 시 반사 효과를 적용합니다.
     /// </summary>
@@ -838,23 +853,30 @@ public partial class TestCHMKart : MonoBehaviour
         StartBoost(boostDuration);
         // Debug.Log("부스터 충돌 처리 실행됨!");
     }
-
     /// <summary>
-    /// 지면과 충돌 시 수평 속도를 그대로 유지합니다.
+    /// 지면과 충돌 시 수평 속도를 유지하며, 경사면일 경우 각도에 따라 점진적으로 속도를 보정합니다.
     /// </summary>
     private void ProcessGroundCollision()
     {
+        // 수평 속도를 유지
         Vector3 horizontalVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
         rigid.velocity = horizontalVelocity;
-        // Debug.Log("ProcessGroundCollision: 지면 충돌 시 수평 속력 유지");
 
+        // 경사 각도 계산
         float slopeAngle = Vector3.Angle(lastHit.normal, Vector3.up);
-        if (slopeAngle >= 10f)
+
+        // 경사각에 따라 보정 비율을 점진적으로 증가
+        if (slopeAngle >= maxSlopeAngle)
         {
-            Vector3 horizontalVelocityGround = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z) * 1.2f;
-            rigid.velocity = new Vector3(horizontalVelocityGround.x, rigid.velocity.y, horizontalVelocityGround.z);
-            //Debug.Log($"ProcessJumpCollision: 경사각 {slopeAngle:F2}° 보정됨. (1.2배)");
+            float slopeFactor = Mathf.Lerp(1f, 1.5f, Mathf.InverseLerp(maxSlopeAngle, 45f, slopeAngle));
+            // maxSlopeAngle부터 45°까지 점진적으로 보정 비율 증가
+
+            Vector3 adjustedVelocity = horizontalVelocity * slopeFactor;
+            rigid.velocity = new Vector3(adjustedVelocity.x, rigid.velocity.y, adjustedVelocity.z);
+
+            Debug.Log($"ProcessGroundCollision: 경사각 {slopeAngle:F2}°, 보정 비율 {slopeFactor:F2}, 속도 {rigid.velocity}");
         }
+        
     }
 
     /// <summary>
@@ -865,7 +887,7 @@ public partial class TestCHMKart : MonoBehaviour
         if (!CheckIfGrounded())
         {
             float currentHorizontalSpeed = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z).magnitude;
-            float speedFactor = Mathf.Clamp01(currentHorizontalSpeed / 50f); // 조정 가능
+            float speedFactor = Mathf.Clamp01(currentHorizontalSpeed / 100f); // 조정 가능
             float gravityMultiplier = Mathf.Lerp(1f, 5f, speedFactor);
             Vector3 enhancedGravity = Physics.gravity * gravityMultiplier;
 
