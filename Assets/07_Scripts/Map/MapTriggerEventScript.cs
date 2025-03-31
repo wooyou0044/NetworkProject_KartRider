@@ -23,10 +23,10 @@ public class MapTriggerEventScript : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        PhotonView photonView = other.gameObject.GetPhotonView();
+        Debug.Log(other);
 
         // 일단 다른사람이 충돌했으면 무시
-        if (photonView == null || !photonView.IsMine)
+        if (!other.gameObject.GetPhotonView().IsMine)
         {
             return;
         }
@@ -36,6 +36,6 @@ public class MapTriggerEventScript : MonoBehaviour
             _checkPoint.OnEnterCheckPoint();
         }
         
-        collisionEvent.Invoke(other, gameObject);
+        collisionEvent.Invoke(other, this.gameObject);
     }
 }

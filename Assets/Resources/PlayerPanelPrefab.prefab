@@ -267,10 +267,6 @@ MonoBehaviour:
   playerImg: {fileID: 1348480863874753204}
   PlayerNameText: {fileID: 8147758119063562579}
   playerIcon: {fileID: 7201783258846162909}
-  startBtn: {fileID: 0}
-  readyBtn: {fileID: 0}
-  readyCanCelBtn: {fileID: 0}
-  readyImage: {fileID: 0}
 --- !u!1 &7727254937546306735
 GameObject:
   m_ObjectHideFlags: 0

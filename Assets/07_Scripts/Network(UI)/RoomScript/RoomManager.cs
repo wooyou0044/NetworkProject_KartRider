@@ -19,6 +19,22 @@ public class RoomManager : MonoBehaviourPunCallbacks
         yield return new WaitUntil(() => PhotonNetwork.IsConnectedAndReady);
         RoomInfoUpdate();
         JoinRoom();
+        InitializeUI();
+    }
+
+    private void InitializeUI()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            roomUIManger.startBtn.gameObject.SetActive(true);
+            roomUIManger.readyBtn.gameObject.SetActive(false);
+            roomUIManger.startBtn.interactable = true;
+        }
+        else
+        {
+            roomUIManger.startBtn.gameObject.SetActive(false);
+            roomUIManger.readyBtn.gameObject.SetActive(true);
+        }
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
@@ -129,5 +145,18 @@ public class RoomManager : MonoBehaviourPunCallbacks
             PhotonNetwork.LoadLevel("DaisyCircuit");
         }
     }
-    
+
+    public void PlayerBtnController()
+    {//준비 상태가 아니라면 준비상태로만들기
+        if(roomUIManger.readyBtn.gameObject.activeSelf)
+        {
+            roomUIManger.readyBtn.gameObject.SetActive(false);
+            roomUIManger.readyCanCelBtn.gameObject.SetActive(true);
+        }
+        else
+        {//준비상태라면 준비 취소
+            roomUIManger.readyBtn.gameObject.SetActive(true);
+            roomUIManger.readyCanCelBtn.gameObject.SetActive(false);
+        }
+    }    
 }

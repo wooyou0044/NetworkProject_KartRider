@@ -1,40 +1,34 @@
-using System;
 using Cinemachine;
 using UnityEngine;
 
 public class DollyRealKart : MonoBehaviour
 {
     private float _trackPosition;
-    private float _trackPosToLength;
-    private CinemachineSmoothPath _dollyPath;
-    
-    public Transform trackingObject;
 
-    public void Awake()
-    {
-        _dollyPath = FindObjectOfType<CinemachineSmoothPath>();
-    }
+    public CinemachinePathBase dollyTrack;
+    public Transform toFollow;
 
-    public CinemachineSmoothPath DollyPath
+    private void Start()
     {
-        get => _dollyPath;
-    }
-
-    public float GetTrackPosToLength()
-    {
-        return _trackPosToLength;
-    }
-    
-    public float CalculateTrackPosition()
-    {
-        if (DollyPath == null)
+        if (dollyTrack == null)
         {
-            Debug.LogError("Dolly Path is not set");
-            return 0f;
+            Debug.LogError("돌리 카트 에러 발생!!!");
         }
-        
-        _trackPosition = _dollyPath.FindClosestPoint(trackingObject.position,0, -1, 1);
-        _trackPosToLength = (_trackPosition / _dollyPath.m_Waypoints.Length) * _dollyPath.PathLength;
-        return _trackPosToLength;
+    }
+
+    public float GetTrackPosition()
+    {
+        return _trackPosition;
+    }
+    
+    public void CalculateTrackPosition()
+    {
+        _trackPosition = dollyTrack.FindClosestPoint(toFollow.position,0, -1, 1);
+    }
+
+    private void FixedUpdate()
+    {
+        CalculateTrackPosition();
+        Debug.Log(GetTrackPosition());
     }
 }
