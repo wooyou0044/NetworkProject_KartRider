@@ -175,17 +175,40 @@ public partial class TestCHMKart : MonoBehaviour
         isUsingShield = false;
     }
 
+    //[PunRPC]
+    //void MakeBarricade()
+    //{
+    //    GameObject barricade = Resources.Load<GameObject>("Items/Barricade");
+    //    GameObject barricadePrefab = Instantiate(barricade, frontBarricadePos.position, Quaternion.identity);
+       
+    //    Vector3 forwardDir = transform.forward;
+    //    barricadePrefab.transform.position += forwardDir * 7 + Vector3.up;
+    //    Vector3 direction = transform.position - barricadePrefab.transform.position;
+    //    direction.y = 0;
+    //    barricadePrefab.transform.rotation = Quaternion.LookRotation(direction);
+    //    Debug.Log("MakeBarricade 실행됨! - " + gameObject.name);
+    //}
+
     [PunRPC]
     void MakeBarricade()
     {
         GameObject barricade = Resources.Load<GameObject>("Items/Barricade");
         GameObject barricadePrefab = Instantiate(barricade, frontBarricadePos.position, Quaternion.identity);
-       
+
+        // ItemNetController에 바리케이드 등록
+        itemNetCtrl.RegisterItem(barricadePrefab);
+
         Vector3 forwardDir = transform.forward;
         barricadePrefab.transform.position += forwardDir * 7 + Vector3.up;
         Vector3 direction = transform.position - barricadePrefab.transform.position;
         direction.y = 0;
         barricadePrefab.transform.rotation = Quaternion.LookRotation(direction);
+        Debug.Log("MakeBarricade 실행됨! - " + gameObject.name);
+    }
+
+    public void MakeDisableBarricade(GameObject disableObject)
+    {
+        itemNetCtrl.RequestDisableItem(disableObject);
     }
 
     public void StuckInWaterFly()

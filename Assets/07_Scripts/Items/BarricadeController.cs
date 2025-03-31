@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class BarricadeController : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class BarricadeController : MonoBehaviour
         
     }
 
+    [PunRPC]
     public void OffBarricade()
     {
         StartCoroutine(PlayerCollisonBarricade());
