@@ -15,27 +15,6 @@ public class BarricadeController : MonoBehaviour
         
     }
 
-    void OnCollisionEnter(Collision collision)
-    {
-        //if(collision.gameObject.CompareTag("Player"))
-        //{
-        //    Debug.Log("ºÎµúÈû");
-        //    StartCoroutine(PlayerCollisonBarricade());
-        //}
-    }
-
-    void OnCollisionStay(Collision collision)
-    {
-        //if (collision.gameObject.CompareTag("Player"))
-        //{
-        //    if(gameObject.activeSelf == true)
-        //    {
-        //        Debug.Log("ºÎµúÈû");
-        //        StartCoroutine(PlayerCollisonBarricade());
-        //    }
-        //}
-    }
-
     public void OffBarricade()
     {
         StartCoroutine(PlayerCollisonBarricade());
