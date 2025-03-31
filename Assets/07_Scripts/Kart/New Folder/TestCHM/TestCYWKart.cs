@@ -21,6 +21,8 @@ public partial class TestCHMKart : MonoBehaviour
     bool isUsingShield;
     bool isOneUsedShield;
 
+    public bool isKartRotating { get; set; }
+
     private void HandleItemInput()
     {
         // LeftControl 키와 부스트 게이지 최대치 시 부스터 기본 발동
@@ -118,15 +120,17 @@ public partial class TestCHMKart : MonoBehaviour
 
     IEnumerator ThreadBanana(float duration)
     {
+        isKartRotating = true;
         isRacingStart = false;
-        rigid.centerOfMass = new Vector3(0, -0.5f, 0);
+        rigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        rigid.centerOfMass = new Vector3(0, -2.0f, 0);
         originAngularDrag = rigid.angularDrag;
         rigid.angularDrag = 0.05f;
         float timer = 0f;
         while(timer < duration)
         {
             //Debug.Log(timer);
-            rigid.AddTorque(Vector3.up * 500f, ForceMode.Impulse);
+            rigid.AddTorque(Vector3.up * 700f, ForceMode.Impulse);
             timer += Time.deltaTime;
             yield return null;
         }
@@ -134,6 +138,7 @@ public partial class TestCHMKart : MonoBehaviour
         yield return new WaitForSeconds(1f);
         isRacingStart = true;
         rigid.angularDrag = originAngularDrag;
+        isKartRotating = false;
     }
 
     void DamageItem(ItemType type)
@@ -141,7 +146,7 @@ public partial class TestCHMKart : MonoBehaviour
         switch(type)
         {
             case ItemType.banana:
-                StartCoroutine(ThreadBanana(5f));
+                StartCoroutine(ThreadBanana(3f));
                 break;
         }
     }
