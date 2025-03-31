@@ -22,7 +22,8 @@ public partial class TestCHMKart : MonoBehaviour
     [SerializeField] private float minDriftAngle = 30f;       // 최소 드리프트 각도
     [SerializeField] public float maxDriftAngle = 180f;       // 최대 드리프트 각도
     [SerializeField] private float minDriftDuration = 0.2f;     // 최소 드리프트 지속시간
-    [SerializeField] private float maxDriftDuration = 2f;       // 최대 드리프트 지속시간
+    [SerializeField] private float maxDriftDuration = 2f;       // 최대판단 드리프트 지속시간
+    [SerializeField] private float totalMaxDriftDuration = 2f;       // 최대판단 드리프트 지속시간
     [SerializeField] private float minDriftForceMultiplier = 1f;// 최소 드리프트 힘 배수
     [SerializeField] private float maxDriftForceMultiplier = 5f;// 최대 드리프트 힘 배수
     [SerializeField] private float driftSpeedReduction = 0.7f;  // 드리프트 시 속도 감소 비율
@@ -95,6 +96,7 @@ public partial class TestCHMKart : MonoBehaviour
         inventory = GetComponent<KartInventory>();
 
         rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
+        ///charAni = GetComponent<Animator>();
 
         /* TODO : 포톤 붙일때 수정해주기 */
         _tr = gameObject.transform;
@@ -105,6 +107,7 @@ public partial class TestCHMKart : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
     }
+
     private void FixedUpdate()
     {
         if (!_photonView.IsMine) return;
@@ -114,8 +117,7 @@ public partial class TestCHMKart : MonoBehaviour
                                        //boostMaxSpeed = boostMaxSpeedKmh / 3.6f; // 부스트 최대 속도
                                        //currentMaxSpeed = isBoostTriggered ? boostMaxSpeed : maxSpeed;
 
-        // 이동 처리
-        HandleKartMovement(currentMotorInput, currentSteerInput);
+        
 
         // 속도 제한 로직 제거 또는 완화
         if (!isBoostTriggered)
@@ -148,6 +150,8 @@ public partial class TestCHMKart : MonoBehaviour
         // 입력값 읽어오기
         currentSteerInput = Input.GetAxis("Horizontal");
         currentMotorInput = Input.GetAxis("Vertical");
+        // 이동 처리
+        HandleKartMovement(currentMotorInput, currentSteerInput);
         // 드리프트 상태에 따라 복구 처리
         if (!isDrifting)
         {
@@ -169,6 +173,7 @@ public partial class TestCHMKart : MonoBehaviour
         // 부스트 입력 처리
         HandleItemInput();
 
+        playerCharAni.SetBool("IsBoosting", isBoostTriggered);
         if (PerformBoxCast(groundLayer | wallLayer | jumpLayer | boosterLayer))
 
         {
@@ -195,10 +200,7 @@ public partial class TestCHMKart : MonoBehaviour
     }
     #endregion
 
-    #region [드리프트 관련 함수]
-
-    // 전역 변수 (필요한 곳에 선언)
-   // private float driftDuration;         // 현재 이벤트에서 계산된 드리프트 지속시간
+    #region [드리프트 관련 함수] 
     private float totalDriftDuration = 0f; // 드리프트 연계시 누적된 지속시간
 
     // 드리프트 관련 파라미터 업데이트 (속도에 따라 민감도와 힘 배수 조정)
@@ -229,10 +231,16 @@ public partial class TestCHMKart : MonoBehaviour
         driftDuration = Mathf.Lerp(minDriftDuration, maxDriftDuration, influenceFactor);
 
         // 누적 지속시간 초기화 (최초 시작에서는 새 지속시간으로 초기화)
-        totalDriftDuration = driftDuration;
+        totalDriftDuration = Mathf.Min(driftDuration, totalMaxDriftDuration); // 최대 지속 시간 제한
+
+        // 최대 지속 시간을 초과할 경우 바로 종료 예약
+        if (totalDriftDuration >= totalMaxDriftDuration)
+        {
+            Debug.Log("[StartDrift] 누적 지속 시간이 최대 지속 시간을 초과하여 즉시 종료 예약");
+        }
 
         // 지정된 누적 지속시간 후 드리프트 종료 예약
-        CancelInvoke(nameof(EndDrift));
+        CancelInvoke(nameof(EndDrift)); // 기존 예약 제거
         Invoke(nameof(EndDrift), totalDriftDuration);
 
         //Debug.Log($"[StartDrift] 초기 각도={currentDriftAngle:F2}, 새 지속시간={driftDuration:F2}, 누적 지속시간={totalDriftDuration:F2}");
@@ -336,7 +344,6 @@ public partial class TestCHMKart : MonoBehaviour
         }
     }
 
-    // 드리프트 연계에 따른 추가 지속시간 업데이트 함수
     private void ChainDrift(float steerInput)
     {
         // 입력이 충분할 때만 연계 (작은 입력은 건너뜁니다)
@@ -348,12 +355,14 @@ public partial class TestCHMKart : MonoBehaviour
         float influenceFactor = (speedFactor + steerFactor) / 2f;
         float newDriftDuration = Mathf.Lerp(minDriftDuration, maxDriftDuration, influenceFactor);
 
-        totalDriftDuration += newDriftDuration;
+        // 누적 지속시간에 추가 (최대 지속 시간을 초과하지 않도록 제한)
+        totalDriftDuration = Mathf.Min(totalDriftDuration + newDriftDuration, totalMaxDriftDuration);
 
-        CancelInvoke(nameof(EndDrift));
+        // 최대 지속 시간을 초과하지 않도록 드리프트 종료 예약
+        CancelInvoke(nameof(EndDrift)); // 기존 예약 제거
         Invoke(nameof(EndDrift), totalDriftDuration);
 
-       // Debug.Log($"[ChainDrift] 추가 지속시간={newDriftDuration:F2}, 누적 지속시간={totalDriftDuration:F2}");
+        // Debug.Log($"[ChainDrift] 추가 지속시간={newDriftDuration:F2}, 누적 지속시간={totalDriftDuration:F2}");
     }
 
     // 현재 연계 시간이 아직 남아있는지 확인 (항상 true를 반환해도 됨)
@@ -519,7 +528,7 @@ public partial class TestCHMKart : MonoBehaviour
     {
         if (isBoostTriggered) return; // 이미 부스트 중이면 무시
 
-        Debug.Log("기본 부스트 활성화!");
+        //Debug.Log("기본 부스트 활성화!");
         isBoostTriggered = true;
         // 램프 TrilRenderer 실행
         kartBodyCtrl.SetLampTrailActive(true);
@@ -561,7 +570,7 @@ public partial class TestCHMKart : MonoBehaviour
 
         // 감속이 끝났으면 부스터 종료 플래그 해제
         isBoostTriggered = false;
-        Debug.Log("부스트 종료");
+        //Debug.Log("부스트 종료");
     }
     #endregion
 
@@ -570,7 +579,11 @@ public partial class TestCHMKart : MonoBehaviour
     private void HandleKartMovement(float motorInput, float steerInput)
     {
         float steeringMultiplier = Mathf.Lerp(minSteerMultiplier, maxSteerMultiplier, 0.8f);
-
+        if (steerInput != 0)
+        {
+            UpdateAnimator(steerInput);
+            
+        }
         // 드리프트 중인지 아닌지에 따라 별도 처리
         if (isDrifting)
         {
@@ -584,7 +597,6 @@ public partial class TestCHMKart : MonoBehaviour
 
         // 조향 민감도를 적용해 회전 처리
         RotateKart(steerInput, steeringMultiplier);
-
         // 바퀴 업데이트 (필요 시)
         if (wheelCtrl != null)
         {
@@ -685,6 +697,31 @@ public partial class TestCHMKart : MonoBehaviour
             Vector3 turnDirection = Quaternion.Euler(0, currentSteerAngle * Time.fixedDeltaTime, 0) * transform.forward;
             rigid.MoveRotation(Quaternion.LookRotation(turnDirection));
         }
+    }
+    private void UpdateAnimator(float steerInput)
+    {
+        if (playerCharAni == null)
+        {
+            Debug.LogError("charAni가 null입니다! Animator가 제대로 연결되지 않았는지 확인하세요.");
+            return; // 더 이상 진행하지 않음
+        }
+
+        if (playerCharAni != null)
+        {
+            // 조향 값을 기반으로 LSteer 및 RSteer 업데이트
+            float LSteer = Mathf.Clamp01(-steerInput); // 왼쪽 조향
+            float RSteer = Mathf.Clamp01(steerInput);  // 오른쪽 조향
+            
+            if (LSteer <0.3f && RSteer <0.3f)
+            {
+                LSteer = 0;
+                RSteer = 0;
+            }
+            playerCharAni.SetFloat("LSteer", LSteer);
+            playerCharAni.SetFloat("RSteer", RSteer);           
+                   
+        }      
+
     }
 
     #endregion
@@ -807,7 +844,15 @@ public partial class TestCHMKart : MonoBehaviour
     {
         Vector3 horizontalVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
         rigid.velocity = horizontalVelocity;
-       // Debug.Log("ProcessGroundCollision: 지면 충돌 시 수평 속력 유지");
+        // Debug.Log("ProcessGroundCollision: 지면 충돌 시 수평 속력 유지");
+
+        float slopeAngle = Vector3.Angle(lastHit.normal, Vector3.up);
+        if (slopeAngle >= 10f)
+        {
+            Vector3 horizontalVelocityGround = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z) * 1.2f;
+            rigid.velocity = new Vector3(horizontalVelocityGround.x, rigid.velocity.y, horizontalVelocityGround.z);
+            //Debug.Log($"ProcessJumpCollision: 경사각 {slopeAngle:F2}° 보정됨. (1.2배)");
+        }
     }
 
     /// <summary>
