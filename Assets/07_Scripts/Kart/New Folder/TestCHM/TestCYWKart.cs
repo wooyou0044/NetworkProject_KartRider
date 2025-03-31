@@ -23,7 +23,7 @@ public partial class TestCHMKart : MonoBehaviour
 
     private void HandleItemInput()
     {
-        // LeftControl Å°¿Í ºÎ½ºÆ® °ÔÀÌÁö ÃÖ´ëÄ¡ ½Ã ºÎ½ºÅÍ ±âº» ¹ßµ¿
+        // LeftControl í‚¤ì™€ ë¶€ìŠ¤íŠ¸ ê²Œì´ì§€ ìµœëŒ€ì¹˜ ì‹œ ë¶€ìŠ¤í„° ê¸°ë³¸ ë°œë™
         if (Input.GetKeyDown(KeyCode.LeftControl) && inventory.itemNum > 0)
         {
             //StartBoost(boostDuration);
@@ -31,7 +31,7 @@ public partial class TestCHMKart : MonoBehaviour
             inventory.RemoveItem();
             isItemUsed = true;
         }
-        // ºÎ½ºÆ® °ÔÀÌÁö ÃæÀü
+        // ë¶€ìŠ¤íŠ¸ ê²Œì´ì§€ ì¶©ì „
         if (currentMotorInput != 0 || isDrifting)
         {
             ChargeBoostGauge();
@@ -52,7 +52,7 @@ public partial class TestCHMKart : MonoBehaviour
         }
     }
 
-    #region Ä«Æ® È¿°úÀ½
+    #region ì¹´íŠ¸ íš¨ê³¼ìŒ
     void PlayDriftEffectSound()
     {
         audioSource.clip = driftAudioClip;
@@ -89,11 +89,11 @@ public partial class TestCHMKart : MonoBehaviour
                 StartCoroutine(OffShield());
                 break;
             case ItemType.barricade:
-                // ÀÓ½Ã·Î => 1µî ¾Õ¿¡ »ı°Ü¾ß ÇÔ
+                // ì„ì‹œë¡œ => 1ë“± ì•ì— ìƒê²¨ì•¼ í•¨
                 MakeBarricade();
                 break;
             case ItemType.waterFly:
-                // ÀÓ½Ã·Î
+                // ì„ì‹œë¡œ
                 StuckInWaterFly();
                 break;
         }
@@ -119,6 +119,7 @@ public partial class TestCHMKart : MonoBehaviour
     IEnumerator ThreadBanana(float duration)
     {
         isRacingStart = false;
+        rigid.centerOfMass = new Vector3(0, -0.5f, 0);
         originAngularDrag = rigid.angularDrag;
         rigid.angularDrag = 0.05f;
         float timer = 0f;
@@ -186,7 +187,7 @@ public partial class TestCHMKart : MonoBehaviour
         transform.localPosition = Vector3.zero;
         rigid.isKinematic = true;
         isRacingStart = false;
-        // ÀÓ½Ã
+        // ì„ì‹œ
         StartCoroutine(ExitInWaterFly(waterFlyPrefab));
     }
 
