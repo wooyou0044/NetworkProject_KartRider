@@ -4794,7 +4794,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db4d191e45e1cf443b481374d75db63b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomUIManger: {fileID: 258271264}
   playerSlots:
   - {fileID: 1287795621}
   - {fileID: 1725082248}
@@ -4804,6 +4803,7 @@ MonoBehaviour:
   - {fileID: 1924124170}
   - {fileID: 1708165508}
   - {fileID: 102842734}
+  roomUIManger: {fileID: 258271264}
 --- !u!4 &1143283375
 Transform:
   m_ObjectHideFlags: 0
@@ -5832,7 +5832,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1143283374}
         m_TargetAssemblyTypeName: RoomManager, Assembly-CSharp
-        m_MethodName: SetRoomMapChange
+        m_MethodName: SetRoomMapChangeBtn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10584,7 +10584,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1143283374}
         m_TargetAssemblyTypeName: RoomManager, Assembly-CSharp
-        m_MethodName: SetRoomInfoChange
+        m_MethodName: SetRoomInfoChangeBtn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
