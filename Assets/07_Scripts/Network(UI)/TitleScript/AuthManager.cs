@@ -5,14 +5,13 @@ using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
 using System;
+using System.Linq;
 
 public class AuthManager : MonoBehaviour
 {
     public TitleUI titleUI;
     public ServerConnect serverCon;
-
-    //시작과 동시에 파이어베이스의 어스의 정보와 데이터베이스 정보를
-    //만든 게임서버 파이어베이스 정보와 연결함
+    //시작과 동시에 파이어베이스의 어스의 정보와 데이터베이스 정보를 만든 게임서버 파이어베이스 정보와 연결함
     private void Awake()
     {
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
@@ -22,6 +21,7 @@ public class AuthManager : MonoBehaviour
             {
                 FirebaseDBManager.Instance.Auth = FirebaseAuth.DefaultInstance;
                 FirebaseDBManager.Instance.DbRef = FirebaseDatabase.DefaultInstance.RootReference;
+
             }
             else
             {
@@ -345,8 +345,7 @@ public class AuthManager : MonoBehaviour
         var setPrfileTask = FirebaseDBManager.Instance.DbRef.Child("users")
             .Child(FirebaseDBManager.Instance.User.UserId).Child("isLoggedIn")
             .SetValueAsync(false);
-        
-        float timer = 5f;
+        float timer = 10f;
         float elapsedTime = 0;
         bool toggle = true;
         WaitForSeconds wait = new WaitForSeconds(1f);
@@ -355,21 +354,41 @@ public class AuthManager : MonoBehaviour
             elapsedTime += 1f;
             if (elapsedTime >= timer)
             {
-                titleUI.ShowMessage(titleUI.errorMessage, "유저 데이터 생성 실패 관리자에게 문의하세요.", true);
+                titleUI.ShowMessage(titleUI.errorMessage, "유저 데이터 로딩 실패 관리자에게 문의하세요.", true);
+                yield return new WaitForSeconds(2);
+                titleUI.InitializeLogin();
                 yield break;
             }
             string message = toggle ? "계정 생성중." : "계정 생성중..";
             titleUI.ShowMessage(titleUI.successMessage, message, true);
             toggle = !toggle;
-            yield return wait;            
+            yield return wait;
         }
         yield return new WaitUntil(() => setPrfileTask.IsCompleted);
         if(setPrfileTask.Exception != null)
         {
             titleUI.ShowMessage(titleUI.errorMessage, "유저 데이터 생성 실패 관리자에게 문의하세요.", true);
             yield return new WaitForSeconds(2);
+            titleUI.InitializeLogin();
             yield break;
         }
+
+        //리소스폴더에 있는 캐릭터들의 이름을 파이어베이스의 데이터 베이스에 저장함
+        //List<CharacterSo> characters = Resources.LoadAll<CharacterSo>("Character").ToList();
+        //List<string> jsonList = characters.Select(p => p.characterName).ToList();
+                
+        //var saveTask = FirebaseDBManager.Instance.DbRef.Child("users")
+        //    .Child(FirebaseDBManager.Instance.User.UserId)
+        //    .Child("CharacterList")
+        //    .SetValueAsync(jsonList);
+        //yield return new WaitUntil(() => saveTask.IsCompleted);
+        //if (!saveTask.IsCompleted)
+        //{            
+        //    titleUI.ShowMessage(titleUI.errorMessage, "초기 캐릭터 리스트 저장 실패!관리자에게 문의하세요.", true);
+        //    yield return new WaitForSeconds(2);
+        //    yield break;
+        //}
+        //Debug.Log("초기 캐릭터 셋팅 완료");
         titleUI.ToggleSignUpPanel(false);
         //회원가입 완료 메세지
         titleUI.ShowMessage(titleUI.successMessage, "회원가입 완료!", true);
