@@ -178,6 +178,12 @@ public class RankUIController : MonoBehaviour
     // Players 하위에 있는 GameObject에서, 해당 순위를 찾아서 반환해준다.
     public GameObject GetKartObjectByRank(int rank)
     {
+        if (rank > _sortedKartList.Count)
+        {
+            Debug.LogError("순위가 리스트 인덱스보다 더 큼");
+            return null;
+        }
+        
         return _sortedKartList[rank - 1];
     }
 }
