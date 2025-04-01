@@ -75,6 +75,8 @@ public class GameManager : MonoBehaviour
         GameObject kart = PhotonNetwork.Instantiate(kartPrefab.name, Vector3.zero, Quaternion.identity);
         // kart에 붙어 있는 Controller 가져오기
         kartCtrl = kart.GetComponent<TestCHMKart>();
+        TestCHMCamer cameraCtrl = virtualCamera.GetComponent<TestCHMCamer>();
+        kartCtrl.camerCtrl = cameraCtrl;
         //PhotonNetwork.Instantiate(characterPrefab.name, Vector3.zero, Quaternion.identity);
         GameObject playerChar = PhotonNetwork.Instantiate(characterSo.characterName, Vector3.zero, Quaternion.identity);
         kartCtrl.playerCharAni = playerChar.GetComponent<Animator>();
@@ -174,6 +176,7 @@ public class GameManager : MonoBehaviour
         {
             _winner = PhotonNetwork.LocalPlayer;
             _gameManagerView.RPC("OnSomePlayerFinish", RpcTarget.AllViaServer, _winner);
+            kartCtrl.camerCtrl.ActivateFinishCamera();
         }
     }
 }

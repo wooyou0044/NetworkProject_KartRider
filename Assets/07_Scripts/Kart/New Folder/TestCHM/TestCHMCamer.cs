@@ -1,5 +1,6 @@
-using UnityEngine;
+using System.Collections;
 using Cinemachine;
+using UnityEngine;
 
 public class TestCHMCamer : MonoBehaviour
 {
@@ -16,7 +17,9 @@ public class TestCHMCamer : MonoBehaviour
     public float maxPanAngleDelta = 15f;
     [Tooltip("오프셋 전환 부드러움 (낮을수록 전환이 빠름)")]
     public float smoothTime = 0.3f;
-    
+    [Header("Finish Camera Settings")]
+    [Tooltip("피니쉬 카메라 오프셋")]
+    public Vector3 finishCameraOffset = new Vector3(0f, 5f, -10f);
     [Tooltip("기본 상태에서 카메라 팬 각도 (도 단위)")]
     public float basePanAngleDelta = 10f; // Inspector에서 조정 가능한 기본 팬 각도
     [SerializeField]
@@ -24,9 +27,10 @@ public class TestCHMCamer : MonoBehaviour
     [Header("Boost Camera Settings")]
     [Tooltip("부스터 시 카메라가 뒤로 밀리는 거리")]
     public float boostDistanceOffset = 5f; // 기본값: 뒤로 5m
-
+                                           // 게임 종료 상태를 확인하는 프로퍼티
     [Tooltip("부스터 시 카메라가 위로 올라가는 높이")]
     public float boostHeightOffset = 2f; // 기본값: 위로 2m
+    public bool isGameFinished { get; set; }
 
     private CinemachineTransposer transposer;
     private Vector3 initialOffset;
@@ -40,10 +44,29 @@ public class TestCHMCamer : MonoBehaviour
             Debug.LogError("Virtual Camera 참조가 없습니다!");
             return;
         }
+        transposer = virtualCamera.GetCinemachineComponent<CinemachineTransposer>();
+        if (transposer != null)
+        {
+            initialOffset = transposer.m_FollowOffset; // 기본 초기값 저장
+        }
+        else
+        {
+            Debug.LogWarning("Cinemachine Transposer 컴포넌트를 찾을 수 없습니다!");
+        }
+
     }
 
     private void FixedUpdate()
     {
+        if (kartController.isRacingStart == false)
+        {
+            return;
+        }
+        // 게임이 종료되었으면 카메라 업데이트 중단
+        if (isGameFinished)
+        {
+            return;
+        }
         if (kartController == null || transposer == null) return;
 
         Vector3 currentOffset = transposer.m_FollowOffset; // 현재 카메라 오프셋
@@ -66,7 +89,7 @@ public class TestCHMCamer : MonoBehaviour
             targetOffset.x = baseDistance * Mathf.Sin(basePanAngle);
             targetOffset.z = baseDistance * Mathf.Cos(basePanAngle);
             targetOffset.y = initialOffset.y + horizontalInput * 0.3f; // 기울기 효과 추가
-            float lerpFactor = kartController.isDrifting ? Time.deltaTime / (smoothTime * 1.5f) : Time.deltaTime / smoothTime;
+            float lerpFactor = kartController.isDrifting ? Time.deltaTime / (smoothTime * 1.5f) : Time.fixedDeltaTime / smoothTime;
             transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, lerpFactor); ;
         }
         else if (kartController.isDrifting)
@@ -83,17 +106,17 @@ public class TestCHMCamer : MonoBehaviour
             targetOffset.z = baseDistance * Mathf.Cos(driftAngle);
             targetOffset.y = initialOffset.y;
 
-            transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, Time.deltaTime / smoothTime);
+            transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, Time.fixedDeltaTime / smoothTime);
         }
         else if (kartController.isBoostTriggered) // 부스터 상태
         {
             // 카메라 뒤로 밀리고 위로 상승
             targetOffset += new Vector3(0f, boostHeightOffset, -boostDistanceOffset);
-            transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, Time.deltaTime / (smoothTime * 0.5f)); // 더 빠르게 전환
+            transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, Time.fixedDeltaTime / (smoothTime * 0.5f)); // 더 빠르게 전환
         }
 
         // 부드러운 전환
-        transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, Time.deltaTime / smoothTime);
+        transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, Time.fixedDeltaTime / smoothTime);
     }
     public void SetKart(GameObject kart)
     {
@@ -120,4 +143,55 @@ public class TestCHMCamer : MonoBehaviour
             Debug.LogWarning("Cinemachine Transposer 컴포넌트를 찾을 수 없습니다!");
         }
     }
+    /// <summary>
+    /// 피니쉬 카메라를 활성화하고, 설정한 오프셋으로 서서히 이동.
+    /// </summary>
+    public void ActivateFinishCamera()
+    {
+        if (virtualCamera == null || target == null)
+        {
+            Debug.LogWarning("Virtual Camera 또는 타겟이 없습니다!");
+            return;
+        }
+
+        // 게임 종료 상태 설정
+        isGameFinished = true;
+
+        // CinemachineTransposer를 가져옴
+        CinemachineTransposer transposer = virtualCamera.GetCinemachineComponent<CinemachineTransposer>();
+        if (transposer == null)
+        {
+            Debug.LogWarning("Cinemachine Transposer 컴포넌트를 찾을 수 없습니다!");
+            return;
+        }
+
+        // 목표 위치를 설정한 오프셋 값으로 지정
+        Vector3 targetOffset = finishCameraOffset;
+
+        // 코루틴을 통해 서서히 Follow Offset 변경
+        StartCoroutine(SmoothMoveFollowOffset(transposer, targetOffset));
+    }
+
+    private IEnumerator SmoothMoveFollowOffset(CinemachineTransposer transposer, Vector3 targetOffset)
+    {
+        float smoothTime = 1f; // 전환 시간이 조정 가능한 부드러운 전환 시간
+        Vector3 currentOffset = transposer.m_FollowOffset;
+
+        float timer = 0f;
+        while (timer < smoothTime)
+        {
+            timer += Time.deltaTime;
+
+            // Follow Offset 값을 서서히 변경
+            transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, timer / smoothTime);
+
+            yield return null; // 다음 프레임으로 대기
+        }
+
+        // 최종적으로 목표 오프셋 값 고정
+        transposer.m_FollowOffset = targetOffset;
+
+        Debug.Log("카메라가 피니쉬 오프셋으로 서서히 이동 완료!");
+    }
+
 }

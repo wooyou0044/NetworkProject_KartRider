@@ -1,6 +1,6 @@
 using System.Collections;
+using Cinemachine;
 using Photon.Pun;
-using UnityEditor;
 using UnityEngine;
 
 public partial class TestCHMKart : MonoBehaviour
@@ -14,38 +14,43 @@ public partial class TestCHMKart : MonoBehaviour
     [Header("이동 설정")]
     [SerializeField] private float maxSpeedKmh = 200f;           // 최대 속도
     [SerializeField] private float movementForce = 20f;       // 이동에 적용할 힘
-    [SerializeField] private float steerAngle = 100f;         // 조향(회전) 각도
-    [SerializeField] private float decelerationRate = 2f;  // 키 없음 감속 보정 계수
+    [SerializeField] private float steerAngle = 100f;         // 조향(회전) 각도    
     [SerializeField] private float minSteerMultiplier = 1f;  // 최소 조향 배수 (속도가 낮을 때)
     [SerializeField] private float maxSteerMultiplier = 2f;  // 최대 조향 배수 (속도가 최대일 때)
 
     [Header("드리프트 설정")]
     [SerializeField] private float minDriftAngle = 30f;       // 최소 드리프트 각도
     [SerializeField] public float maxDriftAngle = 180f;       // 최대 드리프트 각도
+    [Header("드리프트 지속시간")]
     [SerializeField] private float minDriftDuration = 0.2f;     // 최소 드리프트 지속시간
     [SerializeField] private float maxDriftDuration = 2f;       // 최대판단 드리프트 지속시간
     [SerializeField] private float totalMaxDriftDuration = 2f;       // 최대판단 드리프트 지속시간
+    [Header("드리프트 힘")]
     [SerializeField] private float minDriftForceMultiplier = 1f;// 최소 드리프트 힘 배수
     [SerializeField] private float maxDriftForceMultiplier = 5f;// 최대 드리프트 힘 배수
     [SerializeField] private float driftSpeedReduction = 0.7f;  // 드리프트 시 속도 감소 비율
     [SerializeField] private float driftRecoverySpeed = 2f;  // 드리프트 복구 속도 제어    
     [SerializeField] private float curveDriftSpeed = 5f;  // 드리프트 전환 속도 제어
+    [SerializeField] private float boostSpeedIncrease = 1.2f;  // 드리프트시 부스터 힘
 
     [Header("부스트 설정")]
-    [SerializeField] public float boostDuration = 2f;         // 기본 부스트 지속시간
-    [SerializeField] public float momentboostDuration = 0.2f;  // 순간 부스트 지속시간
-    [SerializeField] public int maxBoostGauge = 100;           // 최대 부스트 게이지
-    [SerializeField] private float boostChargeRate = 5f;        // 기본 부스트 충전 속도
-    [SerializeField] private float driftBoostChargeRate = 10f;   // 드리프트 중 부스트 충전 속도    
-    [SerializeField] private float maxBoostSpeed = 300f;         // 부스트 활성화 시 속도 
+    [SerializeField] public float boostDuration = 1.5f;              // 기본 부스트 지속시간
+    [SerializeField] public float momentboostDuration = 0.5f;       // 순간 부스트 지속시간
+    [Header("부스트 게이지 설정")]
+    [SerializeField] public int maxBoostGauge = 100;                // 최대 부스트 게이지
+    [SerializeField] private float boostChargeRate = 5f;             // 기본 부스트 충전 속도
+    [SerializeField] private float driftBoostChargeRate = 10f;        // 드리프트 중 부스트 충전 속도    
+    [Header("부스트 파워 설정")]
+    [SerializeField] private float maxBoostSpeed = 82.5f;            // 부스트 활성화 시 최대 속도 속력 변환 해줘야함 지금 시속 300 = m/s 82.5 가 딱임 
+    [SerializeField] private float boostMultiplier = 1.1f;          // 지속적인 부스터 효과 계수
 
-
-
+    public TestCHMCamer camerCtrl { get; set; }
+    
     #endregion
 
     #region Private Fields
 
-    public Animator playerCharAni { get; set; }       
+    public Animator playerCharAni { get; set; }
     public float speedKM { get; private set; }     // 현재 속력 (km/h 단위) 계기판 출력 속력
     public bool isBoostTriggered { get; set; } // 부스트 활성화 여부
     //public bool isBoostCreate { get; set; }    // 드리프트 아이템 생성 가능 여부
@@ -54,23 +59,27 @@ public partial class TestCHMKart : MonoBehaviour
     public bool isRacingStart { get; set; } //시작 대기 변수
     public bool isGameFinished { get; set; } //결승선 변수
 
-    private float driftDuration;  // 부스터 지속 시간
+    public float totalBoostDuration { get; private set; }
+
+
+    public bool isDrifting = false;            // 드리프트 진행 중 여부
+    public float currentDriftAngle = 0f;       // 현재 누적 드리프트 각도 카메라에서 써야함 
     private CHMTestWheelController wheelCtrl;  // 바퀴 제어 스크립트
     private Rigidbody rigid;                   // 리지드바디 (물리 처리)
     private Coroutine postDriftBoostCoroutine; // 드리프트 종료 후 부스트 처리를 위한 코루틴 변수
+    private float driftDuration;               // 부스터 지속 시간
     private float initialDriftSpeed;           // 드리프트 시작 시 기록된 초기 속도
-    public float currentDriftAngle = 0f;       // 현재 누적 드리프트 각도
     private float currentDriftThreshold;       // 속도에 따른 드리프트 입력 기준 값
     private float driftForceMultiplier;        // 동적으로 계산된 드리프트 힘 배수
     private float lockedYRotation = 0f;        // 드리프트 시 고정되는 Y 회전값
     private float currentMotorInput;
-    private float currentSteerInput;    
-    private float maxSpeed;      // 최대 속도 (m/s)
-    private Vector3 speed;       // 현재 속도 벡터
+    private float currentSteerInput;
+    private float maxSpeed;                    // 최대 속도 (m/s)
+    private Vector3 speed;                     // 현재 속도 벡터
     private float chargeAmount;
-    public bool isDrifting = false;            // 드리프트 진행 중 여부
-    private bool startBoost = true;    
+    private bool startBoost = true;
     private bool wasAirborne = false;         //공중 상태 여부 
+    private float currentSteerAngle = 0f;// 조향을 부드럽게 처리하는 변수
 
 
 
@@ -98,9 +107,10 @@ public partial class TestCHMKart : MonoBehaviour
         wheelCtrl = wheels.GetComponent<CHMTestWheelController>(); // 바퀴 컨트롤러 참조
         kartBodyCtrl = kartBody.GetComponent<KartBodyController>();
         inventory = GetComponent<KartInventory>();
-
-        rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
+        camerCtrl = GetComponent<TestCHMCamer>();
         
+        rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
+
         /* TODO : 포톤 붙일때 수정해주기 */
         _tr = gameObject.transform;
         _photonView = GetComponent<PhotonView>();
@@ -126,8 +136,8 @@ public partial class TestCHMKart : MonoBehaviour
         currentMotorInput = Input.GetAxis("Vertical");
         // 이동 처리
         HandleKartMovement(currentMotorInput, currentSteerInput);
-         StartRace();//순간 부스트 실행           
-        
+        StartRace();//순간 부스트 실행           
+
 
         // 속도 제한 로직 제거 또는 완화
         if (!isBoostTriggered)
@@ -140,18 +150,22 @@ public partial class TestCHMKart : MonoBehaviour
                 rigid.velocity = horizontalVelocity.normalized * maxSpeed + Vector3.up * rigid.velocity.y;
             }
         }
-        if (PerformBoxCast(groundLayer | wallLayer | boosterLayer))
+        int combinedLayer = wallLayer.value | boosterLayer.value | groundLayer.value; // 충돌처리
 
+        if (PerformCombinedBoxCast(combinedLayer))
         {
-            HandleLayerCollision(); // 충돌된 레이어 처리
+            HandleLayerCollision();
         }
+
+
         ProcessSlopeForce();//경사면 체크 
-         // 레이캐스트로 지면 체크
-         // 공중 상태일 때 추가 하강력 적용
+                            // 레이캐스트로 지면 체크
+                            // 공중 상태일 때 추가 하강력 적용
         if (!CheckIfGrounded())
         {
             wasAirborne = true;
             ApplyAirborneLandingForce();
+            rigid.angularDrag = 0f;
         }
         else
         {
@@ -181,7 +195,7 @@ public partial class TestCHMKart : MonoBehaviour
         if (!isDrifting)
         {
             RecoverDriftAngle();
-        }    
+        }
         // 현재 속도 갱신 (Y축 제외) 및 km/h 변환
         speed = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
         speedKM = speed.magnitude * 3.6f;
@@ -198,10 +212,10 @@ public partial class TestCHMKart : MonoBehaviour
 
         playerCharAni.SetBool("IsBoosting", isBoostTriggered);
 
-        
-        if(isUsingShield == false)
+
+        if (isUsingShield == false)
         {
-            if(kartBodyCtrl.shield.activeSelf == true)
+            if (kartBodyCtrl.shield.activeSelf == true)
             {
                 kartBodyCtrl.SetShieldEffectActive(false);
             }
@@ -287,7 +301,7 @@ public partial class TestCHMKart : MonoBehaviour
         Vector3 driftDirection = curveRotation * Vector3.forward;
         rigid.velocity = Vector3.Lerp(rigid.velocity, driftDirection * initialDriftSpeed, Time.deltaTime * 5f);
 
-        if(isSparkOn == true)
+        if (isSparkOn == true)
         {
             inputKey = steerInput;
             kartBodyCtrl.SetDriftSparkActive(true, steerInput);
@@ -313,7 +327,7 @@ public partial class TestCHMKart : MonoBehaviour
         Vector3 driftDirection = driftRotation * Vector3.forward;
         rigid.velocity = Vector3.Lerp(rigid.velocity, driftDirection * initialDriftSpeed, Time.deltaTime * 5f);
 
-        if(isSparkOn == true)
+        if (isSparkOn == true)
         {
             inputKey = steerInput;
             kartBodyCtrl.SetDriftSparkActive(true, steerInput);
@@ -432,7 +446,38 @@ public partial class TestCHMKart : MonoBehaviour
 
     #endregion
 
-    #region [부스터 관련 함수]
+    #region [부스터 관련 함수]          
+    /// <summary>
+    /// 기본 부스터 힘을 점진적으로 적용합니다.
+    /// </summary>
+    /// <param name="elapsedTime">부스터가 활성화된 후 경과 시간</param>
+    /// <param name="duration">전체 부스터 지속 시간</param>
+    private void ApplyBasicBoostForce(float elapsedTime, float duration)
+    {
+        // 기본 힘과 최대 힘 설정
+        float baseBoostForce = 100f;  // 초기 부스터 힘
+        float maxBoostForce = 500f; // 최대 부스터 힘
+
+        // 경과 시간 비례로 힘을 점진적으로 증가
+        float dynamicBoostForce = Mathf.Lerp(baseBoostForce, maxBoostForce, elapsedTime / duration);
+
+        // 부스터 힘 방향 계산
+        Vector3 boostDirection = transform.forward * dynamicBoostForce;
+        rigid.velocity = boostDirection;
+        // 차량에 부스터 힘 적용
+        //rigid.AddForce(boostDirection, ForceMode.Acceleration);
+    }
+    /// <summary>
+    /// 현재 속력 받아서 추가로 힘줌 
+    /// </summary>
+    private void ApplyOriginalBoostForce()
+    {
+        // 기존 부스터 속도 처리
+        float currentSpeed = rigid.velocity.magnitude;
+        Vector3 boostForce = transform.forward * currentSpeed * boostMultiplier * Time.fixedDeltaTime * 10f;
+
+        rigid.AddForce(boostForce, ForceMode.Acceleration);
+    }
 
     // 드리프트 종료 후 바로 부스트 입력을 받기 위한 코루틴
     private IEnumerator PostDriftBoostCoroutine()
@@ -452,12 +497,6 @@ public partial class TestCHMKart : MonoBehaviour
             timer += Time.deltaTime;
             yield return null;
         }
-
-        if (!boosted)
-        {
-            //Debug.Log("즉시 부스트 입력 시간 초과");
-        }
-
         postDriftBoostCoroutine = null;
     }
 
@@ -472,34 +511,37 @@ public partial class TestCHMKart : MonoBehaviour
         kartBodyCtrl.SetBoostEffectActive(true);
         kartBodyCtrl.SetBoostWindEffectActive(true);
 
+        totalBoostDuration = momentboostDuration;
+
         // 가속 소리 설정
         PlayBoostEffectSound();
         StartCoroutine(InstantBoostCoroutine()); // 순간 부스터 실행
     }
 
-    private IEnumerator InstantBoostCoroutine()
+    private IEnumerator InstantBoostCoroutine()//순간 부스트 함수 
     {
-        float boostDuration = momentboostDuration; // 부스터 지속 시간
-        float boostMultiplier = 1.2f; // 현재 속력의 1.2배로 밀기
+        
         float timer = 0f;
 
-        // [Phase 1] 부스터 가속 단계
-        while (timer < boostDuration)
+        while (timer < momentboostDuration)
         {
-            timer += Time.fixedDeltaTime; // FixedUpdate 주기에 맞춰 타이머 업데이트
+            timer += Time.fixedDeltaTime;
+            //// 기존 부스터 속도 처리
+            //float currentSpeed = rigid.velocity.magnitude;
+            //Vector3 boostForce = transform.forward * currentSpeed * boostMultiplier;
+            //rigid.AddForce(boostForce, ForceMode.Acceleration);
+            ApplyOriginalBoostForce();
 
-            // 현재 속도에 비례한 추가 힘 계산
-            float currentSpeed = rigid.velocity.magnitude;
-            Vector3 boostForce = transform.forward * currentSpeed * boostMultiplier;
+            // 속도 제한 적용
+            if (rigid.velocity.magnitude > maxBoostSpeed)
+            {
+                rigid.velocity = rigid.velocity.normalized * maxBoostSpeed;
+            }
 
-            // 추가 힘을 차량의 전방 방향으로 적용
-            rigid.AddForce(boostForce, ForceMode.Acceleration);
-
-            yield return new WaitForFixedUpdate(); // FixedUpdate와 동기화
+            yield return new WaitForFixedUpdate();
         }
 
-        EndBoost(); // 부스터 종료 처리
-                    // Debug.Log("순간 부스터 종료!");
+        EndBoost();
     }
     private void EndBoost()
     {
@@ -524,45 +566,56 @@ public partial class TestCHMKart : MonoBehaviour
             : boostChargeRate * Time.deltaTime;       // 일반 충전 속도
 
         boostGauge = Mathf.Clamp(chargeAmount, 0, maxBoostGauge);
-        if (boostGauge >= maxBoostGauge)
-        {
-            //Debug.Log("부스트 게이지 최대치 도달!");
-        }
     }
     /// <summary>
-    /// 부스트를 시작하는 함수. 코루틴을 호출해 현재 속도에서 최대 부스트 속도까지 점진적 가속을 구현합니다.
+    /// 부스트를 시작하는 함수. 현재 속도가 시속 50km 이하인 경우 기본 부스터를 사용, 아니라면 원래 부스터 로직 실행.
     /// </summary>
     /// <param name="duration">부스트 지속 시간(초)</param>
     private void StartBoost(float duration)
     {
-        if (isBoostTriggered) return; // 이미 부스트 중이면 무시
+        if (isBoostTriggered) return; // 이미 부스트 중이면 무시      
 
-        //Debug.Log("기본 부스트 활성화!");
+        totalBoostDuration = duration;
+
+        // 부스트 활성화 설정
         isBoostTriggered = true;
         startBoost = false;
-        // 램프 TrilRenderer 실행
+
+        // 효과 실행
         kartBodyCtrl.SetLampTrailActive(true);
         kartBodyCtrl.SetBoostEffectActive(true);
         kartBodyCtrl.SetBoostWindEffectActive(true);
 
         PlayBoostEffectSound();
 
-        StartCoroutine(BoostCoroutine(duration)); // 기본 부스터 실행
+        // 부스터 코루틴 시작
+        StartCoroutine(BoostCoroutine(duration));
     }
 
     private IEnumerator BoostCoroutine(float duration)
     {
-        float boostMultiplier = 1.1f; // 현재 속력의 1.1배로 밀기
         float timer = 0f;
 
         // Booster 코루틴 내부에서 매 프레임마다
         while (timer < duration)
         {
             timer += Time.fixedDeltaTime;
+            // 현재 속도를 m/s 단위로 계산
             float currentSpeed = rigid.velocity.magnitude;
-            Vector3 boostForce = transform.forward * currentSpeed * boostMultiplier;
+            float minimumBoostSpeed = 13.89f; // 시속 50km를 m/s로 변환한 값
 
-            rigid.AddForce(boostForce, ForceMode.Acceleration);
+            // 시속 50km 이하일 경우 기본 부스터 적용
+            if (currentSpeed < minimumBoostSpeed)
+            {
+                ApplyBasicBoostForce(timer, duration); // 기본 부스터 힘 적용
+            }
+            else
+            {
+                //float currentSpeed = rigid.velocity.magnitude;
+                //Vector3 boostForce = transform.forward * currentSpeed * boostMultiplier;
+                //rigid.AddForce(boostForce, ForceMode.Acceleration);
+                ApplyOriginalBoostForce(); // 원래 부스터 로직 실행
+            }
 
             // 속도 제한 적용 예시: 최대 부스트 속도가 maxBoostSpeed를 넘지 않도록 설정
             if (rigid.velocity.magnitude > maxBoostSpeed)
@@ -620,7 +673,7 @@ public partial class TestCHMKart : MonoBehaviour
     }
 
     /// <summary>
-    /// 드리프트 상태일 때 속도 처리 및 측면 힘 적용
+    /// 드리프트 상태일 때 속도 처리 및 측면 힘 적용. 부스터 사용 시 속도 증가.
     /// </summary>
     private void ProcessDrift(float steerInput, float steeringMultiplier)
     {
@@ -629,65 +682,37 @@ public partial class TestCHMKart : MonoBehaviour
         {
             initialDriftSpeed = rigid.velocity.magnitude;
         }
+
+        // 드리프트 속도 설정 (기본적으로 드리프트 시작 속도와 감소 인자 사용)
         float driftSpeed = initialDriftSpeed * driftSpeedReduction;
+
+        // 부스터가 활성화된 경우, 부스터 속도가 우선 적용됩니다.
+        if (isBoostTriggered)
+        {
+            driftSpeed = rigid.velocity.magnitude * boostMultiplier; // 부스터 속력 우선 적용
+            // 부스터 속도가 maxBoostSpeed를 넘지 않도록 제한
+            if (driftSpeed > maxBoostSpeed)
+            {
+                driftSpeed = maxBoostSpeed; // 최대 속도로 고정
+            }
+
+        }
 
         // 조향 입력에 민감도를 적용하여 누적 회전을 보정합니다.
         lockedYRotation += steerInput * ((steerAngle / 2.5f) * steeringMultiplier) * Time.fixedDeltaTime;
         Quaternion driftRotation = Quaternion.Euler(0f, lockedYRotation, 0f);
         Vector3 driftDirection = driftRotation * Vector3.forward;
 
-        // 현재 속도를 부드럽게 드리프트 방향으로 전환합니다.
-        rigid.velocity = Vector3.Lerp(rigid.velocity, driftDirection * driftSpeed, Time.fixedDeltaTime * 10f);
+        // 현재 속도를 부드럽게 드리프트 방향 또는 부스터 방향으로 전환합니다.
+        rigid.velocity = Vector3.Lerp(rigid.velocity, driftDirection * driftSpeed, Time.fixedDeltaTime * 20f);
 
         // 측면 힘을 추가하여 드리프트 느낌을 강화합니다.
         Vector3 lateralForce = transform.right * steerInput * driftForceMultiplier * movementForce;
         rigid.AddForce(lateralForce, ForceMode.Force);
     }
 
-    [SerializeField] private AnimationCurve accelerationCurve; // 에디터에서 가속 곡선 설정
-    private float accelerationTime = 0f; // 누적 가속 시간을 추적
-    private float currentAcceleration = 0f; // 현재 가속도 (매 프레임 누적)
-
-    // 최대 가속도 제한
-    [SerializeField] private float maxAcceleration; // 최대 가속도 (수정 가능)
-
     /// <summary>
-    /// 전진/후진 가속 처리 (누적 가속도 기반으로 점진적 증가)
-    /// </summary>
-    private void ProcessAcceleration(float motorInput, float currentMaxSpeed)
-    {
-        // 가속 시간 누적: 입력이 있는 경우만 증가
-        if (Mathf.Abs(motorInput) > 0.1f)
-        {
-            accelerationTime += Time.fixedDeltaTime; // 누적 시간 증가
-                                                     // AnimationCurve로 가속 배율 계산
-            float accelerationMultiplier = accelerationCurve.Evaluate(accelerationTime);
-
-            // 가속도가 최대 가속도를 초과하지 않도록 제한
-            currentAcceleration = Mathf.Clamp(accelerationMultiplier * maxAcceleration, 0f, maxAcceleration);
-        }
-        else
-        {
-            // 입력이 없을 경우 가속도와 시간 초기화
-            accelerationTime = 0f;
-            currentAcceleration = 0f;
-        }
-
-        // 목표 속도 계산
-        Vector3 targetVelocity = transform.forward * motorInput * currentMaxSpeed;
-
-        // 점진적으로 가속도 기반으로 속도 증가
-        Vector3 smoothedVelocity = Vector3.Lerp(new Vector3(rigid.velocity.x, 0f, rigid.velocity.z), targetVelocity * currentAcceleration, Time.fixedDeltaTime * 0.25f);
-
-        // Y축 속도는 유지
-        smoothedVelocity.y = rigid.velocity.y;
-
-        // 최종적으로 Rigidbody에 속도 적용
-        rigid.velocity = smoothedVelocity;
-    }
-    /// <summary>
-    /// 드리프트가 아닐 때 즉각적으로 전진/후진 속도를 반영하는 함수.
-    /// 기존의 AccelerationCurve를 사용한 누적 가속 대신, 즉각적인 목표 속도를 반영합니다.
+    /// 드리프트가 아닐 때 즉각적으로 전진/후진 속도를 반영하는 함수.   
     /// </summary>
     private void ProcessImmediateAcceleration(float motorInput, float currentMaxSpeed)
     {
@@ -707,22 +732,20 @@ public partial class TestCHMKart : MonoBehaviour
 
     /// <summary>
     /// 조향 입력과 속도 기반 민감도를 적용해 회전 처리를 담당합니다.
-    /// </summary>
-    // 조향을 부드럽게 처리하는 변수
-    private float currentSteerAngle = 0f;
+    /// </summary>  
 
     private void RotateKart(float steerInput, float steeringMultiplier)
     {
         if (speedKM > 0.1f)
         {
             // 드리프트 상태에서 다른 각도 제한 적용
-            float maxSteerAngle = isDrifting ? 360f : 180f;  // 드리프트 중에는 60도, 기본은 90도
+            float maxSteerAngle = isDrifting ? 360f : 120f;  // 드리프트 중에는 60도, 기본은 90도
 
             // 목표 각도 계산
             float targetSteerAngle = steerInput * steerAngle * steeringMultiplier;
 
             // 부드러운 보간으로 현재 각도를 목표 각도로 점진적으로 변경
-            currentSteerAngle = Mathf.Lerp(currentSteerAngle, targetSteerAngle, Time.fixedDeltaTime * 50f);
+            currentSteerAngle = Mathf.Lerp(currentSteerAngle, targetSteerAngle, Time.fixedDeltaTime * 100f);
 
             // 각도를 -maxSteerAngle에서 +maxSteerAngle로 제한
             currentSteerAngle = Mathf.Clamp(currentSteerAngle, -maxSteerAngle, maxSteerAngle);
@@ -737,8 +760,7 @@ public partial class TestCHMKart : MonoBehaviour
     {
         if (playerCharAni == null)
         {
-            Debug.LogError("charAni가 null입니다! Animator가 제대로 연결되지 않았는지 확인하세요.");
-            return; // 더 이상 진행하지 않음
+            return;
         }
 
         if (playerCharAni != null)
@@ -746,16 +768,16 @@ public partial class TestCHMKart : MonoBehaviour
             // 조향 값을 기반으로 LSteer 및 RSteer 업데이트
             float LSteer = Mathf.Clamp01(-steerInput); // 왼쪽 조향
             float RSteer = Mathf.Clamp01(steerInput);  // 오른쪽 조향
-            
-            if (LSteer <0.3f && RSteer <0.3f)
+
+            if (LSteer < 0.3f && RSteer < 0.3f)
             {
                 LSteer = 0;
                 RSteer = 0;
             }
             playerCharAni.SetFloat("LSteer", LSteer);
-            playerCharAni.SetFloat("RSteer", RSteer);           
-                   
-        }      
+            playerCharAni.SetFloat("RSteer", RSteer);
+
+        }
 
     }
     /// <summary>
@@ -788,22 +810,16 @@ public partial class TestCHMKart : MonoBehaviour
                 startBoost = false;
                 yield break; // 대기를 종료
             }
-            
+
             timer += Time.deltaTime;
             yield return null;
         }
 
-        if (!isBoostTriggered)
-        {
-            Debug.Log("시간 초과: 위 화살표 키를 누르지 않아 부스트가 실행되지 않았습니다.");
-        }
     }
 
 
     public IEnumerator DecelerateOverTime(float duration)//결승선 도착시 속력 서서히 줄어들기 
     {
-        Debug.Log("결승선에 닿음: 속도 서서히 감소 시작");
-
         // 현재 전후진 입력 값을 저장
         float initialMotorInput = currentMotorInput;
 
@@ -820,22 +836,35 @@ public partial class TestCHMKart : MonoBehaviour
             timer += Time.deltaTime;
             yield return null;
         }
-
+        
+        //camerCtrl.ActivateFinishCamera(); //여기서하면 1초뒤에함
         // 최종적으로 전후진 입력 값을 완전히 0으로 설정
         currentMotorInput = 0f;
         currentSteerInput = 0f;
-
-        Debug.Log("속도 감소 완료: 차량 정지");
+        playerCharAni.SetFloat("LSteer", 0);
+        playerCharAni.SetFloat("RSteer", 0);
+        playerCharAni.SetBool("IsBoosting", false);
+        rigid.isKinematic = true;
     }
 
 
     #endregion
 
     #region [박스 캐스트 인스펙터 설정]
-    [Header("박스 캐스트 설정")]
-    [SerializeField] private Vector3 boxCastCenter = Vector3.zero;     // 박스 캐스트 중심 오프셋
-    [SerializeField] private Vector3 boxCastSize = new Vector3(1, 1, 1);   // 박스 크기
-    [SerializeField] private float boxCastDistance = 1f;                 // 박스 캐스트 거리
+    [Header("공통 박스 캐스트 설정")]
+    [SerializeField] private Vector3 boxCastCenter = Vector3.zero;   // 박스 캐스트 중심 오프셋
+
+    [Header("전면/후면 박스 캐스트 설정")]
+    [SerializeField] private float frontBackBoxCastDistance = 1f;        // 전면/후면 검사 거리
+    [SerializeField] private Vector3 frontBackBoxCastSize = new Vector3(1, 1, 1); // 전면/후면 박스 크기 (모양)
+    [SerializeField] private Color frontBackLineColor = Color.red;         // 전면/후면 선 색상
+    [SerializeField] private Color frontBackBoxColor = Color.blue;         // 전면/후면 끝 박스 색상
+
+    [Header("좌측/우측 박스 캐스트 설정")]
+    [SerializeField] private float leftRightBoxCastDistance = 1f;          // 좌측/우측 검사 거리
+    [SerializeField] private Vector3 leftRightBoxCastSize = new Vector3(0.5f, 1, 1.5f); // 좌측/우측 박스 크기 (모양)
+    [SerializeField] private Color leftRightLineColor = Color.yellow;      // 좌측/우측 선 색상
+    [SerializeField] private Color leftRightBoxColor = Color.magenta;
 
     [Header("지면 체크 설정")]
     [SerializeField] private float groundRayDistance = 0.8f;             // 지면 레이캐스트 거리
@@ -859,17 +888,68 @@ public partial class TestCHMKart : MonoBehaviour
 
 
     #endregion
-
-    #region [박스 캐스트 및 레이어 충돌 처리]
+    #region [박스 캐스트 충돌 검사]
 
     /// <summary>
-    /// 박스 캐스트로 충돌 여부를 확인합니다.
+    /// 전면 및 후면 방향으로 박스 캐스트를 실행하여 충돌을 검사합니다.
+    /// 충돌 시 마지막 결과를 lastHit에 저장하고 true를 반환합니다.
     /// </summary>
-    private bool PerformBoxCast(LayerMask layer)
+    private bool PerformFrontBackBoxCast(LayerMask layer)
     {
         Vector3 worldCenter = transform.position + transform.TransformDirection(boxCastCenter);
-        return Physics.BoxCast(worldCenter, boxCastSize * 0.5f, transform.forward, out lastHit, Quaternion.identity, boxCastDistance, layer.value);
+        float distance = frontBackBoxCastDistance;
+        RaycastHit hit;
+
+        // 전면 검사
+        if (Physics.BoxCast(worldCenter, frontBackBoxCastSize * 0.5f, transform.forward, out hit, Quaternion.identity, distance, layer.value))
+        {
+            lastHit = hit;
+            return true;
+        }
+        // 후면 검사
+        if (Physics.BoxCast(worldCenter, frontBackBoxCastSize * 0.5f, -transform.forward, out hit, Quaternion.identity, distance, layer.value))
+        {
+            lastHit = hit;
+            return true;
+        }
+        return false;
     }
+
+    /// <summary>
+    /// 좌측 및 우측 방향으로 박스 캐스트를 실행하여 충돌을 검사합니다.
+    /// 충돌 시 마지막 결과를 lastHit에 저장하고 true를 반환합니다.
+    /// </summary>
+    private bool PerformLeftRightBoxCast(LayerMask layer)
+    {
+        Vector3 worldCenter = transform.position + transform.TransformDirection(boxCastCenter);
+        float distance = leftRightBoxCastDistance;
+        RaycastHit hit;
+
+        // 우측 검사
+        if (Physics.BoxCast(worldCenter, leftRightBoxCastSize * 0.5f, transform.right, out hit, Quaternion.identity, distance, layer.value))
+        {
+            lastHit = hit;
+            return true;
+        }
+        // 좌측 검사
+        if (Physics.BoxCast(worldCenter, leftRightBoxCastSize * 0.5f, -transform.right, out hit, Quaternion.identity, distance, layer.value))
+        {
+            lastHit = hit;
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Inspector 설정에 따라 전면/후면과 좌측/우측 박스 캐스트 결과를 결합하여 충돌 여부를 검사합니다.
+    /// 하나라도 충돌이 발생하면 true를 반환합니다.
+    /// </summary>
+    private bool PerformCombinedBoxCast(LayerMask layer)
+    {
+        return PerformFrontBackBoxCast(layer) || PerformLeftRightBoxCast(layer);
+    }
+
+
 
     /// <summary>
     /// 박스 캐스트 결과에 따라 충돌된 레이어에 따른 처리를 호출합니다.
@@ -900,32 +980,50 @@ public partial class TestCHMKart : MonoBehaviour
     }
 
     /// <summary>
-    /// 벽과 충돌 시 반사 효과를 적용합니다.
+    /// 벽과 충돌 시 반사 효과를 적용하며, 드리프트 중이면 드리프트를 종료하고,
+    /// 충돌 후 차량이 벽 안으로 박히는 현상을 막기 위해 약간의 밀쳐내기(Separation) 처리를 합니다.
     /// </summary>
     private void ProcessWallCollision()
     {
         if (lastHit.collider != null)
         {
-            // 예: 아이템 박스 처리도 포함
+            // 드리프트 중이면 드리프트 종료 처리
+            if (isDrifting)
+            {
+                EndDrift();
+            }
+
+            // 예: 아이템 박스 처리
             if (lastHit.collider.CompareTag("ItemBox"))
             {
                 lastHit.collider.gameObject.GetComponent<BarricadeController>().OffBarricade();
             }
+
+            // 충돌 전 손실된 속도를 반사 처리: 현재 속도를 반사 및 감쇠
             Vector3 incomingVelocity = rigid.velocity;
             Vector3 reflectedVelocity = Vector3.Reflect(incomingVelocity, lastHit.normal);
-            float bounceFactor = 0.5f; // 감쇠 계수
+            float bounceFactor = 0.2f; // 감쇠 계수
+            Vector3 newVelocity = reflectedVelocity * bounceFactor;
 
-            rigid.velocity = reflectedVelocity * bounceFactor;
-            Debug.Log($"벽 충돌: 반사된 속도 = {rigid.velocity}");
+            // 벽에 너무 박히지 않도록, 충돌면의 법선 방향으로 살짝 밀어냅니다.
+            // 이 거리 값은 실험을 통해 적절한 수치(예: 0.1f ~ 0.2f 등)로 조정하면 됩니다.
+            float separationDistance = 0.1f;
+            transform.position += lastHit.normal * separationDistance;
+
+            rigid.velocity = newVelocity;
+            Debug.Log($"벽 충돌 후 처리: 새 속도 = {rigid.velocity}");
+
+            kartBodyCtrl.SetCollisonSparkActive(true);
         }
     }
+
 
     /// <summary>
     /// 부스터 레이어 충돌 시 부스트를 실행합니다.
     /// </summary>
     private void ProcessBoosterCollision()
     {
-        StartBoost(1.5f); // boostDuration 예시
+        StartBoost(boostDuration); // boostDuration 예시
     }
 
     /// <summary>
@@ -937,18 +1035,6 @@ public partial class TestCHMKart : MonoBehaviour
         // 우선 수평 속도 유지
         Vector3 horizontalVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
         rigid.velocity = new Vector3(horizontalVelocity.x, rigid.velocity.y, horizontalVelocity.z);
-
-        // 경사 각도는 여기서도 계산할 수 있지만, 슬로프 체크는 별도의 정면 캐스트로 처리합니다.
-        float slopeAngle = Vector3.Angle(lastHit.normal, Vector3.up);
-
-        // 예: 경사각이 최소 기준 이상일 때 보정 (이 부분은 원래 방식과 유사)
-        if (slopeAngle >= maxSlopeAngle)
-        {
-            float slopeFactor = Mathf.Lerp(1f, 1.5f, Mathf.InverseLerp(maxSlopeAngle, 45f, slopeAngle));
-            Vector3 adjustedVelocity = horizontalVelocity * slopeFactor;
-            rigid.velocity = new Vector3(adjustedVelocity.x, rigid.velocity.y, adjustedVelocity.z);
-            Debug.Log($"지면 충돌 처리: 경사각 {slopeAngle:F2}°, 보정 비율 {slopeFactor:F2}");
-        }
     }
 
     #endregion
@@ -971,10 +1057,10 @@ public partial class TestCHMKart : MonoBehaviour
             float slopeAngle = Vector3.Angle(slopeRayHit.normal, Vector3.up);
             // 예: 경사각이 클수록 (혹은 특정 임계치 이상) 추가 힘을 부여
             float forceMultiplier = Mathf.Lerp(1.0f, 2.0f, Mathf.InverseLerp(0f, 45f, slopeAngle));
-            Debug.Log($"슬로프 체크: 경사각 {slopeAngle:F2}°, 힘 배율 {forceMultiplier:F2}");
+            //Debug.Log($"슬로프 체크: 경사각 {slopeAngle:F2}°, 힘 배율 {forceMultiplier:F2}");
 
             // 예: 경사면에서 속도를 보완하기 위해 추가 전진 힘을 가한다. (단, 조건에 맞게 조정)
-            rigid.AddForce(transform.forward * forceMultiplier * 10f, ForceMode.Acceleration);
+            rigid.AddForce(transform.forward * forceMultiplier * 1.2f, ForceMode.Acceleration);
         }
     }
     #endregion
@@ -988,6 +1074,7 @@ public partial class TestCHMKart : MonoBehaviour
     {
         if (Physics.Raycast(transform.position, Vector3.down, out groundRayHit, groundRayDistance, groundLayer))
         {
+            rigid.angularDrag = 50f;
             return true;
         }
         return false;
@@ -1012,7 +1099,6 @@ public partial class TestCHMKart : MonoBehaviour
 
             // 추가 하강력을 아래쪽으로 적용 (ForceMode.Acceleration은 질량 무관한 가속도 적용)
             rigid.AddForce(Vector3.down * extraDownForce, ForceMode.Acceleration);
-            Debug.Log("Extra Landing Force Applied: " + extraDownForce);
         }
     }
     /// <summary>
@@ -1025,62 +1111,47 @@ public partial class TestCHMKart : MonoBehaviour
 
         // 착지 시, 수직 속도는 0으로 설정하여 운동 에너지 손실 없이 수평 속도를 유지
         rigid.velocity = new Vector3(horizontalVelocity.x, 0f, horizontalVelocity.z);
-
-        Debug.Log("착지 처리: 수평 속도 보존, vertical velocity reset");
-    }
-
-    #endregion
-
-    #region [Gizmos 시각화]
-    private void OnDrawGizmos()
-    {
-        // → 박스 캐스트 시각화 (플레이어 주위를 둘러싼 네모)
-        Vector3 worldCenter = transform.position + transform.TransformDirection(boxCastCenter);
-        Gizmos.color = Color.green;           // 시작 박스: 녹색
-        Gizmos.DrawWireCube(worldCenter, boxCastSize);
-        Gizmos.color = Color.red;             // 캐스트 방향 선: 빨간색
-        Vector3 endCenter = worldCenter + transform.forward * boxCastDistance;
-        Gizmos.DrawLine(worldCenter, endCenter);
-        Gizmos.color = Color.blue;            // 끝 지점 박스: 파란색
-        Gizmos.DrawWireCube(endCenter, boxCastSize);
-
-        // → 지면 체크용 Raycast (직선, 아래로 쏘는)
-        Vector3 rayOrigin = transform.position;
-        Vector3 rayDirection = Vector3.down * groundRayDistance;
-        if (Physics.Raycast(rayOrigin, Vector3.down, out groundRayHit, groundRayDistance, groundLayer))
-        {
-            Gizmos.color = Color.yellow; // 지면 체크 충돌 시: 노란색
-            Gizmos.DrawLine(rayOrigin, groundRayHit.point);
-            Gizmos.DrawSphere(groundRayHit.point, 0.1f);
-        }
-        else
-        {
-            Gizmos.color = Color.white;  // 미충돌 시: 흰색
-            Gizmos.DrawLine(rayOrigin, rayOrigin + rayDirection);
-        }
-
-        // → 정면(슬로프 체크) Raycast 시각화
-        Vector3 slopeOrigin = transform.position + transform.forward * 1.0f;
-        Vector3 slopeDirection = (transform.forward + Vector3.down * 0.5f).normalized;
-        float slopeRayDistance = 2.0f;
-        if (Physics.Raycast(slopeOrigin, slopeDirection, out slopeRayHit, slopeRayDistance, groundLayer))
-        {
-            Gizmos.color = Color.cyan; // 슬로프 체크 충돌 시: 시안색
-            Gizmos.DrawLine(slopeOrigin, slopeRayHit.point);
-            Gizmos.DrawSphere(slopeRayHit.point, 0.1f);
-            // 지면 법선 표시 (마젠타 색)
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawLine(slopeRayHit.point, slopeRayHit.point + slopeRayHit.normal);
-#if UNITY_EDITOR
-            Handles.Label(slopeRayHit.point, $"Slope: {Vector3.Angle(slopeRayHit.normal, Vector3.up):F1}°");
-#endif
-        }
-        else
-        {
-            Gizmos.color = Color.gray;
-            Gizmos.DrawLine(slopeOrigin, slopeOrigin + slopeDirection * slopeRayDistance);
-        }
     }
     #endregion
+    //기즈모 그리는거
+        #region [Gizmos 시각화: 고정된 방향(월드 기준)으로 표시]
+        private void OnDrawGizmos()
+        {
+            // Gizmo에서 기본 시작점은 차량의 현재 위치에 boxCastCenter 오프셋을 적용한 위치입니다.
+            Vector3 worldCenter = transform.position + boxCastCenter;
+
+            // 기본 중심 박스 (녹색) - 선택 사항: 두 그룹의 박스 크기가 다르므로 기준을 표시
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(worldCenter, frontBackBoxCastSize);
+
+            // 전면/후면 그룹
+            Gizmos.color = frontBackLineColor;
+            Vector3 frontEnd = worldCenter + Vector3.forward * frontBackBoxCastDistance;
+            Gizmos.DrawLine(worldCenter, frontEnd);
+            Gizmos.color = frontBackBoxColor;
+            Gizmos.DrawWireCube(frontEnd, frontBackBoxCastSize);
+
+            Gizmos.color = frontBackLineColor;
+            Vector3 backEnd = worldCenter + Vector3.back * frontBackBoxCastDistance;
+            Gizmos.DrawLine(worldCenter, backEnd);
+            Gizmos.color = frontBackBoxColor;
+            Gizmos.DrawWireCube(backEnd, frontBackBoxCastSize);
+
+            // 좌측/우측 그룹
+            Gizmos.color = leftRightLineColor;
+            Vector3 rightEnd = worldCenter + Vector3.right * leftRightBoxCastDistance;
+            Gizmos.DrawLine(worldCenter, rightEnd);
+            Gizmos.color = leftRightBoxColor;
+            Gizmos.DrawWireCube(rightEnd, leftRightBoxCastSize);
+
+            Gizmos.color = leftRightLineColor;
+            Vector3 leftEnd = worldCenter + Vector3.left * leftRightBoxCastDistance;
+            Gizmos.DrawLine(worldCenter, leftEnd);
+            Gizmos.color = leftRightBoxColor;
+            Gizmos.DrawWireCube(leftEnd, leftRightBoxCastSize);
+        }
+        #endregion
+
+    //*/
 
 }

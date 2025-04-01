@@ -256,28 +256,6 @@ MonoBehaviour:
   - {fileID: 561741976}
   - {fileID: 1091426735}
   pv: {fileID: 0}
---- !u!114 &78301699 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3728095678300952290, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
-  m_PrefabInstance: {fileID: 1653789468}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31c2012e0d5d04fe28d91bcb0421a941, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &99204750 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1208374953293898823, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
-  m_PrefabInstance: {fileID: 1653789468}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31c2012e0d5d04fe28d91bcb0421a941, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &111472056
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,6 +371,7 @@ MonoBehaviour:
   kartController: {fileID: 0}
   maxPanAngleDelta: 10
   smoothTime: 0.5
+  finishCameraOffset: {x: 1, y: 2, z: 3}
   basePanAngleDelta: 50
   maxPanLimit: 40
   boostDistanceOffset: 5
@@ -2870,9 +2849,6 @@ MonoBehaviour:
   finishLine: {fileID: 245630931}
   essentialCheckPoints:
   - {fileID: 1005540868}
-  - {fileID: 78301699}
-  - {fileID: 99204750}
-  - {fileID: 1622042582}
   checkPoints: {fileID: 2105477886}
   dollyPath: {fileID: 1679446658}
   myLastcheckPoint: {fileID: 0}
@@ -4475,17 +4451,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3187579589590430198, guid: 520d140254f76e54b993b4a30aabd2f3, type: 3}
   m_PrefabInstance: {fileID: 176915541}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1622042582 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8672545747844982237, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
-  m_PrefabInstance: {fileID: 1653789468}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31c2012e0d5d04fe28d91bcb0421a941, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1645311907
 PrefabInstance:
   m_ObjectHideFlags: 0
