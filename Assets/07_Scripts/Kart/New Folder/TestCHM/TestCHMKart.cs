@@ -84,6 +84,9 @@ public partial class TestCHMKart : MonoBehaviour
     [SerializeField] AudioClip driftAudioClip;
     [SerializeField] AudioClip boostAudioClip;
 
+    // 내 RankManager 추가
+    RankManager rankManager;
+
     bool isSparkOn;
     float inputKey;
 
@@ -96,6 +99,7 @@ public partial class TestCHMKart : MonoBehaviour
         wheelCtrl = wheels.GetComponent<CHMTestWheelController>(); // 바퀴 컨트롤러 참조
         kartBodyCtrl = kartBody.GetComponent<KartBodyController>();
         inventory = GetComponent<KartInventory>();
+        rankManager = GetComponent<RankManager>();
 
         rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
         ///charAni = GetComponent<Animator>();

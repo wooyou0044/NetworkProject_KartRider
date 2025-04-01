@@ -47,12 +47,35 @@ public class ItemNetController : MonoBehaviour
         }
     }
 
+    public void RequestWaterFly(int kartViewID, int kartRank)
+    {
+        if(kartRank <= 1)
+        {
+            return;
+        }
+        PhotonView photonView = PhotonView.Find(kartViewID);
+        if (photonView != null)
+        {
+            GameObject kartObject = photonView.gameObject;
+
+            GameObject frontKart = rankCtrl.GetKartObjectByRank(kartRank - 1);
+            if(frontKart == null || frontKart == kartObject)
+            {
+                return;
+            }
+            PhotonView view = frontKart.GetPhotonView();
+            view.RPC("StuckInWaterFly", RpcTarget.All);
+        }
+    }
+
     [PunRPC]
     public void DisableItem(int index)
     {
         if(index >= 0 && index < items.Count)
         {
+            GameObject targetItem = items[index];
             items[index].SetActive(false);
+            items.Remove(targetItem);
         }
     }
 

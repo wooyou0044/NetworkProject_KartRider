@@ -101,7 +101,8 @@ public partial class TestCHMKart : MonoBehaviour
                 break;
             case ItemType.waterFly:
                 // 임시로
-                StuckInWaterFly();
+                //StuckInWaterFly();
+                itemNetCtrl.RequestWaterFly(_photonView.ViewID, rankManager.GetRank());
                 break;
         }
     }
@@ -121,6 +122,8 @@ public partial class TestCHMKart : MonoBehaviour
         GameObject bananaPrefab = Instantiate(banana, position, rotation);
         Vector3 backwardDir = -transform.forward;
         bananaPrefab.transform.position += backwardDir + Vector3.up;
+
+        itemNetCtrl.RegisterItem(bananaPrefab);
     }
 
     IEnumerator ThreadBanana(float duration)
@@ -189,7 +192,6 @@ public partial class TestCHMKart : MonoBehaviour
         Vector3 direction = transform.position - barricadePrefab.transform.position;
         direction.y = 0;
         barricadePrefab.transform.rotation = Quaternion.LookRotation(direction);
-        Debug.Log("MakeBarricade 실행됨! - " + gameObject.name);
     }
 
     public void MakeDisableBarricade(GameObject disableObject)
@@ -197,16 +199,21 @@ public partial class TestCHMKart : MonoBehaviour
         itemNetCtrl.RequestDisableItem(disableObject);
     }
 
+    [PunRPC]
     public void StuckInWaterFly()
     {
         playerPastPos = transform.position;
         GameObject waterFly = Resources.Load<GameObject>("Items/WaterFly");
         GameObject waterFlyPrefab = Instantiate(waterFly, transform.position, Quaternion.identity);
         waterFlyPrefab.transform.position += new Vector3(0, 5, 0);
+
+        itemNetCtrl.RegisterItem(waterFlyPrefab);
+
         gameObject.transform.parent = waterFlyPrefab.transform;
         transform.localPosition = Vector3.zero;
         rigid.isKinematic = true;
         isRacingStart = false;
+
         // 임시
         StartCoroutine(ExitInWaterFly(waterFlyPrefab));
     }
@@ -219,7 +226,8 @@ public partial class TestCHMKart : MonoBehaviour
         rigid.isKinematic = false;
         isRacingStart = true;
         Instantiate(waterBombParticle, waterFly.transform.position, Quaternion.identity);
-        waterFly.SetActive(false);
+        //waterFly.SetActive(false);
+        itemNetCtrl.RequestDisableItem(waterFly);
     }
 
     void OnTriggerEnter(Collider other)
@@ -239,7 +247,8 @@ public partial class TestCHMKart : MonoBehaviour
             {
                 isUsingShield = false;
             }
-            other.gameObject.SetActive(false);
+            itemNetCtrl.RequestDisableItem(other.gameObject);
+            //other.gameObject.SetActive(false);
         }
     }
 }

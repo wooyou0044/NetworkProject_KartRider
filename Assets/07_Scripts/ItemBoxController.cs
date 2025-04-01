@@ -25,7 +25,7 @@ public class ItemBoxController : MonoBehaviour
         //int rand = Random.Range(0, 3);
         //curItem = items[2];
 
-        curItem = items[2];
+        curItem = items[3];
     }
 
     public void GetItem()
