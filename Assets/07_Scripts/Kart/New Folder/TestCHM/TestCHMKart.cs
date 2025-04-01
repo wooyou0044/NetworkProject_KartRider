@@ -944,6 +944,8 @@ public partial class TestCHMKart : MonoBehaviour
 
             rigid.velocity = reflectedVelocity * bounceFactor;
             Debug.Log($"벽 충돌: 반사된 속도 = {rigid.velocity}");
+
+            kartBodyCtrl.SetCollisonSparkActive(true);
         }
     }
 
