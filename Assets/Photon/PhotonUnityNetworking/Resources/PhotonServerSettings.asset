@@ -48,6 +48,8 @@ MonoBehaviour:
   - RemoveReadyPlayer
   - ThrowBanana
   - MakeBarricade
+  - DisableItem
+  - OffBarricade
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

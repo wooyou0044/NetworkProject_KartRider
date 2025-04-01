@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
 
 public class BarricadeController : MonoBehaviour
 {
     [SerializeField] float DestroyTime;
 
+    public TestCHMKart kartCtrl;
     void Start()
     {
     }
@@ -16,7 +16,6 @@ public class BarricadeController : MonoBehaviour
         
     }
 
-    [PunRPC]
     public void OffBarricade()
     {
         StartCoroutine(PlayerCollisonBarricade());
@@ -26,6 +25,7 @@ public class BarricadeController : MonoBehaviour
     {
         Debug.Log("Destroy Time : " + DestroyTime);
         yield return new WaitForSeconds(DestroyTime);
-        gameObject.SetActive(false);
+        kartCtrl.MakeDisableBarricade(gameObject);
+        //gameObject.SetActive(false);
     }
 }

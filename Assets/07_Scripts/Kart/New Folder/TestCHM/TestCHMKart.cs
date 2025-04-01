@@ -798,7 +798,9 @@ public partial class TestCHMKart : MonoBehaviour
         {
             if(lastHit.collider.CompareTag("ItemBox"))
             {
-                lastHit.collider.gameObject.GetComponent<BarricadeController>().OffBarricade();
+                BarricadeController barricadeCtrl = lastHit.collider.gameObject.GetComponent<BarricadeController>();
+                barricadeCtrl.OffBarricade();
+                barricadeCtrl.kartCtrl = GetComponent<TestCHMKart>();
             }
             // 현재 속도를 가져온 후, lastHit.normal을 기준으로 반사
             Vector3 incomingVelocity = rigid.velocity;

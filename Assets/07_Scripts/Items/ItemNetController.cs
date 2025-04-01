@@ -16,6 +16,7 @@ public class ItemNetController : MonoBehaviour
 
     void Start()
     {
+        curPhotonView = GetComponent<PhotonView>();
         items = new List<GameObject>();
     }
 
@@ -55,12 +56,13 @@ public class ItemNetController : MonoBehaviour
         }
     }
 
+
     public void RequestDisableItem(GameObject hitItem)
     {
         int index = items.IndexOf(hitItem);
         if(index != -1)
         {
-            
+            curPhotonView.RPC("DisableItem", RpcTarget.All, index);
         }
     }
 }
