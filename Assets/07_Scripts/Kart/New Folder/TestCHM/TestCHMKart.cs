@@ -86,6 +86,9 @@ public partial class TestCHMKart : MonoBehaviour
     [SerializeField] AudioClip driftAudioClip;
     [SerializeField] AudioClip boostAudioClip;
 
+    // 내 RankManager 추가
+    RankManager rankManager;
+
     bool isSparkOn;
     float inputKey;
 
@@ -98,6 +101,7 @@ public partial class TestCHMKart : MonoBehaviour
         wheelCtrl = wheels.GetComponent<CHMTestWheelController>(); // 바퀴 컨트롤러 참조
         kartBodyCtrl = kartBody.GetComponent<KartBodyController>();
         inventory = GetComponent<KartInventory>();
+        rankManager = GetComponent<RankManager>();
 
         rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
         
@@ -109,6 +113,8 @@ public partial class TestCHMKart : MonoBehaviour
 
         audioSource = GetComponent<AudioSource>();
 
+        // 임시
+        itemNetCtrl = GameObject.Find("ItemManager").GetComponent<ItemNetController>();
     }
 
     private void Start()
@@ -219,6 +225,12 @@ public partial class TestCHMKart : MonoBehaviour
                 kartBodyCtrl.SetShieldEffectActive(false);
             }
         }
+
+        //if(isExitWaterFly == true)
+        //{
+        //    itemNetCtrl.RequestDisableItem(waterFlyObject);
+        //    isExitWaterFly = false;
+        //}
     }
     #endregion
 
@@ -922,7 +934,9 @@ public partial class TestCHMKart : MonoBehaviour
             // 예: 아이템 박스 처리도 포함
             if (lastHit.collider.CompareTag("ItemBox"))
             {
-                lastHit.collider.gameObject.GetComponent<BarricadeController>().OffBarricade();
+                BarricadeController barricadeCtrl = lastHit.collider.gameObject.GetComponent<BarricadeController>();
+                barricadeCtrl.OffBarricade();
+                barricadeCtrl.kartCtrl = GetComponent<TestCHMKart>();
             }
             Vector3 incomingVelocity = rigid.velocity;
             Vector3 reflectedVelocity = Vector3.Reflect(incomingVelocity, lastHit.normal);

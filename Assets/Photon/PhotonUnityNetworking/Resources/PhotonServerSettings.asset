@@ -48,6 +48,13 @@ MonoBehaviour:
   - SetLap
   - RemoveReadyPlayer
   - ThrowBanana
+  - MakeBarricade
+  - DisableItem
+  - OffBarricade
+  - StuckInWaterFly
+  - ExitInWaterFly
+  - RequestExitWaterFly
+  - SetShieldState
   - RemoveItemBox
   DisableAutoOpenWizard: 1
   ShowSettings: 1

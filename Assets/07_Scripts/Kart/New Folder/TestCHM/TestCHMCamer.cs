@@ -46,6 +46,24 @@ public class TestCHMCamer : MonoBehaviour
     {
         if (kartController == null || transposer == null) return;
 
+        if (kartController != null)
+        {
+            if (kartController.isKartRotating == true)
+            {
+                if (virtualCamera.Follow != null)
+                {
+                    virtualCamera.Follow = null;
+                }
+            }
+            else
+            {
+                if (virtualCamera.Follow == null)
+                {
+                    virtualCamera.Follow = target;
+                }
+            }
+        }
+
         Vector3 currentOffset = transposer.m_FollowOffset; // 현재 카메라 오프셋
         Vector3 targetOffset = initialOffset;             // 기본 카메라 위치
 

@@ -6,6 +6,7 @@ public class BarricadeController : MonoBehaviour
 {
     [SerializeField] float DestroyTime;
 
+    public TestCHMKart kartCtrl;
     void Start()
     {
     }
@@ -24,6 +25,7 @@ public class BarricadeController : MonoBehaviour
     {
         Debug.Log("Destroy Time : " + DestroyTime);
         yield return new WaitForSeconds(DestroyTime);
-        gameObject.SetActive(false);
+        kartCtrl.MakeDisableBarricade(gameObject);
+        //gameObject.SetActive(false);
     }
 }
