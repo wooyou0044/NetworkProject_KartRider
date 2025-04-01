@@ -88,6 +88,7 @@ public partial class TestCHMKart : MonoBehaviour
 
     // 내 RankManager 추가
     RankManager rankManager;
+    MapManager mapManager;
 
     bool isSparkOn;
     float inputKey;
@@ -114,7 +115,8 @@ public partial class TestCHMKart : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         // 임시
-        itemNetCtrl = GameObject.Find("ItemManager").GetComponent<ItemNetController>();
+        itemNetCtrl = GameObject.FindWithTag("ItemManager").GetComponent<ItemNetController>();
+        mapManager = GameObject.Find("MapManager").GetComponent<MapManager>();
     }
 
     private void Start()

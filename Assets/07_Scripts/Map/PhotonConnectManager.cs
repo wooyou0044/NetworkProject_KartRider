@@ -6,7 +6,7 @@ using UnityEngine;
 public class PhotonConnectManager : MonoBehaviourPunCallbacks
 {
     private string _gameVersion = "1";
-    private string _testRoomName = "testtest";
+    private string _testRoomName = "testtest123";
     private string _testLobbyName = "scTestLobby";
 
     private GameManager _gameManager;

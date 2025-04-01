@@ -116,13 +116,24 @@ public class CHMTestWheelController : MonoBehaviour
             wheels[0].localRotation = Quaternion.Euler(0, leftSteerAngle - 90, wheels[0].localRotation.eulerAngles.z);
 
             float rightSteerAngle = Mathf.Lerp(steerAngleFrontMin, steerAngleFrontMax, (steerInput + 1f) / 2f) * steeringSensitivity;
-            wheels[1].localRotation = Quaternion.Euler(0, rightSteerAngle - 90, wheels[1].localRotation.eulerAngles.z);
+            wheels[1].localRotation = Quaternion.Euler(0, rightSteerAngle + 90, wheels[1].localRotation.eulerAngles.z);
         }
 
         float spinAngle = Mathf.Abs(speed) * Time.deltaTime * maxTorque;
+
+        Vector3 directionLeft = (motorInput >= 0) ? Vector3.back : Vector3.forward;
+        Vector3 directionRight = (motorInput >= 0) ? Vector3.forward : Vector3.back;
+
         foreach (Transform wheel in wheels)
         {
-            wheel.Rotate(Vector3.forward, spinAngle, Space.Self);
+            if(wheel == wheels[0] || wheel == wheels[2])
+            {
+                wheel.Rotate(directionLeft, spinAngle, Space.Self);
+            }
+            else
+            {
+                wheel.Rotate(directionRight, spinAngle, Space.Self);
+            }
         }
         //SetSkidMarkActive(isDrifting);
     }

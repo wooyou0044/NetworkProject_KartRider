@@ -42,7 +42,10 @@ public class MapManager : MonoBehaviourPunCallbacks
     [Header("디버그 필드")]
     [SerializeField] public Transform myLastcheckPoint;
     [HideInInspector] public UnityEvent onFinishEvent;
-    
+
+    int currentCheckPointIndex;
+
+
     public int MyCurrentLap => _myCurrentLap;
 
     private void Awake()
@@ -228,5 +231,11 @@ public class MapManager : MonoBehaviourPunCallbacks
         {
             waypoints[index++].position = cp.transform.parent.localPosition - checkPointRoot;
         }
+    }
+
+    public Transform GetNextCheckPointPos()
+    {
+        currentCheckPointIndex = (currentCheckPointIndex + 1) % _allCheckPoints.Length;
+        return _allCheckPoints[currentCheckPointIndex].transform;
     }
 }
