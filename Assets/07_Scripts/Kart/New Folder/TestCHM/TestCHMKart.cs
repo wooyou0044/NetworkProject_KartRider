@@ -1,5 +1,6 @@
 using System.Collections;
 using Photon.Pun;
+using UnityEditor;
 using UnityEngine;
 
 public partial class TestCHMKart : MonoBehaviour
@@ -35,11 +36,10 @@ public partial class TestCHMKart : MonoBehaviour
     [SerializeField] public float momentboostDuration = 0.2f;  // 순간 부스트 지속시간
     [SerializeField] public int maxBoostGauge = 100;           // 최대 부스트 게이지
     [SerializeField] private float boostChargeRate = 5f;        // 기본 부스트 충전 속도
-    [SerializeField] private float driftBoostChargeRate = 10f;   // 드리프트 중 부스트 충전 속도
-    [SerializeField] private float boostMaxSpeedKmh = 280f;        // 부스트 상태의 최대 속도
+    [SerializeField] private float driftBoostChargeRate = 10f;   // 드리프트 중 부스트 충전 속도    
+    [SerializeField] private float maxBoostSpeed = 300f;         // 부스트 활성화 시 속도 
 
 
-    private float boostSpeed;         // 부스트 활성화 시 속도 
 
     #endregion
 
@@ -59,19 +59,20 @@ public partial class TestCHMKart : MonoBehaviour
     private Rigidbody rigid;                   // 리지드바디 (물리 처리)
     private Coroutine postDriftBoostCoroutine; // 드리프트 종료 후 부스트 처리를 위한 코루틴 변수
     private float initialDriftSpeed;           // 드리프트 시작 시 기록된 초기 속도
-    public bool isDrifting = false;            // 드리프트 진행 중 여부
     public float currentDriftAngle = 0f;       // 현재 누적 드리프트 각도
     private float currentDriftThreshold;       // 속도에 따른 드리프트 입력 기준 값
     private float driftForceMultiplier;        // 동적으로 계산된 드리프트 힘 배수
     private float lockedYRotation = 0f;        // 드리프트 시 고정되는 Y 회전값
     private float currentMotorInput;
-    private float currentSteerInput;
-    //public int boostCount { get; private set; }
-    // 내부적으로 사용할 m/s 단위 변수
+    private float currentSteerInput;    
     private float maxSpeed;      // 최대 속도 (m/s)
     private Vector3 speed;       // 현재 속도 벡터
     private float chargeAmount;
-    
+    public bool isDrifting = false;            // 드리프트 진행 중 여부
+    private bool startBoost = true;    
+    private bool wasAirborne = false;         //공중 상태 여부 
+
+
 
     /* Network Instantiate */
     private Transform _playerParent;
@@ -99,8 +100,7 @@ public partial class TestCHMKart : MonoBehaviour
         inventory = GetComponent<KartInventory>();
 
         rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
-        ///charAni = GetComponent<Animator>();
-
+        
         /* TODO : 포톤 붙일때 수정해주기 */
         _tr = gameObject.transform;
         _photonView = GetComponent<PhotonView>();
@@ -119,7 +119,6 @@ public partial class TestCHMKart : MonoBehaviour
         {
             return;
         }
-
         // 최대 속도 계산
         maxSpeed = maxSpeedKmh / 3.6f; // 일반 최대 속도                                      
         // 입력값 읽어오기
@@ -127,7 +126,7 @@ public partial class TestCHMKart : MonoBehaviour
         currentMotorInput = Input.GetAxis("Vertical");
         // 이동 처리
         HandleKartMovement(currentMotorInput, currentSteerInput);
-
+         StartRace();//순간 부스트 실행           
         
 
         // 속도 제한 로직 제거 또는 완화
@@ -141,9 +140,29 @@ public partial class TestCHMKart : MonoBehaviour
                 rigid.velocity = horizontalVelocity.normalized * maxSpeed + Vector3.up * rigid.velocity.y;
             }
         }
+        if (PerformBoxCast(groundLayer | wallLayer | boosterLayer))
 
-        // 중력 강화 처리
-        //ApplyEnhancedGravity();
+        {
+            HandleLayerCollision(); // 충돌된 레이어 처리
+        }
+        ProcessSlopeForce();//경사면 체크 
+         // 레이캐스트로 지면 체크
+         // 공중 상태일 때 추가 하강력 적용
+        if (!CheckIfGrounded())
+        {
+            wasAirborne = true;
+            ApplyAirborneLandingForce();
+        }
+        else
+        {
+            // 만약 이전 프레임에 공중 상태였다면, 착지한 순간이므로 수평 속도를 보존하도록 처리
+            if (wasAirborne)
+            {
+                ProcessLanding();
+                wasAirborne = false;
+            }
+        }
+
     }
 
     private void Update()
@@ -178,18 +197,7 @@ public partial class TestCHMKart : MonoBehaviour
         HandleItemInput();
 
         playerCharAni.SetBool("IsBoosting", isBoostTriggered);
-        if (PerformBoxCast(groundLayer | wallLayer | jumpLayer | boosterLayer))
 
-        {
-            HandleLayerCollision(); // 충돌된 레이어 처리
-        }
-
-        // 레이캐스트로 지면 체크
-        if (!CheckIfGrounded())
-        {
-            MaintainHorizontalSpeed();
-            ApplyEnhancedGravity();
-        }
         
         if(isUsingShield == false)
         {
@@ -499,10 +507,10 @@ public partial class TestCHMKart : MonoBehaviour
 
         //Debug.Log("부스트 종료: 속도 서서히 감소 시작");
         isBoostTriggered = false; // 부스트 상태 비활성화
+        startBoost = false;//초기 부스트만 씀
         kartBodyCtrl.SetLampTrailActive(false);
         kartBodyCtrl.SetBoostEffectActive(false);
         kartBodyCtrl.SetBoostWindEffectActive(false);
-
         audioSource.Stop();
         audioSource.loop = false;
     }
@@ -531,6 +539,7 @@ public partial class TestCHMKart : MonoBehaviour
 
         //Debug.Log("기본 부스트 활성화!");
         isBoostTriggered = true;
+        startBoost = false;
         // 램프 TrilRenderer 실행
         kartBodyCtrl.SetLampTrailActive(true);
         kartBodyCtrl.SetBoostEffectActive(true);
@@ -543,22 +552,25 @@ public partial class TestCHMKart : MonoBehaviour
 
     private IEnumerator BoostCoroutine(float duration)
     {
-        float boostMultiplier = 1.2f; // 현재 속력의 1.2배로 밀기
+        float boostMultiplier = 1.1f; // 현재 속력의 1.1배로 밀기
         float timer = 0f;
 
-        // [Phase 1] 부스터 가속 단계
+        // Booster 코루틴 내부에서 매 프레임마다
         while (timer < duration)
         {
-            timer += Time.fixedDeltaTime;  // FixedDeltaTime 사용
-
-            // 현재 속도에 비례한 추가 힘 계산
+            timer += Time.fixedDeltaTime;
             float currentSpeed = rigid.velocity.magnitude;
             Vector3 boostForce = transform.forward * currentSpeed * boostMultiplier;
 
-            // 추가 힘을 차량의 전방 방향으로 적용
             rigid.AddForce(boostForce, ForceMode.Acceleration);
 
-            yield return new WaitForFixedUpdate();  // FixedUpdate와 동기화
+            // 속도 제한 적용 예시: 최대 부스트 속도가 maxBoostSpeed를 넘지 않도록 설정
+            if (rigid.velocity.magnitude > maxBoostSpeed)
+            {
+                rigid.velocity = rigid.velocity.normalized * maxBoostSpeed;
+            }
+
+            yield return new WaitForFixedUpdate();
         }
 
         // 램프 TrailRenderer 끄기
@@ -583,21 +595,23 @@ public partial class TestCHMKart : MonoBehaviour
         if (steerInput != 0)
         {
             UpdateAnimator(steerInput);
-            
         }
-        // 드리프트 중인지 아닌지에 따라 별도 처리
+
+        // 드리프트 상태에 따라 별도 처리
         if (isDrifting)
         {
             ProcessDrift(steerInput, steeringMultiplier);
         }
         else
         {
+            // 드리프트 상태가 아니면 즉각적인 가속 처리
             initialDriftSpeed = 0f;
-            ProcessAcceleration(motorInput, maxSpeed);
+            ProcessImmediateAcceleration(motorInput, maxSpeed);
         }
 
         // 조향 민감도를 적용해 회전 처리
         RotateKart(steerInput, steeringMultiplier);
+
         // 바퀴 업데이트 (필요 시)
         if (wheelCtrl != null)
         {
@@ -671,6 +685,25 @@ public partial class TestCHMKart : MonoBehaviour
         // 최종적으로 Rigidbody에 속도 적용
         rigid.velocity = smoothedVelocity;
     }
+    /// <summary>
+    /// 드리프트가 아닐 때 즉각적으로 전진/후진 속도를 반영하는 함수.
+    /// 기존의 AccelerationCurve를 사용한 누적 가속 대신, 즉각적인 목표 속도를 반영합니다.
+    /// </summary>
+    private void ProcessImmediateAcceleration(float motorInput, float currentMaxSpeed)
+    {
+        // 목표 속도 계산: 전진/후진 입력과 최대 속도를 곱함
+        Vector3 targetVelocity = transform.forward * motorInput * currentMaxSpeed;
+
+        // 약간의 부드러운 전환을 위해 Lerp 사용 (계수가 높으면 거의 즉각적)
+        Vector3 smoothedVelocity = Vector3.Lerp(new Vector3(rigid.velocity.x, 0f, rigid.velocity.z), targetVelocity, Time.fixedDeltaTime * 1.1f);
+
+        // 수직 속도는 그대로 유지
+        smoothedVelocity.y = rigid.velocity.y;
+
+        // 최종 속도 적용
+        rigid.velocity = smoothedVelocity;
+    }
+
 
     /// <summary>
     /// 조향 입력과 속도 기반 민감도를 적용해 회전 처리를 담당합니다.
@@ -689,7 +722,7 @@ public partial class TestCHMKart : MonoBehaviour
             float targetSteerAngle = steerInput * steerAngle * steeringMultiplier;
 
             // 부드러운 보간으로 현재 각도를 목표 각도로 점진적으로 변경
-            currentSteerAngle = Mathf.Lerp(currentSteerAngle, targetSteerAngle, Time.fixedDeltaTime * 20f);
+            currentSteerAngle = Mathf.Lerp(currentSteerAngle, targetSteerAngle, Time.fixedDeltaTime * 50f);
 
             // 각도를 -maxSteerAngle에서 +maxSteerAngle로 제한
             currentSteerAngle = Mathf.Clamp(currentSteerAngle, -maxSteerAngle, maxSteerAngle);
@@ -699,6 +732,7 @@ public partial class TestCHMKart : MonoBehaviour
             rigid.MoveRotation(Quaternion.LookRotation(turnDirection));
         }
     }
+
     private void UpdateAnimator(float steerInput)
     {
         if (playerCharAni == null)
@@ -724,6 +758,47 @@ public partial class TestCHMKart : MonoBehaviour
         }      
 
     }
+    /// <summary>
+    /// 게임이 시작될 때 부스트 대기 코루틴 시작
+    /// </summary>
+    private void StartRace()
+    {
+        if (startBoost == true)
+        {
+            StartCoroutine(WaitForInstantBoost());
+            startBoost = false;
+        }
+    }
+
+    /// <summary>
+    /// 레이싱 시작 시 위 화살표 키 입력을 기다렸다가 부스트를 실행하는 함수.
+    /// </summary>
+    private IEnumerator WaitForInstantBoost()
+    {
+        startBoost = true; // 초기화
+        float timer = 0f;
+
+        // 0.2초 동안 키 입력을 대기
+        while (timer < 0.2f)
+        {
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                // 키 입력이 감지되면 TriggerInstantBoost 실행
+                TriggerInstantBoost();
+                startBoost = false;
+                yield break; // 대기를 종료
+            }
+            
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        if (!isBoostTriggered)
+        {
+            Debug.Log("시간 초과: 위 화살표 키를 누르지 않아 부스트가 실행되지 않았습니다.");
+        }
+    }
+
 
     public IEnumerator DecelerateOverTime(float duration)//결승선 도착시 속력 서서히 줄어들기 
     {
@@ -748,6 +823,7 @@ public partial class TestCHMKart : MonoBehaviour
 
         // 최종적으로 전후진 입력 값을 완전히 0으로 설정
         currentMotorInput = 0f;
+        currentSteerInput = 0f;
 
         Debug.Log("속도 감소 완료: 차량 정지");
     }
@@ -756,23 +832,35 @@ public partial class TestCHMKart : MonoBehaviour
     #endregion
 
     #region [박스 캐스트 인스펙터 설정]
-
     [Header("박스 캐스트 설정")]
     [SerializeField] private Vector3 boxCastCenter = Vector3.zero;     // 박스 캐스트 중심 오프셋
-    [SerializeField] private Vector3 boxCastSize = new Vector3(1, 1, 1); // 박스 크기
+    [SerializeField] private Vector3 boxCastSize = new Vector3(1, 1, 1);   // 박스 크기
     [SerializeField] private float boxCastDistance = 1f;                 // 박스 캐스트 거리
+
+    [Header("지면 체크 설정")]
     [SerializeField] private float groundRayDistance = 0.8f;             // 지면 레이캐스트 거리
-    [SerializeField] private float maxSlopeAngle = 10f;             // 지면 레이캐스트 거리
+    [SerializeField] private float maxSlopeAngle = 10f;                  // 최소 경사각(보정 시작 기준)
 
     [Header("레이어 설정")]
-    [SerializeField] private LayerMask wallLayer;     // 벽 레이어
-    [SerializeField] private LayerMask jumpLayer;     // 점프 레이어
+    [SerializeField] private LayerMask wallLayer;     // 벽 레이어  
     [SerializeField] private LayerMask boosterLayer;  // 부스터 레이어
     [SerializeField] private LayerMask groundLayer;   // 지면 레이어
 
     // 충돌된 객체 정보를 저장할 변수들
     private RaycastHit lastHit;     // 박스 캐스트 충돌 결과
-    private RaycastHit groundRayHit; // 아래로 쏘는 레이캐스트 결과
+    private RaycastHit groundRayHit; // 지면 체크 Raycast 결과
+    private RaycastHit slopeRayHit; // 정면(슬로프 체크) Raycast 결과    
+
+    // 착지를 위한 추가 하강력 관련 변수들
+    [SerializeField] private float landingForceMultiplier = 1.0f; // 속력에 따른 하강력 계수
+    [SerializeField] private float minLandingForce = 10f;         // 최소 하강력
+    [SerializeField] private float maxLandingForce = 50f;         // 최대 하강력
+
+
+
+    #endregion
+
+    #region [박스 캐스트 및 레이어 충돌 처리]
 
     /// <summary>
     /// 박스 캐스트로 충돌 여부를 확인합니다.
@@ -784,7 +872,7 @@ public partial class TestCHMKart : MonoBehaviour
     }
 
     /// <summary>
-    /// 충돌된 레이어를 판별하고 각 상황에 맞는 처리를 호출합니다.
+    /// 박스 캐스트 결과에 따라 충돌된 레이어에 따른 처리를 호출합니다.
     /// </summary>
     private void HandleLayerCollision()
     {
@@ -796,10 +884,6 @@ public partial class TestCHMKart : MonoBehaviour
             {
                 ProcessWallCollision();
             }
-            else if (((1 << hitLayer) & jumpLayer.value) != 0)
-            {
-                ProcessJumpCollision();
-            }
             else if (((1 << hitLayer) & boosterLayer.value) != 0)
             {
                 ProcessBoosterCollision();
@@ -810,27 +894,11 @@ public partial class TestCHMKart : MonoBehaviour
             }
             else
             {
-                // 정의되지 않은 레이어 처리 (필요 시 추가)
+                // 기타 레이어 처리
             }
         }
     }
-    private void MaintainHorizontalSpeed()
-    {
-        if (!CheckIfGrounded()) // 공중 상태일 경우
-        {
-            // 현재 수평 속도를 계산
-            Vector3 horizontalVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
 
-            // 수평 속도를 유지 (속도가 일정 값 이하로 떨어지지 않도록 설정)
-            if (horizontalVelocity.magnitude < 10f) // 10f는 최소 유지 속도
-            {
-                horizontalVelocity = horizontalVelocity.normalized * 10f;
-            }
-
-            // 기존 속도를 유지하며, 중력 방향 속도는 그대로 유지
-            rigid.velocity = new Vector3(horizontalVelocity.x, rigid.velocity.y, horizontalVelocity.z);
-        }
-    }
     /// <summary>
     /// 벽과 충돌 시 반사 효과를 적용합니다.
     /// </summary>
@@ -838,97 +906,80 @@ public partial class TestCHMKart : MonoBehaviour
     {
         if (lastHit.collider != null)
         {
-            if(lastHit.collider.CompareTag("ItemBox"))
+            // 예: 아이템 박스 처리도 포함
+            if (lastHit.collider.CompareTag("ItemBox"))
             {
                 lastHit.collider.gameObject.GetComponent<BarricadeController>().OffBarricade();
             }
-            // 현재 속도를 가져온 후, lastHit.normal을 기준으로 반사
             Vector3 incomingVelocity = rigid.velocity;
             Vector3 reflectedVelocity = Vector3.Reflect(incomingVelocity, lastHit.normal);
             float bounceFactor = 0.5f; // 감쇠 계수
 
             rigid.velocity = reflectedVelocity * bounceFactor;
-            Debug.Log($"벽 충돌 처리: 반사된 속도 = {rigid.velocity}");
-
-            kartBodyCtrl.SetCollisonSparkActive(true);
+            Debug.Log($"벽 충돌: 반사된 속도 = {rigid.velocity}");
         }
     }
 
     /// <summary>
-    /// 점프 레이어와 충돌 시, 경사면 기울기가 10도 이상이면 현재 수평 속력을 1.2배 보정합니다.
-    /// </summary>
-    private void ProcessJumpCollision()
-    {
-        if (lastHit.collider == null) return;
-
-        float slopeAngle = Vector3.Angle(lastHit.normal, Vector3.up);
-        if (slopeAngle >= 10f)
-        {
-            Vector3 horizontalVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z) * 1.2f;
-            rigid.velocity = new Vector3(horizontalVelocity.x, rigid.velocity.y, horizontalVelocity.z);
-            //Debug.Log($"ProcessJumpCollision: 경사각 {slopeAngle:F2}° 보정됨. (1.2배)");
-        }
-        else
-        {
-            //Debug.Log($"ProcessJumpCollision: 경사각 {slopeAngle:F2}° (보정 없음)");
-        }
-    }
-
-    /// <summary>
-    /// 부스터 레이어와 충돌 시 기본 부스터 기능을 호출합니다.
+    /// 부스터 레이어 충돌 시 부스트를 실행합니다.
     /// </summary>
     private void ProcessBoosterCollision()
     {
-        StartBoost(boostDuration);
-        // Debug.Log("부스터 충돌 처리 실행됨!");
+        StartBoost(1.5f); // boostDuration 예시
     }
+
     /// <summary>
-    /// 지면과 충돌 시 수평 속도를 유지하며, 경사면일 경우 각도에 따라 점진적으로 속도를 보정합니다.
+    /// 지면과 충돌 시 수평 속도를 유지하고, 경사면일 경우 보정 처리를 실행합니다.
+    /// (이 함수는 박스 캐스트로부터 충돌 정보를 사용)
     /// </summary>
     private void ProcessGroundCollision()
     {
-        // 수평 속도를 유지
+        // 우선 수평 속도 유지
         Vector3 horizontalVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
-        rigid.velocity = horizontalVelocity;
+        rigid.velocity = new Vector3(horizontalVelocity.x, rigid.velocity.y, horizontalVelocity.z);
 
-        // 경사 각도 계산
+        // 경사 각도는 여기서도 계산할 수 있지만, 슬로프 체크는 별도의 정면 캐스트로 처리합니다.
         float slopeAngle = Vector3.Angle(lastHit.normal, Vector3.up);
 
-        // 경사각에 따라 보정 비율을 점진적으로 증가
+        // 예: 경사각이 최소 기준 이상일 때 보정 (이 부분은 원래 방식과 유사)
         if (slopeAngle >= maxSlopeAngle)
         {
             float slopeFactor = Mathf.Lerp(1f, 1.5f, Mathf.InverseLerp(maxSlopeAngle, 45f, slopeAngle));
-            // maxSlopeAngle부터 45°까지 점진적으로 보정 비율 증가
-
             Vector3 adjustedVelocity = horizontalVelocity * slopeFactor;
             rigid.velocity = new Vector3(adjustedVelocity.x, rigid.velocity.y, adjustedVelocity.z);
-
-            Debug.Log($"ProcessGroundCollision: 경사각 {slopeAngle:F2}°, 보정 비율 {slopeFactor:F2}, 속도 {rigid.velocity}");
-        }
-        
-    }
-
-    /// <summary>
-    /// 공중 상태에서 추가 중력을 적용합니다 (지면에 닿기 전 강화).
-    /// </summary>
-    private void ApplyEnhancedGravity()
-    {
-        if (!CheckIfGrounded())
-        {
-            float currentHorizontalSpeed = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z).magnitude;
-            float speedFactor = Mathf.Clamp01(currentHorizontalSpeed / 100f); // 조정 가능
-            float gravityMultiplier = Mathf.Lerp(1f, 5f, speedFactor);
-            Vector3 enhancedGravity = Physics.gravity * gravityMultiplier;
-
-            rigid.AddForce(enhancedGravity, ForceMode.Acceleration);
-            // Debug.Log($"강화된 중력 적용됨: {enhancedGravity} (속도: {currentHorizontalSpeed})");
+            Debug.Log($"지면 충돌 처리: 경사각 {slopeAngle:F2}°, 보정 비율 {slopeFactor:F2}");
         }
     }
 
     #endregion
 
-    #region [지면 체크]
+    #region [정면(슬로프 체크) 캐스트 및 경사 보정 힘 적용]
 
+    /// <summary>
+    /// 정면으로 Raycast를 쏘아 지면의 경사를 체크하고, 경사각에 따라 추가 힘을 적용합니다.
+    /// </summary>
+    private void ProcessSlopeForce()
+    {
+        // 정면으로 슬로프 체크를 위한 오리진. 예: 플레이어 전방 약간 앞으로 이동한 위치
+        Vector3 origin = transform.position + transform.forward * 1.0f; // 1단위 만큼 앞으로
+        // 정면 + 약간 아래로 쏘기 (지면 체크에 적합하도록)
+        Vector3 direction = (transform.forward + Vector3.down * 0.5f).normalized;
+        float rayDistance = 2.0f; // 슬로프 체크용 거리
+
+        if (Physics.Raycast(origin, direction, out slopeRayHit, rayDistance, groundLayer))
+        {
+            float slopeAngle = Vector3.Angle(slopeRayHit.normal, Vector3.up);
+            // 예: 경사각이 클수록 (혹은 특정 임계치 이상) 추가 힘을 부여
+            float forceMultiplier = Mathf.Lerp(1.0f, 2.0f, Mathf.InverseLerp(0f, 45f, slopeAngle));
+            Debug.Log($"슬로프 체크: 경사각 {slopeAngle:F2}°, 힘 배율 {forceMultiplier:F2}");
+
+            // 예: 경사면에서 속도를 보완하기 위해 추가 전진 힘을 가한다. (단, 조건에 맞게 조정)
+            rigid.AddForce(transform.forward * forceMultiplier * 10f, ForceMode.Acceleration);
+        }
+    }
+    #endregion
+
+    #region [지면 체크]
     /// <summary>
     /// 아래 방향으로 Raycast를 실행해 지면 충돌 여부를 확인합니다.
     /// 결과는 groundRayHit에 저장됩니다.
@@ -941,28 +992,95 @@ public partial class TestCHMKart : MonoBehaviour
         }
         return false;
     }
-
-    #endregion
-
-    #region [Gizmos: 박스 캐스트 시각화]
-
-    private void OnDrawGizmos()
+    /// <summary>
+    /// 공중 상태일 때(currently not grounded) 현재 수평 속력에 비례하여 추가 하강력을 적용합니다.
+    /// 이를 통해 높은 속력에서 공중에 뜬 차량이 더 빠르게 착지하도록 합니다.
+    /// </summary>
+    private void ApplyAirborneLandingForce()
     {
-        // 박스 캐스트 중심을 월드 좌표로 변환
-        Vector3 worldCenter = transform.position + transform.TransformDirection(boxCastCenter);
+        // 공중 상태인지 검사
+        if (!CheckIfGrounded())
+        {
+            // 수평 속도 계산 (Y축 제외)
+            Vector3 horizontalVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
+            float currentSpeed = horizontalVelocity.magnitude;
 
-        // 시작 위치의 박스 (녹색)
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(worldCenter, boxCastSize);
+            // 현재 속력에 비례한 추가 하강력을 계산
+            float extraDownForce = currentSpeed * landingForceMultiplier;
+            // 최소, 최대 한계를 적용
+            extraDownForce = Mathf.Clamp(extraDownForce, minLandingForce, maxLandingForce);
 
-        // 캐스트 방향과 끝 위치 표시 (빨간 선 및 파란 박스)
-        Gizmos.color = Color.red;
-        Vector3 endCenter = worldCenter + transform.forward * boxCastDistance;
-        Gizmos.DrawLine(worldCenter, endCenter);
+            // 추가 하강력을 아래쪽으로 적용 (ForceMode.Acceleration은 질량 무관한 가속도 적용)
+            rigid.AddForce(Vector3.down * extraDownForce, ForceMode.Acceleration);
+            Debug.Log("Extra Landing Force Applied: " + extraDownForce);
+        }
+    }
+    /// <summary>
+    /// 착지 직후에 수평 속도를 보존하면서 수직 속도를 정리합니다.
+    /// </summary>
+    private void ProcessLanding()
+    {
+        // 현재 속도에서 수평 성분을 별도로 분리 (Y축은 제외)
+        Vector3 horizontalVelocity = new Vector3(rigid.velocity.x, 0f, rigid.velocity.z);
 
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(endCenter, boxCastSize);
+        // 착지 시, 수직 속도는 0으로 설정하여 운동 에너지 손실 없이 수평 속도를 유지
+        rigid.velocity = new Vector3(horizontalVelocity.x, 0f, horizontalVelocity.z);
+
+        Debug.Log("착지 처리: 수평 속도 보존, vertical velocity reset");
     }
 
     #endregion
+
+    #region [Gizmos 시각화]
+    private void OnDrawGizmos()
+    {
+        // → 박스 캐스트 시각화 (플레이어 주위를 둘러싼 네모)
+        Vector3 worldCenter = transform.position + transform.TransformDirection(boxCastCenter);
+        Gizmos.color = Color.green;           // 시작 박스: 녹색
+        Gizmos.DrawWireCube(worldCenter, boxCastSize);
+        Gizmos.color = Color.red;             // 캐스트 방향 선: 빨간색
+        Vector3 endCenter = worldCenter + transform.forward * boxCastDistance;
+        Gizmos.DrawLine(worldCenter, endCenter);
+        Gizmos.color = Color.blue;            // 끝 지점 박스: 파란색
+        Gizmos.DrawWireCube(endCenter, boxCastSize);
+
+        // → 지면 체크용 Raycast (직선, 아래로 쏘는)
+        Vector3 rayOrigin = transform.position;
+        Vector3 rayDirection = Vector3.down * groundRayDistance;
+        if (Physics.Raycast(rayOrigin, Vector3.down, out groundRayHit, groundRayDistance, groundLayer))
+        {
+            Gizmos.color = Color.yellow; // 지면 체크 충돌 시: 노란색
+            Gizmos.DrawLine(rayOrigin, groundRayHit.point);
+            Gizmos.DrawSphere(groundRayHit.point, 0.1f);
+        }
+        else
+        {
+            Gizmos.color = Color.white;  // 미충돌 시: 흰색
+            Gizmos.DrawLine(rayOrigin, rayOrigin + rayDirection);
+        }
+
+        // → 정면(슬로프 체크) Raycast 시각화
+        Vector3 slopeOrigin = transform.position + transform.forward * 1.0f;
+        Vector3 slopeDirection = (transform.forward + Vector3.down * 0.5f).normalized;
+        float slopeRayDistance = 2.0f;
+        if (Physics.Raycast(slopeOrigin, slopeDirection, out slopeRayHit, slopeRayDistance, groundLayer))
+        {
+            Gizmos.color = Color.cyan; // 슬로프 체크 충돌 시: 시안색
+            Gizmos.DrawLine(slopeOrigin, slopeRayHit.point);
+            Gizmos.DrawSphere(slopeRayHit.point, 0.1f);
+            // 지면 법선 표시 (마젠타 색)
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawLine(slopeRayHit.point, slopeRayHit.point + slopeRayHit.normal);
+#if UNITY_EDITOR
+            Handles.Label(slopeRayHit.point, $"Slope: {Vector3.Angle(slopeRayHit.normal, Vector3.up):F1}°");
+#endif
+        }
+        else
+        {
+            Gizmos.color = Color.gray;
+            Gizmos.DrawLine(slopeOrigin, slopeOrigin + slopeDirection * slopeRayDistance);
+        }
+    }
+    #endregion
+
 }

@@ -391,10 +391,10 @@ MonoBehaviour:
   virtualCamera: {fileID: 123966365}
   target: {fileID: 0}
   kartController: {fileID: 0}
-  maxPanAngleDelta: 50
-  smoothTime: 0.8
-  basePanAngleDelta: 35
-  maxPanLimit: 30
+  maxPanAngleDelta: 10
+  smoothTime: 0.5
+  basePanAngleDelta: 50
+  maxPanLimit: 40
   boostDistanceOffset: 5
   boostHeightOffset: 2
 --- !u!114 &123966365
