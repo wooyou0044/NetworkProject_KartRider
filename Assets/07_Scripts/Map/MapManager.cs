@@ -1,4 +1,5 @@
 using System;
+using Cinemachine;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Events;
@@ -11,14 +12,14 @@ public enum MapEnum {
 
 public class MapManager : MonoBehaviourPunCallbacks
 {
-    private string sceneName;
-    private Vector3 defaultRotationVector;
+    private string _sceneName;
+    private Vector3 _defaultRotationVector;
 
     /* 게임 종료 및 결과 전달 위한 게임 매니저, 종료시에만 호출하자. */
-    private GameManager gameManager;
+    private GameManager _gameManager;
     
     /* 현재 랩, 종료 랩 설정 */
-    private int myCurrentLap = 0;    
+    private int _myCurrentLap = 0;    
     
     [Header("맵 전체 바퀴 수 설정")]
     public int totalLap = 3; 
@@ -26,44 +27,53 @@ public class MapManager : MonoBehaviourPunCallbacks
     [Header("맵 시작 / 종료 포지션 설정")]
     public Transform[] startPos;
     public Transform finishLine;
-    private CheckPoint[] _allCheckPoints;
-    
-    [Header("필수 체크포인트 설정")]
-    public CheckPoint[] essentialCheckPoints;    
 
+    [Header("필수 체크포인트 설정")]
+    public CheckPoint[] essentialCheckPoints;
+
+    [Header("Dolly Track Waypoint 설정")]
+    public GameObject checkPoints;
+    private CheckPoint[] _allCheckPoints;    
+    
+    // 돌리 트랙 설정 (순위 측정용)
+    public CinemachineSmoothPath dollyPath;
+    
     // 디버깅용 내 마지막 체크포인트 보기
+    [Header("디버그 필드")]
     [SerializeField] private Transform myLastcheckPoint;
     [HideInInspector] public UnityEvent onFinishEvent;
-
-    public int MyCurrentLap => myCurrentLap;
+    
+    public int MyCurrentLap => _myCurrentLap;
 
     private void Awake()
     {
-        sceneName = SceneManager.GetActiveScene().name;
+        _sceneName = SceneManager.GetActiveScene().name;
         
-        MapEnum mapEnum = (MapEnum) Enum.Parse(typeof(MapEnum), sceneName);
+        MapEnum mapEnum = (MapEnum) Enum.Parse(typeof(MapEnum), _sceneName);
+
+        // 차가 기본으로 돌아가있으므로 수정
         Vector3 kartRotationVector = new Vector3(0, -90, 0);
         switch (mapEnum)
         {
             case MapEnum.DaisyCircuit :
-                defaultRotationVector = kartRotationVector + Vector3.zero;
+                _defaultRotationVector = kartRotationVector + Vector3.zero;
                 break;
             case MapEnum.Default:
-                defaultRotationVector = kartRotationVector + Vector3.zero;
+                _defaultRotationVector = kartRotationVector + Vector3.zero;
                 break;
             default: 
                 Debug.Log("설정된 맵이 없습니다");
-                defaultRotationVector = kartRotationVector + Vector3.zero;
+                _defaultRotationVector = kartRotationVector + Vector3.zero;
                 break;
         }
-
-        // 차가 기본으로 돌아가있으므로 수정
-        _allCheckPoints = FindObjectsOfType<CheckPoint>();
+        
+        _allCheckPoints = checkPoints.transform.GetComponentsInChildren<CheckPoint>();
+        SetAllCheckPointToDollyTrack();
     }
 
     private void Start()
     {
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
     
     // 바닥으로 떨어졌을때
@@ -82,7 +92,10 @@ public class MapManager : MonoBehaviourPunCallbacks
     // 완전 종료 필요할 경우에 게임 매니저 호출.
     public void OnTouchFinishLine(Collider kart, GameObject line)
     {
-        if (!kart.gameObject.GetPhotonView().IsMine)
+        PhotonView pv = kart.gameObject.GetPhotonView();
+        TestCHMKart kartCtrl = kart.GetComponent<TestCHMKart>();
+        
+        if (pv == null || !pv.IsMine)
         {
             return;
         }
@@ -97,14 +110,20 @@ public class MapManager : MonoBehaviourPunCallbacks
         
         if(MyCurrentLap < totalLap)
         {
-            myCurrentLap = MyCurrentLap + 1;
+            _myCurrentLap = MyCurrentLap + 1;
             myLastcheckPoint = finishLine;
             ResetAllCheckPoints();
+            pv.RPC("SetLap", RpcTarget.All, MyCurrentLap);
         }
         else
         {
             ResetAllCheckPoints();
-            gameManager.OnFinished();
+            _gameManager.OnFinished();
+            pv.RPC("SetFinish", RpcTarget.All, true);
+            
+            // 조작 안되게 하고 더 할 처리 필요한것 있는지 확인
+            kartCtrl.isRacingStart = false;
+            StartCoroutine(kartCtrl.DecelerateOverTime(1f));
         }
         
         onFinishEvent.Invoke();
@@ -120,12 +139,6 @@ public class MapManager : MonoBehaviourPunCallbacks
         
         Debug.Log("OnTouchCheckPoint, name : " + checkPoint.name);
         myLastcheckPoint = checkPoint.transform.parent;
-    }
-
-    // 맵에서 부스터 닿았을떄 메서드
-    public void OnTouchBooster(Collider kart, GameObject booster)
-    {
-        
     }
 
     // 그냥 마지막 체크포인트로 돌리고 싶을 때
@@ -150,19 +163,19 @@ public class MapManager : MonoBehaviourPunCallbacks
         {
             playerKart.transform.position = somePoint.position + penalty;
             playerKart.transform.rotation = somePoint.transform.rotation;
-            playerKart.transform.Rotate(defaultRotationVector);
+            playerKart.transform.Rotate(_defaultRotationVector);
         }
         else
         {
             playerKart.transform.position = myLastcheckPoint.position + penalty;
             playerKart.transform.rotation = myLastcheckPoint.transform.rotation;
-            playerKart.transform.Rotate(defaultRotationVector);
+            playerKart.transform.Rotate(_defaultRotationVector);
         }
         
         kartRigid.isKinematic = false;        
     }
-
-    /* ToDo: 플레이어 카트의 리지드 바디 찾아서 설정해주기 */ 
+    
+    // 카트 맵에 위치하면서 맵 매니저와 관련한 부분들 초기화
     public void PlaceToStartPos(int randomNum, GameObject playerKart)
     {
         Rigidbody kartRigid = playerKart.GetComponent<Rigidbody>();
@@ -198,6 +211,22 @@ public class MapManager : MonoBehaviourPunCallbacks
         foreach (var checkPoint in _allCheckPoints)
         {
             checkPoint.ResetFlag();
+        }
+    }
+
+    private void SetAllCheckPointToDollyTrack()
+    {
+        Vector3 checkPointRoot = dollyPath.gameObject.transform.localPosition;
+        CinemachineSmoothPath.Waypoint[] waypoints = new CinemachineSmoothPath.Waypoint[_allCheckPoints.Length+1];        
+        dollyPath.m_Waypoints = waypoints;
+        
+        // 0번째 웨이포인트는 시작점으로 설정
+        int index = 0;
+        waypoints[index++].position = Vector3.zero;
+        
+        foreach (CheckPoint cp in _allCheckPoints)
+        {
+            waypoints[index++].position = cp.transform.parent.localPosition - checkPointRoot;
         }
     }
 }
