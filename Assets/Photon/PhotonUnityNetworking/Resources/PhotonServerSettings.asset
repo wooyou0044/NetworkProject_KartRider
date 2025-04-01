@@ -44,6 +44,7 @@ MonoBehaviour:
   - ReceiveLoadFinished
   - StartCountDown
   - SetOwnInfo
+  - SetReady
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
