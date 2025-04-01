@@ -45,6 +45,10 @@ MonoBehaviour:
   - StartCountDown
   - SetOwnInfo
   - SetReady
+  - SetLap
+  - RemoveReadyPlayer
+  - ThrowBanana
+  - RemoveItemBox
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
