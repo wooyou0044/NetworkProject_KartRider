@@ -111,6 +111,19 @@ public partial class TestCHMKart : MonoBehaviour
 
     }
 
+    private void Start()
+    {
+        // Player Marker Setting
+        if (_photonView.IsMine)
+        {
+            gameObject.transform.Find("Markers").GetChild(0).gameObject.SetActive(true);
+        }
+        else
+        {
+            gameObject.transform.Find("Markers").GetChild(1).gameObject.SetActive(true);
+        }
+    }
+
     private void FixedUpdate()
     {
         if (!_photonView.IsMine) return;

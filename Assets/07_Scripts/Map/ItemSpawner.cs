@@ -59,7 +59,6 @@ public class ItemSpawner : MonoBehaviour
     [PunRPC]
     public void RemoveItemBox(int boxIndex)
     {
-        Debug.Log("hihi");
         ItemBoxController ibc = itemList[boxIndex].GetComponent<ItemBoxController>();
         ibc.InactiveItemBox();
         StartCoroutine(ibc.RespawnItemBox(itemRespawnTime));
