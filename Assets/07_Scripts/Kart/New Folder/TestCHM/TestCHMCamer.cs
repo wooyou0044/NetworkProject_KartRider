@@ -57,11 +57,7 @@ public class TestCHMCamer : MonoBehaviour
     }
 
     private void FixedUpdate()
-    {
-        if (kartController.isRacingStart == false)
-        {
-            return;
-        }
+    {        
         // 게임이 종료되었으면 카메라 업데이트 중단
         if (isGameFinished)
         {
@@ -169,29 +165,51 @@ public class TestCHMCamer : MonoBehaviour
         Vector3 targetOffset = finishCameraOffset;
 
         // 코루틴을 통해 서서히 Follow Offset 변경
-        StartCoroutine(SmoothMoveFollowOffset(transposer, targetOffset));
+        StartCoroutine(MoveCameraToOffset(transposer, targetOffset,2f));
     }
 
-    private IEnumerator SmoothMoveFollowOffset(CinemachineTransposer transposer, Vector3 targetOffset)
+    private IEnumerator MoveCameraToOffset(CinemachineTransposer transposer, Vector3 targetOffset, float duration)
     {
-        float smoothTime = 1f; // 전환 시간이 조정 가능한 부드러운 전환 시간
-        Vector3 currentOffset = transposer.m_FollowOffset;
-
         float timer = 0f;
-        while (timer < smoothTime)
+
+        // 초기 반지름 및 각도 계산
+        float radius = Mathf.Sqrt(Mathf.Pow(transposer.m_FollowOffset.x, 2) + Mathf.Pow(transposer.m_FollowOffset.z, 2));
+        float startAngle = Mathf.Atan2(transposer.m_FollowOffset.z, transposer.m_FollowOffset.x); // 초기 각도
+        float endAngle = Mathf.Atan2(targetOffset.z, targetOffset.x); // 목표 각도
+
+        while (timer < duration)
         {
             timer += Time.deltaTime;
 
-            // Follow Offset 값을 서서히 변경
-            transposer.m_FollowOffset = Vector3.Lerp(currentOffset, targetOffset, timer / smoothTime);
+            // 현재 각도 계산 (시간에 따라 선형적으로 변화)
+            float currentAngle = Mathf.Lerp(startAngle, endAngle, timer / duration);
 
-            yield return null; // 다음 프레임으로 대기
+            // X, Z 좌표를 원형 경로로 계산
+            float newX = radius * Mathf.Cos(currentAngle);
+            float newZ = radius * Mathf.Sin(currentAngle);
+
+            // Y 값은 설정된 목표 오프셋으로 직접 보간하여 이동
+            float newY = Mathf.Lerp(transposer.m_FollowOffset.y, targetOffset.y, timer / duration);
+
+            // 새로운 오프셋 계산
+            Vector3 newOffset = new Vector3(newX, newY, newZ);
+
+            // Follow Offset 업데이트
+            transposer.m_FollowOffset = newOffset;
+
+            // 목표 오프셋에 근접하면 이동 종료
+            if (Vector3.Distance(newOffset, targetOffset) <= 0.01f)
+            {
+                break;
+            }
+
+            yield return null; // 다음 프레임까지 대기
         }
 
         // 최종적으로 목표 오프셋 값 고정
         transposer.m_FollowOffset = targetOffset;
 
-        Debug.Log("카메라가 피니쉬 오프셋으로 서서히 이동 완료!");
+        Debug.Log("카메라가 설정된 오프셋에 도달하고 멈췄습니다!");
     }
 
 }

@@ -739,7 +739,7 @@ public partial class TestCHMKart : MonoBehaviour
         if (speedKM > 0.1f)
         {
             // 드리프트 상태에서 다른 각도 제한 적용
-            float maxSteerAngle = isDrifting ? 360f : 120f;  // 드리프트 중에는 60도, 기본은 90도
+            float maxSteerAngle = isDrifting ? 560f : 120f;  // 드리프트 중에는 60도, 기본은 90도
 
             // 목표 각도 계산
             float targetSteerAngle = steerInput * steerAngle * steeringMultiplier;
@@ -801,7 +801,7 @@ public partial class TestCHMKart : MonoBehaviour
         float timer = 0f;
 
         // 0.2초 동안 키 입력을 대기
-        while (timer < 0.2f)
+        while (timer < 0.4f)
         {
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
