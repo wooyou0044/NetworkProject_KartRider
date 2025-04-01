@@ -8,6 +8,7 @@ public class ItemNetController : MonoBehaviour
 {
     // 해당 순위 게임 오브젝트 반환하는 Script
     [SerializeField] RankUIController rankCtrl;
+    [SerializeField] MapManager mapManager;
 
     List<GameObject> items;
     PhotonView curPhotonView;
@@ -33,7 +34,7 @@ public class ItemNetController : MonoBehaviour
     public void RequestBarricade(int kartViewID)
     {
         PhotonView photonView = PhotonView.Find(kartViewID);
-        if(photonView != null)
+        if (photonView != null)
         {
             GameObject kartObject = photonView.gameObject;
 

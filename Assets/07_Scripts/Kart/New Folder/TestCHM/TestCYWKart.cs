@@ -221,29 +221,43 @@ public partial class TestCHMKart : MonoBehaviour
     void MakeBarricade()
     {
         GameObject barricade = Resources.Load<GameObject>("Items/Barricade");
-        //GameObject barricadePrefab = Instantiate(barricade, frontBarricadePos.position, Quaternion.identity);
+        GameObject[] barricadePrefab = new GameObject[3];
+        //for (int i = 0; i < 3; i++)
+        //{
+        //    barricadePrefab[i] = Instantiate(barricade, frontBarricadePos.position, Quaternion.identity);
+        //    itemNetCtrl.RegisterItem(barricadePrefab[i]);
 
-        Transform checkPointTrans = mapManager.GetNextCheckPointPos();
-
-        for (int i=-1; i<2; i++)
-        {
-            // checkPoint로 설정
-            GameObject barricadePrefab = Instantiate(barricade, checkPointTrans.position, Quaternion.identity);
-
-            // ItemNetController에 바리케이드 등록
-            itemNetCtrl.RegisterItem(barricadePrefab);
-            //barricadePrefab.transform.rotation = Quaternion.LookRotation(checkPointPos);
-            barricadePrefab.transform.rotation = Quaternion.LookRotation(gameObject.transform.position);
-            barricadePrefab.transform.position += Vector3.up * 0.1f + new Vector3(0, 0, 10 * i);
-        }
-        // ItemNetController에 바리케이드 등록
-        //itemNetCtrl.RegisterItem(barricadePrefab);
+        //    Vector3 direction = transform.position - barricadePrefab[0].transform.position;
+        //    direction.y = 0;
+        //    barricadePrefab[i].transform.rotation = Quaternion.LookRotation(direction);
+        //}
 
         //Vector3 forwardDir = transform.forward;
-        //barricadePrefab.transform.position += forwardDir * 7 + Vector3.up * 0.1f;
-        //Vector3 direction = transform.position - barricadePrefab.transform.position;
-        //direction.y = 0;
-        //barricadePrefab.transform.rotation = Quaternion.LookRotation(direction);
+        //Vector3 rightDir = transform.right;
+
+        //for (int i = -1; i < 2; i++)
+        //{
+        //    barricadePrefab[i + 1].transform.position += forwardDir * 7 + Vector3.up * 0.1f + rightDir * (10 * i);
+        //}
+        int currentPointIndex = mapManager.GetKartCheckPointIndex(gameObject);
+        Transform checkPointPos = mapManager.GetNextCheckPointPos(currentPointIndex);
+        Vector3 checkPointRot = checkPointPos.eulerAngles;
+        for (int i = 0; i < 3; i++)
+        {
+            barricadePrefab[i] = Instantiate(barricade, checkPointPos.position, Quaternion.identity);
+            itemNetCtrl.RegisterItem(barricadePrefab[i]);
+
+            barricadePrefab[i].transform.eulerAngles = checkPointRot + new Vector3(0, 90, 0);
+        }
+
+        Vector3 forwardDir = checkPointPos.forward;
+
+        for (int i = -1; i < 2; i++)
+        {
+            //barricadePrefab[i + 1].transform.position += Vector3.up * 0.1f + new Vector3(0,0,10 * i);
+            barricadePrefab[i + 1].transform.position += Vector3.up * 0.1f + forwardDir * (10 * i);
+        }
+
     }
 
     public void MakeDisableBarricade(GameObject disableObject)

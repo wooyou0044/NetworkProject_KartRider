@@ -233,9 +233,22 @@ public class MapManager : MonoBehaviourPunCallbacks
         }
     }
 
-    public Transform GetNextCheckPointPos()
+    public Transform GetNextCheckPointPos(int currentCheckPointIndex)
     {
-        currentCheckPointIndex = (currentCheckPointIndex + 1) % _allCheckPoints.Length;
-        return _allCheckPoints[currentCheckPointIndex].transform;
+        int nextIndex = (currentCheckPointIndex + 1) % _allCheckPoints.Length;
+        return _allCheckPoints[nextIndex].transform.parent.transform;
+    }
+
+    public int GetKartCheckPointIndex(GameObject kart)
+    {
+        Transform lastCheckPoint = kart.GetComponent<TestCHMKart>().mapManager.myLastcheckPoint;
+        for (int i = 0; i < _allCheckPoints.Length; i++)
+        {
+            if (_allCheckPoints[i].transform.parent == lastCheckPoint)
+            {
+                return i;
+            }
+        }
+        return 0;
     }
 }

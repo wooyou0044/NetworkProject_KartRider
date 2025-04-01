@@ -88,7 +88,7 @@ public partial class TestCHMKart : MonoBehaviour
 
     // 내 RankManager 추가
     RankManager rankManager;
-    MapManager mapManager;
+    public MapManager mapManager { get; private set; }
 
     bool isSparkOn;
     float inputKey;
