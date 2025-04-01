@@ -46,12 +46,13 @@ public partial class TestCHMKart : MonoBehaviour
     #region Private Fields
 
     public Animator playerCharAni { get; set; }       
-    public float speedKM { get; private set; }     // 현재 속력 (km/h 단위)
+    public float speedKM { get; private set; }     // 현재 속력 (km/h 단위) 계기판 출력 속력
     public bool isBoostTriggered { get; set; } // 부스트 활성화 여부
     //public bool isBoostCreate { get; set; }    // 드리프트 아이템 생성 가능 여부
     public float boostGauge { get; private set; }                // 현재 부스트 게이지
     public bool isItemUsed { get; set; }
-    public bool isRacingStart { get; set; }
+    public bool isRacingStart { get; set; } //시작 대기 변수
+    public bool isGameFinished { get; set; } //결승선 변수
 
     private float driftDuration;  // 부스터 지속 시간
     private CHMTestWheelController wheelCtrl;  // 바퀴 제어 스크립트
@@ -723,6 +724,34 @@ public partial class TestCHMKart : MonoBehaviour
         }      
 
     }
+
+    public IEnumerator DecelerateOverTime(float duration)//결승선 도착시 속력 서서히 줄어들기 
+    {
+        Debug.Log("결승선에 닿음: 속도 서서히 감소 시작");
+
+        // 현재 전후진 입력 값을 저장
+        float initialMotorInput = currentMotorInput;
+
+        float timer = 0f;
+
+        while (timer < duration)
+        {
+            // 전후진 입력을 서서히 감소
+            speedKM = Mathf.Lerp(initialMotorInput, 0f, timer / duration);//계기판 속력 줄어들게
+            currentMotorInput = Mathf.Lerp(initialMotorInput, 0f, timer / duration); // 진짜 속력 줄어들게 
+            // 속도 클램핑 처리 (현재 속도 값 제한)
+            rigid.velocity = Vector3.ClampMagnitude(rigid.velocity, maxSpeedKmh);
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        // 최종적으로 전후진 입력 값을 완전히 0으로 설정
+        currentMotorInput = 0f;
+
+        Debug.Log("속도 감소 완료: 차량 정지");
+    }
+
 
     #endregion
 

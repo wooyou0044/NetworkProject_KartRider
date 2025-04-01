@@ -32,7 +32,6 @@ public class InventoryUI : MonoBehaviour
 
         boostAni = boostSpeed.GetComponent<Animator>();
         boostSpeedImg = boostSpeed.GetComponent<Image>();
-
         boostAni.enabled = false;
         boostSpeedImg.enabled = false;
     }
