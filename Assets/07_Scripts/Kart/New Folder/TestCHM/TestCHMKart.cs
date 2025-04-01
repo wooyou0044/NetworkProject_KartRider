@@ -205,6 +205,12 @@ public partial class TestCHMKart : MonoBehaviour
                 kartBodyCtrl.SetShieldEffectActive(false);
             }
         }
+
+        //if(isExitWaterFly == true)
+        //{
+        //    itemNetCtrl.RequestDisableItem(waterFlyObject);
+        //    isExitWaterFly = false;
+        //}
     }
     #endregion
 

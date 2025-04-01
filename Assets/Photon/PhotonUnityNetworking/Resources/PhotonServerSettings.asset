@@ -51,6 +51,9 @@ MonoBehaviour:
   - DisableItem
   - OffBarricade
   - StuckInWaterFly
+  - ExitInWaterFly
+  - RequestExitWaterFly
+  - SetShieldState
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

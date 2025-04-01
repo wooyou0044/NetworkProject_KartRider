@@ -6,6 +6,7 @@ using Photon.Realtime;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.WSA;
 
 public partial class TestCHMKart : MonoBehaviour
 {
@@ -20,8 +21,11 @@ public partial class TestCHMKart : MonoBehaviour
     float originAngularDrag;
     Vector3 playerPastPos;
 
-    bool isUsingShield;
+    public bool isUsingShield { get; set; }
     bool isOneUsedShield;
+    bool isExitWaterFly;
+
+    GameObject waterFlyObject;
 
     ItemNetController itemNetCtrl;
 
@@ -91,6 +95,7 @@ public partial class TestCHMKart : MonoBehaviour
                 break;
             case ItemType.shield:
                 isUsingShield = true;
+                SetActiveShield(isUsingShield);
                 kartBodyCtrl.SetShieldEffectActive(true);
                 StartCoroutine(OffShield());
                 break;
@@ -102,7 +107,7 @@ public partial class TestCHMKart : MonoBehaviour
             case ItemType.waterFly:
                 // 임시로
                 //StuckInWaterFly();
-                itemNetCtrl.RequestWaterFly(_photonView.ViewID, rankManager.GetRank());
+                itemNetCtrl.RequestWaterFly(_photonView.ViewID, rankManager.GetRank(), exitWaterFlyTime);
                 break;
         }
     }
@@ -159,6 +164,20 @@ public partial class TestCHMKart : MonoBehaviour
         }
     }
 
+    [PunRPC]
+    void SetShieldState(bool isActive)
+    {
+        isUsingShield = isActive;
+    }
+
+    void SetActiveShield(bool isActive)
+    {
+        if(_photonView.IsMine)
+        {
+            _photonView.RPC("SetShieldState", RpcTarget.All, isActive);
+        }
+    }
+
     IEnumerator OffShield()
     {
         if(isUsingShield == false)
@@ -176,6 +195,7 @@ public partial class TestCHMKart : MonoBehaviour
             yield return null;
         }
         isUsingShield = false;
+        SetActiveShield(isUsingShield);
     }
 
     [PunRPC]
@@ -209,26 +229,46 @@ public partial class TestCHMKart : MonoBehaviour
 
         itemNetCtrl.RegisterItem(waterFlyPrefab);
 
+        waterFlyObject = waterFlyPrefab;
+
         gameObject.transform.parent = waterFlyPrefab.transform;
         transform.localPosition = Vector3.zero;
         rigid.isKinematic = true;
         isRacingStart = false;
-
-        // 임시
-        StartCoroutine(ExitInWaterFly(waterFlyPrefab));
     }
 
-    IEnumerator ExitInWaterFly(GameObject waterFly)
+    [PunRPC]
+    void ExitInWaterFly()
     {
-        yield return new WaitForSeconds(exitWaterFlyTime);
+        //GameObject waterFly = itemNetCtrl.GetLastItem();
+        if(waterFlyObject == null)
+        {
+            return;
+        }
+
         gameObject.transform.parent = _playerParent;
-        transform.localPosition = playerPastPos;
+        transform.position = playerPastPos;
         rigid.isKinematic = false;
         isRacingStart = true;
-        Instantiate(waterBombParticle, waterFly.transform.position, Quaternion.identity);
-        //waterFly.SetActive(false);
-        itemNetCtrl.RequestDisableItem(waterFly);
+
+        Instantiate(waterBombParticle, waterFlyObject.transform.position, Quaternion.identity);
+
+        itemNetCtrl.RequestDisableItem(waterFlyObject);
+
+        waterFlyObject = null;
     }
+
+    //void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    //{
+    //    if(stream.IsWriting)
+    //    {
+    //        stream.SendNext(isUsingShield);
+    //    }
+    //    else
+    //    {
+    //        isUsingShield = (bool)stream.ReceiveNext();
+    //    }
+    //}
 
     void OnTriggerEnter(Collider other)
     {

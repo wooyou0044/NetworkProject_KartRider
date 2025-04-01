@@ -38,8 +38,8 @@ public class ItemNetController : MonoBehaviour
             GameObject kartObject = photonView.gameObject;
 
             GameObject firstKart = rankCtrl.GetKartObjectByRank(1);
-            
-            if (firstKart != kartObject)
+            TestCHMKart firstKartCtrl = firstKart.GetComponent<TestCHMKart>();
+            if (firstKart != kartObject && firstKartCtrl.isUsingShield == false)
             {
                 PhotonView view = firstKart.GetPhotonView();
                 view.RPC("MakeBarricade", RpcTarget.All);
@@ -47,7 +47,7 @@ public class ItemNetController : MonoBehaviour
         }
     }
 
-    public void RequestWaterFly(int kartViewID, int kartRank)
+    public void RequestWaterFly(int kartViewID, int kartRank, float waterFlyBombTime)
     {
         if(kartRank <= 1)
         {
@@ -59,12 +59,19 @@ public class ItemNetController : MonoBehaviour
             GameObject kartObject = photonView.gameObject;
 
             GameObject frontKart = rankCtrl.GetKartObjectByRank(kartRank - 1);
+            TestCHMKart frontKartCtrl = frontKart.GetComponent<TestCHMKart>();
             if(frontKart == null || frontKart == kartObject)
             {
                 return;
             }
-            PhotonView view = frontKart.GetPhotonView();
-            view.RPC("StuckInWaterFly", RpcTarget.All);
+            if(frontKart != kartObject && frontKartCtrl.isUsingShield == false)
+            {
+                PhotonView view = frontKart.GetPhotonView();
+                view.RPC("StuckInWaterFly", RpcTarget.All);
+
+                double exitTime = PhotonNetwork.Time + waterFlyBombTime;
+                StartExitWaterFlyForAll(view.ViewID, exitTime);
+            }
         }
     }
 
@@ -87,5 +94,60 @@ public class ItemNetController : MonoBehaviour
         {
             curPhotonView.RPC("DisableItem", RpcTarget.All, index);
         }
+    }
+
+    public void StartExitWaterFlyForAll(int kartViewID, double exitTime)
+    {
+        PhotonView photonView = PhotonView.Find(kartViewID);
+        if(photonView == null)
+        {
+            return;
+        }
+        if (PhotonNetwork.IsMasterClient)
+        {
+            StartCoroutine(ExitWaterFlyForAll(photonView, exitTime));
+        }
+        else
+        {
+            curPhotonView.RPC("RequestExitWaterFly", RpcTarget.MasterClient, kartViewID, exitTime);
+        }
+    }
+
+    [PunRPC]
+    void RequestExitWaterFly(int kartViewID, double exitTime)
+    {
+        StartExitWaterFlyForAll(kartViewID, exitTime);
+    }
+
+    IEnumerator ExitWaterFlyForAll(PhotonView targetView, double exitTime)
+    {
+        double currentTime;
+        do
+        {
+            currentTime = PhotonNetwork.Time;
+            yield return null;
+        }
+        while (currentTime < exitTime);
+
+        if(targetView != null)
+        {
+            targetView.RPC("ExitInWaterFly", RpcTarget.All);
+        }
+    }
+
+    public GameObject GetLastItem()
+    {
+        for(int i=items.Count - 1; i>= 0; i--)
+        {
+            if (items[i] != null)
+            {
+                ItemManager itemData = items[i].GetComponent<ItemController>()?.item;
+                if(itemData != null && itemData.itemType == ItemType.waterFly)
+                {
+                    return items[i];
+                }
+            }
+        }
+        return null;
     }
 }
