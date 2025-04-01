@@ -74,7 +74,7 @@ public class RankManager : MonoBehaviour, IPunObservable
         kartRankData.totalPos = calculatedPos;
     }
     
-    public bool GetFinish()
+    public bool IsFinish()
     {
         return kartRankData.isFinish;
     }
@@ -99,6 +99,11 @@ public class RankManager : MonoBehaviour, IPunObservable
 
     private void FixedUpdate()
     {
+        if (IsFinish())
+        {
+            return;
+        }
+        
         // 널 포인터 방어코드
         if (_dollyRealKart.DollyPath == null)
         {

@@ -124,6 +124,12 @@ public class RankUIController : MonoBehaviour
             {
                 continue;
             }
+
+            // 이미 끝난애들은 정렬 건너뛰기
+            if (_kartDict[kart].RankManager.IsFinish())
+            {
+                continue;
+            }
             
             rank++;
             _kartDict[kart].RankManager.SetRank(rank);

@@ -47,12 +47,12 @@ public class GameManager : MonoBehaviour
     {
         _readyPlayers = new List<Player>();
         _characterSoArray = Resources.LoadAll<CharacterSo>("Character");
+        _gameManagerView = GetComponent<PhotonView>();
     }
     
     private void Start()
     {
         // ToDo 실제 네트워크 연결하면 네트워크 상 캐릭터, 카트 정보로 바꿀 것
-        _gameManagerView = GetComponent<PhotonView>();
         DefaultPool pool = PhotonNetwork.PrefabPool as DefaultPool;
         if (pool != null)
         {
@@ -135,11 +135,12 @@ public class GameManager : MonoBehaviour
         StartCoroutine("CountDown");
     }
     
-    // ToDo : 카운트 다운 끝나면 움직이기, 실제 3초보단 살짝 길겠지만, 굳이 필요할까? 
+    // 카운트다운 세기, 실제 3초보단 살짝 길다. 
     IEnumerator CountDown()
     {
         rankUIController.InitRankUI();
         yield return new WaitForSeconds(0.5f);
+        
         while(startCountDownSeconds > 0)
         {
             StartCoroutine(mainTextController.ShowTextOneSecond(startCountDownSeconds.ToString()));
