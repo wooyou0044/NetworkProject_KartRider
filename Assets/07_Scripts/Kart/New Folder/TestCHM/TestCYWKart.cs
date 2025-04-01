@@ -151,6 +151,7 @@ public partial class TestCHMKart : MonoBehaviour
         yield return new WaitForSeconds(1f);
         isRacingStart = true;
         rigid.angularDrag = originAngularDrag;
+        rigid.constraints = RigidbodyConstraints.None;
         isKartRotating = false;
     }
 
