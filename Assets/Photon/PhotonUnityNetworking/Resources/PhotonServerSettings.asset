@@ -49,6 +49,7 @@ MonoBehaviour:
   - RemoveReadyPlayer
   - ThrowBanana
   - RemoveItemBox
+  - SetFinish
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
