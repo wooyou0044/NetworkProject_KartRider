@@ -151,6 +151,7 @@ public partial class TestCHMKart : MonoBehaviour
         yield return new WaitForSeconds(1f);
         isRacingStart = true;
         rigid.angularDrag = originAngularDrag;
+        rigid.constraints = RigidbodyConstraints.None;
         isKartRotating = false;
     }
 
@@ -208,7 +209,7 @@ public partial class TestCHMKart : MonoBehaviour
         itemNetCtrl.RegisterItem(barricadePrefab);
 
         Vector3 forwardDir = transform.forward;
-        barricadePrefab.transform.position += forwardDir * 7 + Vector3.up;
+        barricadePrefab.transform.position += forwardDir * 7 + Vector3.up * 0.1f;
         Vector3 direction = transform.position - barricadePrefab.transform.position;
         direction.y = 0;
         barricadePrefab.transform.rotation = Quaternion.LookRotation(direction);
@@ -286,6 +287,7 @@ public partial class TestCHMKart : MonoBehaviour
             else
             {
                 isUsingShield = false;
+                SetActiveShield(isUsingShield);
             }
             itemNetCtrl.RequestDisableItem(other.gameObject);
             //other.gameObject.SetActive(false);

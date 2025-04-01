@@ -39,11 +39,11 @@ public class KartUIController : MonoBehaviour
             kartSpeed = kartCtrl.speedKM;
             kartSpeed = Mathf.FloorToInt(kartSpeed);
             speedTxt.text = kartSpeed.ToString("f0");
-            if(speedCircle.fillAmount > 0.75f)
+
+            if (kartSpeed * 0.0025f <= 0.75f)
             {
-                speedCircle.fillAmount = 0.75f;
-            }
-            speedCircle.fillAmount = kartSpeed * 0.0025f;            
+                speedCircle.fillAmount = kartSpeed * 0.0025f;  
+            }       
         }
 
         if(kartSpeed < 300.0f)

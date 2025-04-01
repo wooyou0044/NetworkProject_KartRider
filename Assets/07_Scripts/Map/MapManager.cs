@@ -40,7 +40,7 @@ public class MapManager : MonoBehaviourPunCallbacks
     
     // 디버깅용 내 마지막 체크포인트 보기
     [Header("디버그 필드")]
-    [SerializeField] private Transform myLastcheckPoint;
+    [SerializeField] public Transform myLastcheckPoint;
     [HideInInspector] public UnityEvent onFinishEvent;
     
     public int MyCurrentLap => _myCurrentLap;
@@ -123,6 +123,7 @@ public class MapManager : MonoBehaviourPunCallbacks
             
             // 조작 안되게 하고 더 할 처리 필요한것 있는지 확인
             kartCtrl.isRacingStart = false;
+            StartCoroutine(kartCtrl.DecelerateOverTime(1f));
         }
         
         onFinishEvent.Invoke();
