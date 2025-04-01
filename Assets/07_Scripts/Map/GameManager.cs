@@ -45,17 +45,17 @@ public class GameManager : MonoBehaviour
     private List<Player> _readyPlayers;
     
     // 결과창 위한 플레이어 리스트 & 딕셔너리
-    private List<Player> _playerRanks;
-    private Dictionary<Player, float> _playerTime;
-
+    public List<Player> finishedPlayerRanks;
+    public Dictionary<Player, float> finishedPlayerTime;
+    
     private void Awake()
     {
         _readyPlayers = new List<Player>();
         _characterSoArray = Resources.LoadAll<CharacterSo>("Character");
         _gameManagerView = GetComponent<PhotonView>();
 
-        _playerRanks = new List<Player>();
-        _playerTime = new Dictionary<Player, float>();
+        finishedPlayerRanks = new List<Player>();
+        finishedPlayerTime = new Dictionary<Player, float>();
     }
     
     private void Start()
@@ -173,6 +173,9 @@ public class GameManager : MonoBehaviour
             _winner = player;
             StartCoroutine(RetireCountDown());
         }
+        
+        finishedPlayerRanks.Add(player);
+        finishedPlayerTime.Add(player, elapsedTime);
     }
 
     public IEnumerator RetireCountDown()
@@ -217,7 +220,7 @@ public class GameManager : MonoBehaviour
         kartUIController.gameObject.SetActive(false);
         inventoryUI.gameObject.SetActive(false);
         mnMapController.gameObject.SetActive(false);
-        rankUIController.gameObject.SetActive(false);
+        rankUIController.gridRoot.gameObject.SetActive(false);
         
         StartCoroutine(RetireCountDown());
     }

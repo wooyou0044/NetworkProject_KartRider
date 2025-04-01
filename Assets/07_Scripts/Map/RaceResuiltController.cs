@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,65 +8,55 @@ public class RaceResultController : MonoBehaviour
     public GameObject raceResultPrefab;
     public GameObject playersObject;
     public GridLayoutGroup gridRoot;
-
+    
     private GameManager _gameManager;
+    private MapManager _mapManager;
+    private RankUIController _rankUIController;
 
-    private List<GameObject> _kartList;
-    // 현재 카트와 랭크 UI를 매칭시켜주는 딕셔너리
-    private Dictionary<GameObject, RankUIComponent> _kartDict;
-    // 순차 정렬된 카트리스트 저장용
-    private List<GameObject> _sortedKartList;
+    private float _totalLength;
     
     public void Awake()
     {
         _gameManager = FindObjectOfType<GameManager>();
+        _mapManager = FindObjectOfType<MapManager>();
+        _rankUIController = _gameManager.rankUIController;
     }
-    
-    public void SetPlayers()
+
+    public void OnEnable()
     {
-        _kartList = new List<GameObject>();
-        foreach (Transform child in playersObject.transform)
-        {
-            _kartList.Add(child.gameObject);
-        }
-        _sortedKartList = new List<GameObject>(_kartList);
+        InitRankUI();
+        _totalLength = _mapManager.totalLap * _mapManager.dollyPath.PathLength;
     }
 
     // 전체 유저의 랭크 UI 그려주기
     public void InitRankUI()
     {
-        SetPlayers();
+        Transform playersTr = playersObject.transform;
         
-        _kartDict = new Dictionary<GameObject, RankUIComponent>();        
-        
-        // 방에 플레이어 들어오는 갱신있을시 예외처리
-        if (playersObject.transform.childCount > 0)
-        {
-            DestroyAllRankUIChildren();
-            StopAllCoroutines();
-        }
+        for (int i = 0; i < playersTr.childCount; i++)
+        {;
+            GameObject kart = _rankUIController.GetKartObjectByRank(i+1);
+            RankManager rankManager = kart.GetComponent<RankManager>();
 
-        foreach (var kart in _kartList)
-        {
+            string timeOrPosStr = "";
+            
+            if (rankManager.IsFinish())
+            {
+                timeOrPosStr = _gameManager.finishedPlayerTime[kart.GetPhotonView().Owner].ToString();                
+            }
+            else
+            {
+                timeOrPosStr = (_totalLength - rankManager.GetTotalPos()).ToString();
+            }
+            
             GameObject rankElement = Instantiate(raceResultPrefab, gridRoot.transform);
-            // 랭크 나타내는 UI 객체에 Player의 TagObject를 담아둔다.
-            kart.gameObject.GetPhotonView().Owner.TagObject = rankElement;
-            SetPlayerRankUI(rankElement, kart);
+            SetPlayerRankUI(rankElement, kart, timeOrPosStr);
         }
 
         StartCoroutine(RankUpdate());
     }
 
-    // 예외적으로 랭크 UI를 갱신할때 다 지워주고 다시 그리도록 해주는 옵션
-    public void DestroyAllRankUIChildren()
-    {
-        foreach (Transform child in gridRoot.transform)
-        {
-            Destroy(child.gameObject);
-        }
-    }
-
-    private void SetPlayerRankUI(GameObject rankElement, GameObject kart)
+    private void SetPlayerRankUI(GameObject rankElement, GameObject kart, string timeOrPosStr)
     {
         RankUIComponent rankUIComponent = rankElement.GetComponent<RankUIComponent>();
         RankManager manager = kart.GetComponent<RankManager>();
@@ -91,9 +80,7 @@ public class RaceResultController : MonoBehaviour
 
         rankUIComponent.rankText.text = manager.GetRank().ToString();
         rankUIComponent.namePlate.text = pv.Owner.NickName;
-        
-        // GetComponent 안하기 위한 딕셔너리 추가
-        _kartDict.Add(kart, rankUIComponent);
+        rankUIComponent.timeOrPosText.text = timeOrPosStr;
     }
     
     // 리타이어 될때까지 랭크 갱신
@@ -101,52 +88,7 @@ public class RaceResultController : MonoBehaviour
     {
         while (_gameManager.retireCountDownSeconds > 0)
         {
-            SortRankByDistance();
             yield return new WaitForSeconds(0.5f);            
-        }
-    }
-
-    // 간 거리에 따라 랭크 정렬하기
-    private void SortRankByDistance()
-    {
-        _sortedKartList.Sort((kart1, kart2) =>
-        {
-            // 이미 끝난 카트는 정렬에서 제외
-            if (_kartDict[kart1].RankManager.IsFinish() && !_kartDict[kart2].RankManager.IsFinish())
-            {
-                return -1;
-            }
-            
-            if (!_kartDict[kart1].RankManager.IsFinish() && _kartDict[kart2].RankManager.IsFinish())
-            {
-                return 1;
-            }
-            
-            float kartPos1 = _kartDict[kart1].RankManager.GetTotalPos();
-            float kartPos2 = _kartDict[kart2].RankManager.GetTotalPos();
-            return kartPos2.CompareTo(kartPos1);
-        });
-        
-        int rank = 0;
-        foreach (var kart in _sortedKartList)
-        {
-            // 랭크 업데이트 하는 도중 나갔을때 방어코드 추가
-            if (_kartDict[kart] == null)
-            {
-                continue;
-            }
-            
-            rank++;
-            _kartDict[kart].RankManager.SetRank(rank);
-            _kartDict[kart].rankText.text = rank.ToString();
-
-            int bfRank = _kartDict[kart].RankManager.GetBfRank();
-            int currentRank = _kartDict[kart].RankManager.GetRank();
-            // 랭크가 변동될때만 UI 갱신
-            if (bfRank != currentRank)
-            {
-                StartCoroutine(UpdateRankUI(_kartDict[kart], bfRank, currentRank));                
-            }
         }
     }
 
@@ -184,17 +126,5 @@ public class RaceResultController : MonoBehaviour
         float changedPosY = -(fixedY + cellSizeY + spacingY);
 
         return new Vector2(cellSize.x / 2, changedPosY);
-    }
-    
-    // Players 하위에 있는 GameObject에서, 해당 순위를 찾아서 반환해준다.
-    public GameObject GetKartObjectByRank(int rank)
-    {
-        if (rank > _sortedKartList.Count)
-        {
-            Debug.LogError("순위가 리스트 인덱스보다 더 큼");
-            return null;
-        }
-        
-        return _sortedKartList[rank - 1];
     }
 }
