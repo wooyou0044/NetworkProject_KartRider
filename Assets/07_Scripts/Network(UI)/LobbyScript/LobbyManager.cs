@@ -383,7 +383,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         {
             string enteredPassword = lobbyUiMgr.lockRoomPasswordInputField.text;
             lobbyUiMgr.LockRoomPasswrodPanelActive(false);
-
+            lobbyUiMgr.lockRoomPasswordInputField.text = "";
             if (enteredPassword == correctPassword)
             {
                 JoinRoom(roomName);

@@ -50,28 +50,34 @@ public class LobbyUIManager : MonoBehaviour
     //방 생성 버튼 클릭시 활성화
     public void CreateRoomPanleCon()
     {
+        ClickOffPanelActive(true);
         createRoomPanel.SetActive(true);
     }
     //대기방 입장 클릭시 활성화
     public void RoomNumberJoinPanelCon()
     {
+        ClickOffPanelActive(true);
         roomNumberJoinPanel.SetActive(true);
     }
     //방 만들기 취소 클릭시 비활성화
     public void CreateRoomPanleCancelCon()
     {
         ClickOffPanelActive(false);
+        roomNameInputField.text = "";
+        roomPasswordInputField.text = "";
         createRoomPanel.SetActive(false);
     }
     //대기방 입장 취소 클릭시 비활성화
     public void RoomNumberJoinPanelCancelCon()
     {
         ClickOffPanelActive(false);
+        roomNumberInputField.text = "";
         roomNumberJoinPanel.SetActive(false);
     }
     //비밀번호가 걸린 방 입장시 
     public void LockRoomPasswrodPanelActive(bool active)
     {
+        ClickOffPanelActive(active);
         lockRoomPanel.SetActive(active);
     }
     //UI 패널 또는 팝업 활성화
@@ -83,11 +89,14 @@ public class LobbyUIManager : MonoBehaviour
     //룸 입장 실패시 뜨는 판넬 비활성화 버튼
     public void RoomJoinFaildeBtn()
     {
+        ClickOffPanelActive(false);
         roomJoinFaildePanel.SetActive(false);
     }
     //비밀번호 입력창 비활성화
     public void LockRoomPanelCancelBtn()
     {
+        ClickOffPanelActive(false);
+        lockRoomPasswordInputField.text = "";
         lockRoomPanel.SetActive(false);
     }
     //버튼 클릭을 막는 판넬 오브젝트
