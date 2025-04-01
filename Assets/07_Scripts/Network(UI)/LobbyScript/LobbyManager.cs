@@ -11,7 +11,7 @@ using System.Threading;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
-    private LobbyUIManager lobbyUiMgr;
+    [SerializeField]private LobbyUIManager lobbyUiMgr;
     private List<RoomInfo> roomInfos = new List<RoomInfo>();
     private Dictionary<string, RoomEntry> roomEntryMap = new Dictionary<string, RoomEntry>();
     private Queue<string> availableRoomNumbers = new Queue<string>(); // 방 번호 관리 Queue

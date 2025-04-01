@@ -46,7 +46,7 @@ public class PlayerPanel : MonoBehaviourPun
             roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>();
         }
         PlayerNameText.text = photonView.Controller.NickName;
-        playerImg.sprite = character.characterIcon;
+        //playerImg.sprite = character.characterIcon;
         for (int i = 0; i < roomManager.playerSlots.Length; i++)
         {
             if (roomManager.playerSlots[i].playerPanel == null)
