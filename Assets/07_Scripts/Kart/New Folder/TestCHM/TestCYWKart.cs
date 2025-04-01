@@ -6,7 +6,6 @@ using Photon.Realtime;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEngine.WSA;
 
 public partial class TestCHMKart : MonoBehaviour
 {
@@ -95,6 +94,7 @@ public partial class TestCHMKart : MonoBehaviour
                 break;
             case ItemType.shield:
                 isUsingShield = true;
+                // 바뀐 Shield 값을 모두에게 쏴줌
                 SetActiveShield(isUsingShield);
                 kartBodyCtrl.SetShieldEffectActive(true);
                 StartCoroutine(OffShield());
@@ -258,17 +258,17 @@ public partial class TestCHMKart : MonoBehaviour
         waterFlyObject = null;
     }
 
-    //void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    //{
-    //    if(stream.IsWriting)
-    //    {
-    //        stream.SendNext(isUsingShield);
-    //    }
-    //    else
-    //    {
-    //        isUsingShield = (bool)stream.ReceiveNext();
-    //    }
-    //}
+    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(isUsingShield);
+        }
+        else
+        {
+            isUsingShield = (bool)stream.ReceiveNext();
+        }
+    }
 
     void OnTriggerEnter(Collider other)
     {
