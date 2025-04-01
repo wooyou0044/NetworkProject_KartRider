@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     
     [Header("맵 요소들 매니저")]
     public MapManager mapManager;
+    public RaceResultController raceResultController;
 
     // 전체 캐릭터 풀 설정
     private CharacterSo[] _characterSoArray;
@@ -36,18 +37,25 @@ public class GameManager : MonoBehaviour
     private PhotonView _gameManagerView;
     private Player _winner;
 
-    // 방장이 가지고 있는 준비된 참가자들 리스트
-    private List<Player> _readyPlayers;
     // 포톤 instantiate한 카트 인스턴스
     [HideInInspector] public TestCHMKart kartCtrl;
-
     public GameObject playerChar { get; private set; }
+    
+    // 방장이 가지고 있는 준비된 참가자들 리스트
+    private List<Player> _readyPlayers;
+    
+    // 결과창 위한 플레이어 리스트 & 딕셔너리
+    private List<Player> _playerRanks;
+    private Dictionary<Player, float> _playerTime;
 
     private void Awake()
     {
         _readyPlayers = new List<Player>();
         _characterSoArray = Resources.LoadAll<CharacterSo>("Character");
         _gameManagerView = GetComponent<PhotonView>();
+
+        _playerRanks = new List<Player>();
+        _playerTime = new Dictionary<Player, float>();
     }
     
     private void Start()
@@ -158,23 +166,64 @@ public class GameManager : MonoBehaviour
     // 1. 리타이어 카운트 세기
     // 2. 진짜 누가 이겼는지 확인 필요 (할라나?)
     [PunRPC]
-    public void OnSomePlayerFinish(Player player)
+    public void OnSomePlayerFinish(Player player, float elapsedTime)
     {
         if (_winner == null)
         {
             _winner = player;
+            StartCoroutine(RetireCountDown());
+        }
+    }
+
+    public IEnumerator RetireCountDown()
+    {
+        while(retireCountDownSeconds > 0)
+        {
+            StartCoroutine(mainTextController.ShowTextOneSecond(retireCountDownSeconds.ToString()));
+            retireCountDownSeconds--;
+            yield return new WaitForSeconds(1f);
         }
         
-        Debug.Log(_winner + "플레이어가 골인했습니다.");
+        if (!kartCtrl.GetComponent<RankManager>().IsFinish())
+        {
+            TurnOffInGameUI();
+            timeUIController.StopTimer();
+            mainTextController.SetColor(Color.white);
+            mainTextController.mainText.alignment = TextAnchor.MiddleLeft;
+            mainTextController.ShowMainText("RETIRE..");
+        }
+        
+        ShowFinalResult();
     }
 
     // 들어왔을떄 전달
     public void OnFinished()
     {
+        timeUIController.StopTimer();
+        float elapsedTime = timeUIController.GetElapsedTime();
+        
         if (_winner == null)
         {
             _winner = PhotonNetwork.LocalPlayer;
-            _gameManagerView.RPC("OnSomePlayerFinish", RpcTarget.AllViaServer, _winner);
+            _gameManagerView.RPC("OnSomePlayerFinish", RpcTarget.AllViaServer, _winner, elapsedTime);
         }
+
+        TurnOffInGameUI();
+        ShowFinalResult();
+    }
+
+    public void TurnOffInGameUI()
+    {
+        kartUIController.gameObject.SetActive(false);
+        inventoryUI.gameObject.SetActive(false);
+        mnMapController.gameObject.SetActive(false);
+        rankUIController.gameObject.SetActive(false);
+        
+        StartCoroutine(RetireCountDown());
+    }
+    
+    public void ShowFinalResult()
+    {
+        raceResultController.gameObject.SetActive(true);
     }
 }
