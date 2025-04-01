@@ -15,6 +15,7 @@ public class PlayerPanel : MonoBehaviourPun
     public Image playerImg;
     public TMP_Text PlayerNameText;
     public Image playerIcon;
+    public CharacterSo character;
 
     [Header("준비 완료 이미지")]
     public Image readyImage;
@@ -45,6 +46,7 @@ public class PlayerPanel : MonoBehaviourPun
             roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>();
         }
         PlayerNameText.text = photonView.Controller.NickName;
+        playerImg.sprite = character.characterIcon;
         for (int i = 0; i < roomManager.playerSlots.Length; i++)
         {
             if (roomManager.playerSlots[i].playerPanel == null)
