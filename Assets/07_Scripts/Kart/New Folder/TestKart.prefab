@@ -520,8 +520,13 @@ MonoBehaviour:
   boostEffect: {fileID: 1900756431413560, guid: 529eb4216865eba419c1a4a68d0b0388, type: 3}
   collisionSpark: {fileID: 1845955007268882, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}
   collisionTransform: {fileID: 1853964661691613909}
-  driftSparkWheelPos: []
+  driftSparkWheelPos:
+  - {fileID: 3395335430761523191}
+  - {fileID: 6374713261397151615}
+  shieldEffectBodyPos: {fileID: 8887275532626141900}
   driftSpark: {fileID: 4503612902121041701, guid: 5a936c83b1746f14f9100db745e94f04, type: 3}
+  windEffect: {fileID: 6354686006975832417, guid: 8ba61049d6d48464d81e1c7030773377, type: 3}
+  shieldEffect: {fileID: 7314526620251459061, guid: ccf28ea29cf499744ac31bab90073aba, type: 3}
 --- !u!1 &1556149449001999350
 GameObject:
   m_ObjectHideFlags: 0
@@ -1639,6 +1644,7 @@ GameObject:
   - component: {fileID: 2680623755718992227}
   - component: {fileID: 1327599218726025444}
   - component: {fileID: 2115428642982953309}
+  - component: {fileID: 873466291264580667}
   m_Layer: 3
   m_Name: TestKart
   m_TagString: Untagged
@@ -1751,6 +1757,8 @@ MonoBehaviour:
   boostMaxSpeedKmh: 280
   isDrifting: 0
   currentDriftAngle: 0
+  driftAudioClip: {fileID: 0}
+  boostAudioClip: {fileID: 0}
   accelerationCurve:
     serializedVersion: 2
     m_Curve:
@@ -1792,6 +1800,20 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  backThrowPos: {fileID: 0}
+--- !u!114 &873466291264580667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4848290750487293163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 105f9c9f31bb70f4da2a2be9882fb531, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boostItem: {fileID: 11400000, guid: 1c96c6e0551bd1a46873028e45836543, type: 2}
 --- !u!1 &5008936112258941947
 GameObject:
   m_ObjectHideFlags: 0
