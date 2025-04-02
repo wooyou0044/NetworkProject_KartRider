@@ -24,8 +24,8 @@ public class PlayerPanel : MonoBehaviourPun
 
     private string targetTag = "Player";
     private int currentIndex = 0;
-    List<GameObject> myTaggedObjects = new List<GameObject>();
 
+    [SerializeField] private List<GameObject> myTaggedObjects;
     [SerializeField] private RoomManager roomManager;
     [SerializeField] private CharacterList characterList;
     [SerializeField] private Button rightBtn;
@@ -35,18 +35,16 @@ public class PlayerPanel : MonoBehaviourPun
     {
         roomManager = GameObject.FindObjectOfType<RoomManager>();
         characterList = GameObject.FindObjectOfType<CharacterList>();
+        myTaggedObjects = new List<GameObject>();
 
-
-
-
+        
         if (photonView.IsMine)
         {
-
             //이후에 들어온 사람도 확인을 해야하기 때문에 RpcTarget.AllBuffered사용
-            GetComponent<PhotonView>().RPC("PlayerCharacterLoad", RpcTarget.AllBuffered);
-            GetComponent<PhotonView>().RPC("SetOwnInfo", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer);
+            GetComponent<PhotonView>().RPC("SetOwnInfo", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer);            
         }
-
+        rightBtn.onClick.AddListener(CharacterChangeNextBtn);
+        leftBtn.onClick.AddListener(PreviousCharacterBtn);
     }
 
     /// <summary>
@@ -72,13 +70,10 @@ public class PlayerPanel : MonoBehaviourPun
                 roomManager.playerSlots[i].actorNumber = player.ActorNumber;
                 roomManager.roomUIManger.startBtn.onClick.AddListener(roomManager.playerSlots[i].playerPanel.StartBtnClickTrigger);
                 roomManager.playerSlots[i].isReady = false;
+                roomManager.playerSlots[i].playerPanel.characterSelectBtn = roomManager.roomUIManger.characterSelectBtn.GetComponent<Button>();
+                roomManager.playerSlots[i].playerPanel.rightBtn = roomManager.roomUIManger.characterRightBtn.GetComponent<Button>();
+                roomManager.playerSlots[i].playerPanel.leftBtn = roomManager.roomUIManger.characterLeftBtn.GetComponent<Button>();
                 transform.SetParent(roomManager.playerSlots[i].transform);
-                playerText.text = myTaggedObjects[0].name;
-                rightBtn = roomManager.roomUIManger.characterRightBtn.GetComponent<Button>();
-                leftBtn = roomManager.roomUIManger.characterLeftBtn.GetComponent<Button>();
-                characterSelectBtn = roomManager.roomUIManger.characterSelectBtn.GetComponent<Button>();
-                rightBtn.onClick.AddListener(CharacterChangeNextBtn);
-                leftBtn.onClick.AddListener(PreviousCharacterBtn);
                 roomManager.UpdateAllPlayersReady();
                 break;
             }
@@ -86,7 +81,7 @@ public class PlayerPanel : MonoBehaviourPun
         GetComponent<RectTransform>().anchorMin = Vector3.zero;
         GetComponent<RectTransform>().anchorMax = Vector3.one;
         GetComponent<RectTransform>().localPosition = Vector3.zero;
-
+        GetComponent<PhotonView>().RPC("PlayerCharacterLoad", RpcTarget.AllBuffered);
     }
     /// <summary>
     /// 스타트 버튼
@@ -147,7 +142,7 @@ public class PlayerPanel : MonoBehaviourPun
     [PunRPC]
     public void PlayerCharacterLoad()
     {
-        myTaggedObjects.Clear();
+        myTaggedObjects.Clear();        
         PhotonView[] allPhotonViews = GameObject.FindObjectsOfType<PhotonView>();
         foreach (PhotonView pv in allPhotonViews)
         {
@@ -169,37 +164,45 @@ public class PlayerPanel : MonoBehaviourPun
                 myTaggedObjects[1].transform.rotation = Quaternion.Euler(0, 0, 0);
             }
         }
+        CharacterChangeNextBtn();
+        PreviousCharacterBtn();
     }
 
     public void CharacterChangeNextBtn()
     {
-        if (photonView.IsMine)
+        myTaggedObjects[currentIndex].gameObject.SetActive(false);
+        currentIndex = (currentIndex + 1) % myTaggedObjects.Count;
+        Debug.Log(myTaggedObjects.Count + "몇개임?");
+        myTaggedObjects[currentIndex].gameObject.SetActive(true);
+        Debug.Log(myTaggedObjects.Count + "여기서 터지는거임?");
+        Debug.Log(characterSelectBtn);
+        characterSelectBtn.onClick.AddListener(() =>
         {
-            myTaggedObjects[currentIndex].gameObject.SetActive(false);
-            currentIndex = (currentIndex + 1) % myTaggedObjects.Count;
-            myTaggedObjects[currentIndex].gameObject.SetActive(true);
-            characterSelectBtn.onClick.AddListener(() =>
-            {                
+            Debug.Log("들어왔는지?");
+            if (photonView.IsMine)
+            {
+                Debug.Log(myTaggedObjects[currentIndex].name + "선택 됨");                
                 GetComponent<PhotonView>().RPC("CharacterSelect", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.ActorNumber, myTaggedObjects[currentIndex].name);
                 characterSelectBtn.onClick.RemoveAllListeners();
-            });
-        }
+            }
+        });    
     }
     public void PreviousCharacterBtn()
     {
-        if (photonView.IsMine)
+        myTaggedObjects[currentIndex].gameObject.SetActive(false);
+        currentIndex = (currentIndex - 1 + myTaggedObjects.Count) % myTaggedObjects.Count; // 첫 번째
+        myTaggedObjects[currentIndex].gameObject.SetActive(true);
+        characterSelectBtn.onClick.AddListener(() =>
         {
-            myTaggedObjects[currentIndex].gameObject.SetActive(false);
-            currentIndex = (currentIndex - 1 + myTaggedObjects.Count) % myTaggedObjects.Count; // 첫 번째
-            myTaggedObjects[currentIndex].gameObject.SetActive(true);
-            characterSelectBtn.onClick.AddListener(() =>
+            if (photonView.IsMine)
             {
+
                 GetComponent<PhotonView>().RPC("CharacterSelect", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.ActorNumber, myTaggedObjects[currentIndex].name);
                 characterSelectBtn.onClick.RemoveAllListeners();
 
-            });
-        }
-    }
+            }
+        });
+    }    
     [PunRPC]
     public void CharacterSelect(int palyerActorNum, string characterName)
     {
