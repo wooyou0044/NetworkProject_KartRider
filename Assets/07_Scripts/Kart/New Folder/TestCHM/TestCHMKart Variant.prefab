@@ -158,7 +158,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2115428642982953309, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: exitWaterFlyTime
-      value: 5
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2115428642982953309, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: frontBarricadePos

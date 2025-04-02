@@ -6,7 +6,7 @@ public class BarricadeController : MonoBehaviour
 {
     [SerializeField] float DestroyTime;
 
-    public TestCHMKart kartCtrl;
+    public TestCHMKart kartCtrl { get; set; }
     void Start()
     {
     }

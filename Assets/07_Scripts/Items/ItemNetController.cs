@@ -31,21 +31,48 @@ public class ItemNetController : MonoBehaviour
         items.Add(itemPreab);
     }
 
+    //public void RequestBarricade(int kartViewID)
+    //{
+    //    PhotonView photonView = PhotonView.Find(kartViewID);
+    //    if (photonView != null)
+    //    {
+    //        GameObject kartObject = photonView.gameObject;
+
+    //        GameObject firstKart = rankCtrl.GetKartObjectByRank(1);
+    //        TestCHMKart firstKartCtrl = firstKart.GetComponent<TestCHMKart>();
+    //        if (firstKart != kartObject && firstKartCtrl.isUsingShield == false)
+    //        {
+    //            PhotonView view = firstKart.GetPhotonView();
+    //            view.RPC("MakeBarricade", RpcTarget.MasterClient, firstKart.GetPhotonView().ViewID);
+    //        }
+    //    }
+    //}
+
     public void RequestBarricade(int kartViewID)
     {
         PhotonView photonView = PhotonView.Find(kartViewID);
+
         if (photonView != null)
         {
             GameObject kartObject = photonView.gameObject;
 
             GameObject firstKart = rankCtrl.GetKartObjectByRank(1);
             TestCHMKart firstKartCtrl = firstKart.GetComponent<TestCHMKart>();
+            PhotonView firstKartView = firstKart.GetPhotonView();
+            if(firstKartView == null)
+            {
+                return;
+            }
             if (firstKart != kartObject && firstKartCtrl.isUsingShield == false)
             {
-                PhotonView view = firstKart.GetPhotonView();
-                view.RPC("MakeBarricade", RpcTarget.All);
+                firstKartView.RPC("SendCheckPointIndex", firstKartView.Owner);
             }
         }
+    }
+
+    public GameObject GetFirstKartObject()
+    {
+        return rankCtrl.GetKartObjectByRank(1);
     }
 
     public void RequestWaterFly(int kartViewID, int kartRank, float waterFlyBombTime)

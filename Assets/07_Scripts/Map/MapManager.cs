@@ -242,6 +242,7 @@ public class MapManager : MonoBehaviourPunCallbacks
     public int GetKartCheckPointIndex(GameObject kart)
     {
         Transform lastCheckPoint = kart.GetComponent<TestCHMKart>().mapManager.myLastcheckPoint;
+        Debug.Log(lastCheckPoint.gameObject.name);
         for (int i = 0; i < _allCheckPoints.Length; i++)
         {
             if (_allCheckPoints[i].transform.parent == lastCheckPoint)
