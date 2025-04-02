@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 using Cinemachine;
 using Photon.Pun;
@@ -67,6 +68,10 @@ public class GameManager : MonoBehaviour
             pool.ResourceCache.Add(kartPrefab.name, kartPrefab);
             foreach (var soCharacter in _characterSoArray)
             {
+                if (pool.ResourceCache.ContainsKey(soCharacter.characterName))
+                {
+                    continue;
+                }                
                 pool.ResourceCache.Add(soCharacter.characterName, soCharacter.characterPrefab);                
             }
         }
