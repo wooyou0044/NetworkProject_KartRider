@@ -37,7 +37,6 @@ public class GameManager : MonoBehaviour
     public int retireCountDownSeconds = 10;
     public int backToRoomCountDownSeconds = 3;
     
-    private PhotonView _gameManagerView;
     private Player _winner;
 
     // 포톤 instantiate한 카트 인스턴스
@@ -55,7 +54,6 @@ public class GameManager : MonoBehaviour
     {
         _readyPlayers = new List<Player>();
         _characterSoArray = Resources.LoadAll<CharacterSo>("Character");
-        _gameManagerView = GetComponent<PhotonView>();
         
         finishedPlayerTime = new Dictionary<Player, float>();
     }
@@ -113,7 +111,7 @@ public class GameManager : MonoBehaviour
     /* 방장 클라에 준비 다 되었다고 쏘기 */
     public void SendLoadFinished()
     {
-        _gameManagerView.RPC("ReceiveLoadFinished", RpcTarget.MasterClient, PhotonNetwork.LocalPlayer);
+        gameObject.GetPhotonView().RPC("ReceiveLoadFinished", RpcTarget.MasterClient, PhotonNetwork.LocalPlayer);
     }
 
     /* 방장 클라가 방에 접속한 인원들 모두 로딩 되었는지 확인한다 */
@@ -129,7 +127,7 @@ public class GameManager : MonoBehaviour
         
         if (_readyPlayers.Count == playerCount)
         {
-            _gameManagerView.RPC("StartCountDown", RpcTarget.AllViaServer);
+            gameObject.GetPhotonView().RPC("StartCountDown", RpcTarget.AllViaServer);
         }
     }
     
@@ -164,11 +162,8 @@ public class GameManager : MonoBehaviour
         timeUIController.StartTimer();
     }
     
-    /* 누군가 피니시 라인에 들어왔다 (최종 골인) */
-    // 1. 리타이어 카운트 세기
-    // 2. 진짜 누가 이겼는지 확인 필요 (할라나?)
     [PunRPC]
-    public void OnSomePlayerFinish(Player player, float elapsedTime)
+    public void OnSomePlayerFinished(Player player, float elapsedTime)
     {
         if (_winner == null)
         {
@@ -214,7 +209,7 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(1f);
         }
 
-        if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+        if (PhotonNetwork.LocalPlayer.Equals(PhotonNetwork.MasterClient))
         {
             PhotonNetwork.LoadLevel("RoomScene");            
         }
@@ -235,7 +230,7 @@ public class GameManager : MonoBehaviour
         // Rank 매니저 나와 다른 사람들에게 업데이트, 내꺼는 미리 업데이트함
         rankManager.SetFinish(true);
         kartPv.RPC("SetFinish", RpcTarget.Others, true);
-        _gameManagerView.RPC("OnSomePlayerFinish", RpcTarget.AllViaServer, PhotonNetwork.LocalPlayer, elapsedTime);
+        gameObject.GetPhotonView().RPC("OnSomePlayerFinished", RpcTarget.AllViaServer, PhotonNetwork.LocalPlayer, elapsedTime);
         
         TurnOffInGameUI();
         TurnOffMyKartControl();
@@ -253,7 +248,6 @@ public class GameManager : MonoBehaviour
     public void ShowFinalResult()
     {
         raceResultController.gameObject.SetActive(true);
-        PhotonNetwork.LoadLevel("RoomScene");
     }
 
     // 조작 안되게 하고 더 할 처리 필요한것 있는지 확인
