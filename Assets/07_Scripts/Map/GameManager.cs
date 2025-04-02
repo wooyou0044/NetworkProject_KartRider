@@ -180,7 +180,10 @@ public class GameManager : MonoBehaviour
         if (!PhotonNetwork.LocalPlayer.Equals(player))
         {
             finishedPlayerTime.Add(player, elapsedTime);
-            raceResultController.UpdateFinished(player);
+            if (raceResultController.gameObject.activeInHierarchy)
+            {
+                raceResultController.UpdateFinished(player);
+            }
         }
     }
 
