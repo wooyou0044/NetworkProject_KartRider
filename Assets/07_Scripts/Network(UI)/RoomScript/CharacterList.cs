@@ -1,47 +1,55 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
-public class CharacterList : MonoBehaviour
+public class CharacterList : MonoBehaviourPun
 {
-    public List<CharacterManager> characterManager;
+    public CharacterSo[] characters;
+    public GameObject kartPrefab;
     public RawImage characterImage;
 
+    private PhotonView pv;
     private int currentIndex = 0;
+    public TestCHMKart testCHMKart;
     private void Start()
     {
-        characterManager = new List<CharacterManager>();
+        pv = GetComponent<PhotonView>();
+        characters = Resources.LoadAll<CharacterSo>("Character");
+
+        DefaultPool pool = PhotonNetwork.PrefabPool as DefaultPool;
+        if (pool != null)
+        {
+            //pool.ResourceCache.Add(kartPrefab.name, kartPrefab);
+            foreach (var character in characters)
+            {
+                pool.ResourceCache.Add(character.characterName, character.characterPrefab);
+            }
+        }
         SetCharacterResources();
     }
     public void SetCharacterResources()
     {
-        List<CharacterSo> characters = Resources.LoadAll<CharacterSo>("Character").ToList();
-
-        for (int i = 0; i < characters.Count; i++)
+        //GameObject kart = PhotonNetwork.Instantiate(kartPrefab.name, Vector3.zero, Quaternion.identity);
+        // kart에 붙어 있는 Controller 가져오기
+        //testCHMKart = kart.GetComponent<TestCHMKart>();
+        foreach (var character in characters)
         {
-            var createCharacter = Instantiate(characters[i].characterPrefab, Vector3.zero, Quaternion.Euler(-90, -90, 0));
-            characterManager.Add(createCharacter.GetComponent<CharacterManager>());
-            createCharacter.gameObject.SetActive(false);
+            var createCharacter = PhotonNetwork.Instantiate(character.characterName, Vector3.zero, Quaternion.Euler(-90, -90, 0));            
         }
-        characterManager[3].transform.rotation = Quaternion.Euler(0, 0, 0);
-        characterManager[currentIndex].gameObject.SetActive(true);
     }
+
     public void CharacterChangeNextBtn()
     {
-
-        characterManager[currentIndex].gameObject.SetActive(false);
-        currentIndex = (currentIndex + 1) % characterManager.Count;
-        characterManager[currentIndex].gameObject.SetActive(true);
-
+        characters[currentIndex].characterPrefab.gameObject.SetActive(false);
+        currentIndex = (currentIndex + 1) % characters.Length;
+        characters[currentIndex].characterPrefab.gameObject.SetActive(true);
     }
     public void PreviousCharacterBtn()
     {
-
-        characterManager[currentIndex].gameObject.SetActive(false);
-        currentIndex = (currentIndex - 1 + characterManager.Count) % characterManager.Count; // 첫 번째
-        characterManager[currentIndex].gameObject.SetActive(true);
-
+        characters[currentIndex].characterPrefab.gameObject.SetActive(false);
+        currentIndex = (currentIndex - 1 + characters.Length) % characters.Length; // 첫 번째
+        characters[currentIndex].characterPrefab.gameObject.SetActive(true);
     }
 }

@@ -20,17 +20,32 @@ public class PlayerPanel : MonoBehaviourPun
     [Header("준비 완료 이미지")]
     public Image readyImage;
 
+    private string targetTag = "Player";
+    private int currentIndex = 0;
+    List<GameObject> myTaggedObjects = new List<GameObject>();
+
     [SerializeField] private RoomManager roomManager;
     [SerializeField] private CharacterList characterList;
+    [SerializeField] private Button rightBtn;
+    [SerializeField] private Button leftBtn;
+    [SerializeField] private Button characterSelectBtn;
     private void Start()
     {
         roomManager = GameObject.FindObjectOfType<RoomManager>();
         characterList = GameObject.FindObjectOfType<CharacterList>();
+        rightBtn = roomManager.roomUIManger.characterRightBtn.GetComponent<Button>();
+        leftBtn = roomManager.roomUIManger.characterLeftBtn.GetComponent<Button>();
+        characterSelectBtn = roomManager.roomUIManger.characterSelectBtn.GetComponent<Button>();
+
+        rightBtn.onClick.AddListener(CharacterChangeNextBtn);
+        leftBtn.onClick.AddListener(PreviousCharacterBtn);
         if (photonView.IsMine)
         {
             //이후에 들어온 사람도 확인을 해야하기 때문에 RpcTarget.AllBuffered사용
             GetComponent<PhotonView>().RPC("SetOwnInfo", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer);
+            GetComponent<PhotonView>().RPC("PlayerCharacterLoad", RpcTarget.AllBuffered);
         }
+
     }
 
     /// <summary>
@@ -43,15 +58,15 @@ public class PlayerPanel : MonoBehaviourPun
     [PunRPC]
     public void SetOwnInfo(Player player)
     {
-        if(roomManager == null)
-        {            
+        if (roomManager == null)
+        {
             roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>();
         }
         PlayerNameText.text = photonView.Controller.NickName;
         for (int i = 0; i < roomManager.playerSlots.Length; i++)
         {
             if (roomManager.playerSlots[i].playerPanel == null)
-            {                
+            {
                 roomManager.playerSlots[i].playerPanel = GetComponent<PlayerPanel>();
                 roomManager.playerSlots[i].actorNumber = player.ActorNumber;
                 roomManager.roomUIManger.startBtn.onClick.AddListener(roomManager.playerSlots[i].playerPanel.StartBtnClickTrigger);
@@ -64,7 +79,7 @@ public class PlayerPanel : MonoBehaviourPun
         GetComponent<RectTransform>().anchorMin = Vector3.zero;
         GetComponent<RectTransform>().anchorMax = Vector3.one;
         GetComponent<RectTransform>().localPosition = Vector3.zero;
-        
+
     }
     /// <summary>
     /// 스타트 버튼
@@ -72,7 +87,7 @@ public class PlayerPanel : MonoBehaviourPun
     /// 마스터는 따로 룸매니저에서 할당 됨
     /// </summary>
     public void StartBtnClickTrigger()
-    {        
+    {
         if (photonView.IsMine && !PhotonNetwork.IsMasterClient)
         {
             //이후에 들어온 사람도 확인을 해야하기 때문에 RpcTarget.AllBuffered사용
@@ -114,15 +129,51 @@ public class PlayerPanel : MonoBehaviourPun
             }
         }
     }
-    public void CharacterSelectBtn()
+
+    //public void CharacterSelectBtn()
+    //{
+    //    if(photonView.IsMine)
+    //    {
+    //        .RPC("PlayerCharacterLoad", RpcTarget.AllBuffered);
+    //    }
+    //}
+    [PunRPC]
+    public void PlayerCharacterLoad()
     {
-        if( photonView.IsMine)
+        myTaggedObjects.Clear();
+        PhotonView[] allPhotonViews = GameObject.FindObjectsOfType<PhotonView>();
+        foreach (PhotonView pv in allPhotonViews)
         {
-            
+            if (pv.gameObject.CompareTag(targetTag)) // 내가 생성했고 태그가 일치하는 경우
+            {
+                pv.gameObject.gameObject.SetActive(false);
+                if (pv.IsMine)
+                {
+                    myTaggedObjects.Add(pv.gameObject);
+                    Debug.Log(pv.gameObject.name);
+                }
+            }
+        }
+        for (int i = 0; i < myTaggedObjects.Count; i++)
+        {
+            myTaggedObjects[0].gameObject.SetActive(true);            
+            if(i == 1)
+            {
+                myTaggedObjects[1].transform.rotation = Quaternion.Euler(0, 0, 0);
+            }
         }
     }
-    public void CharacterSelect()
-    {
 
+    public void CharacterChangeNextBtn()
+    {
+        myTaggedObjects[currentIndex].gameObject.SetActive(false);
+        currentIndex = (currentIndex + 1) % myTaggedObjects.Count;
+        myTaggedObjects[currentIndex].gameObject.SetActive(true);
+    }
+    public void PreviousCharacterBtn()
+    {
+        myTaggedObjects[currentIndex].gameObject.SetActive(false);
+        currentIndex = (currentIndex - 1 + myTaggedObjects.Count) % myTaggedObjects.Count; // 첫 번째
+        myTaggedObjects[currentIndex].gameObject.SetActive(true);
     }
 }
