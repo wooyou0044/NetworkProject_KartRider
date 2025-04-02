@@ -90,7 +90,8 @@ public class KartUIController : MonoBehaviour
 
     IEnumerator ChangeSpeedUIOff()
     {
-        yield return new WaitForSeconds(kartCtrl.boostDuration);
+        //yield return new WaitForSeconds(kartCtrl.boostDuration);
+        yield return new WaitForSeconds(kartCtrl.totalBoostDuration);
         isChange = false;
     }
 

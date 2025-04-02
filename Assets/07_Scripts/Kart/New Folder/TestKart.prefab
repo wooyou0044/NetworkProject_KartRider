@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5827183230957533356}
-  - component: {fileID: 3559450436498715099}
   m_Layer: 7
   m_Name: Wheel1
   m_TagString: Untagged
@@ -34,27 +33,6 @@ Transform:
   - {fileID: 2276533408368794308}
   m_Father: {fileID: 2007762332619444533}
   m_LocalEulerAnglesHint: {x: 180, y: 90, z: 2.66}
---- !u!135 &3559450436498715099
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 80917108558967760}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.23
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &307329828063286093
 GameObject:
   m_ObjectHideFlags: 0
@@ -789,7 +767,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2221574038642410683}
-  - component: {fileID: 6719161959094539880}
   m_Layer: 7
   m_Name: Wheel0
   m_TagString: Untagged
@@ -814,27 +791,6 @@ Transform:
   - {fileID: 5114919090588085126}
   m_Father: {fileID: 2007762332619444533}
   m_LocalEulerAnglesHint: {x: 180, y: 90, z: 0}
---- !u!135 &6719161959094539880
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2149207951218738952}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.23
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2199658012698576072
 GameObject:
   m_ObjectHideFlags: 0
@@ -1784,58 +1740,41 @@ MonoBehaviour:
   driftSpeedReduction: 0.85
   driftRecoverySpeed: 2
   curveDriftSpeed: 5
+  boostSpeedIncrease: 1.2
   boostDuration: 1
   momentboostDuration: 0.3
   maxBoostGauge: 100
   boostChargeRate: 5
   driftBoostChargeRate: 15
-  boostMaxSpeedKmh: 280
-  isDrifting: 0
+  maxBoostSpeed: 300
+  sustainBoostMultiplier: 1
   currentDriftAngle: 0
+  isDrifting: 0
   driftAudioClip: {fileID: 0}
   boostAudioClip: {fileID: 0}
-  accelerationCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 1
-      outSlope: 1
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 1
-      outSlope: 1
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  maxAcceleration: 2
   boxCastCenter: {x: 0, y: 0.5, z: 0}
-  boxCastSize: {x: 2.25, y: 0.5, z: 3.25}
-  boxCastDistance: 1
+  frontBackBoxCastDistance: 1
+  frontBackBoxCastSize: {x: 1, y: 1, z: 1}
+  frontBackLineColor: {r: 1, g: 0, b: 0, a: 1}
+  frontBackBoxColor: {r: 0, g: 0, b: 1, a: 1}
+  leftRightBoxCastDistance: 1
+  leftRightBoxCastSize: {x: 0.5, y: 1, z: 1.5}
+  leftRightLineColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  leftRightBoxColor: {r: 1, g: 0, b: 1, a: 1}
   groundRayDistance: 0.5
   maxSlopeAngle: 10
   wallLayer:
     serializedVersion: 2
     m_Bits: 1024
-  jumpLayer:
-    serializedVersion: 2
-    m_Bits: 512
   boosterLayer:
     serializedVersion: 2
     m_Bits: 256
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  landingForceMultiplier: 1
+  minLandingForce: 10
+  maxLandingForce: 50
   backThrowPos: {fileID: 0}
   frontBarricadePos: {fileID: 0}
   shieldDuration: 0
@@ -3684,7 +3623,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4066600516963396816}
-  - component: {fileID: 618260685719900477}
   m_Layer: 7
   m_Name: wheel2
   m_TagString: Untagged
@@ -3709,27 +3647,6 @@ Transform:
   - {fileID: 4917881262027299976}
   m_Father: {fileID: 2007762332619444533}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!135 &618260685719900477
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7907078594772719327}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.23
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8009789417078120890
 GameObject:
   m_ObjectHideFlags: 0
@@ -3971,7 +3888,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4304380414053374285}
-  - component: {fileID: 8808873220282798768}
   m_Layer: 7
   m_Name: Wheel3
   m_TagString: Untagged
@@ -3996,27 +3912,6 @@ Transform:
   - {fileID: 2244596574395485387}
   m_Father: {fileID: 2007762332619444533}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!135 &8808873220282798768
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8689530030818369920}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.23
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8739175889042993727
 GameObject:
   m_ObjectHideFlags: 0
