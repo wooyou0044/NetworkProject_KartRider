@@ -135,9 +135,12 @@ public class AuthManager : MonoBehaviour
     }
     IEnumerator PostLogin(FirebaseUser user)
     {
-        //로그인 성공 후 닉네임 확인, 닉네임이 없다면 생성될 때 까지 대기        
         titleUI.ResetField(titleUI.loginEmailField, titleUI.loginpasswordField);
-        titleUI.ToggleCreateNickNamePanel(true);
+        //로그인 성공 후 닉네임 확인, 닉네임이 없다면 생성될 때 까지 대기        
+        if (string.IsNullOrEmpty(user.DisplayName))
+        {
+            titleUI.ToggleCreateNickNamePanel(true);
+        }
         yield return new WaitUntil(predicate: () => !string.IsNullOrEmpty(user.DisplayName));
         titleUI.ToggleCreateNickNamePanel(false);//닉네임이 있다면 통과
         titleUI.ShowMessage(titleUI.successMessage, "로그인 성공!", true);
@@ -345,7 +348,7 @@ public class AuthManager : MonoBehaviour
         var setPrfileTask = FirebaseDBManager.Instance.DbRef.Child("users")
             .Child(FirebaseDBManager.Instance.User.UserId).Child("isLoggedIn")
             .SetValueAsync(false);
-        float timer = 10f;
+        float timer = 5f;
         float elapsedTime = 0;
         bool toggle = true;
         WaitForSeconds wait = new WaitForSeconds(1f);
@@ -354,17 +357,13 @@ public class AuthManager : MonoBehaviour
             elapsedTime += 1f;
             if (elapsedTime >= timer)
             {
-                titleUI.ShowMessage(titleUI.errorMessage, "유저 데이터 로딩 실패 관리자에게 문의하세요.", true);
-                yield return new WaitForSeconds(2);
-                titleUI.InitializeLogin();
-                yield break;
+                break;
             }
             string message = toggle ? "계정 생성중." : "계정 생성중..";
             titleUI.ShowMessage(titleUI.successMessage, message, true);
             toggle = !toggle;
             yield return wait;
         }
-        yield return new WaitUntil(() => setPrfileTask.IsCompleted);
         if(setPrfileTask.Exception != null)
         {
             titleUI.ShowMessage(titleUI.errorMessage, "유저 데이터 생성 실패 관리자에게 문의하세요.", true);
