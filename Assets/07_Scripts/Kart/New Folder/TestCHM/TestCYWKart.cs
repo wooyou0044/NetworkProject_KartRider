@@ -27,6 +27,7 @@ public partial class TestCHMKart : MonoBehaviour
     GameObject waterFlyObject;
 
     ItemNetController itemNetCtrl;
+    public WaterFlyController waterFlyCtrl { get; set; }
 
     public bool isKartRotating { get; set; }
 
@@ -233,6 +234,7 @@ public partial class TestCHMKart : MonoBehaviour
             itemNetCtrl.RegisterItem(barricadePrefab[i]);
 
             barricadePrefab[i].transform.eulerAngles = rotation + new Vector3(0, 90, 0);
+            barricadePrefab[i].GetComponent<BarricadeController>().itemCtrl = itemNetCtrl;
         }
 
         Vector3 forwardDir = Quaternion.Euler(rotation) * Vector3.forward;
@@ -241,25 +243,29 @@ public partial class TestCHMKart : MonoBehaviour
         {
             barricadePrefab[i + 1].transform.position += Vector3.up * 0.1f + forwardDir * (10 * i);
         }
+
+        itemNetCtrl.MakeBarricadeSink(barricadePrefab[0].GetComponent<BarricadeController>().destoryTime);
     }
 
     [PunRPC]
     void SendCheckPointIndex()
     {
         //GameObject firstKart = itemNetCtrl.GetFirstKartObject();
+        Debug.Log(gameObject.name);
         int firstPointIndex = mapManager.GetKartCheckPointIndex(gameObject);
 
         Transform checkPointTrans = mapManager.GetNextCheckPointPos(firstPointIndex);
         Vector3 checkPointPos = checkPointTrans.position;
         Vector3 checkPointRot = checkPointTrans.eulerAngles;
 
-        _photonView.RPC("MakeBarricade", RpcTarget.All, checkPointPos, checkPointRot);
+        _photonView.RPC("MakeBarricade", RpcTarget.AllViaServer, checkPointPos, checkPointRot);
     }
 
     public void MakeDisableBarricade(GameObject disableObject)
     {
         itemNetCtrl.RequestDisableItem(disableObject);
     }
+
 
     [PunRPC]
     public void StuckInWaterFly()

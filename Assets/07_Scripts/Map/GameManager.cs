@@ -17,7 +17,9 @@ public class GameManager : MonoBehaviour
     public MainTextController mainTextController;
     public MiniMapController mnMapController;
     public RankUIController rankUIController;
-    
+    // 물파리 관련 UI
+    public WaterFlyController waterFlyCtrl;
+
     [Header("맵 요소들 매니저")]
     public MapManager mapManager;
 
@@ -68,6 +70,9 @@ public class GameManager : MonoBehaviour
         {
             InstantiateObject();
         }
+
+        // 물파리 UI 끄기
+        waterFlyCtrl.gameObject.SetActive(false);
     }
     
     public void InstantiateObject()
@@ -79,6 +84,9 @@ public class GameManager : MonoBehaviour
         GameObject playerChar = PhotonNetwork.Instantiate(characterSo.characterName, Vector3.zero, Quaternion.identity);
         kartCtrl.playerCharAni = playerChar.GetComponent<Animator>();
         StartCoroutine(PlaceToMap(kart));
+
+        kartCtrl.waterFlyCtrl = waterFlyCtrl;
+        waterFlyCtrl.gameObject.SetActive(false);
     }
 
     IEnumerator PlaceToMap(GameObject kart)

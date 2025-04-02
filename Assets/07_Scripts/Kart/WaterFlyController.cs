@@ -62,27 +62,33 @@ public class WaterFlyController : MonoBehaviour
         //}
 
 
-        if(Input.GetKeyDown(KeyCode.LeftArrow) && isRight == false)
+        if(Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
-            rightArrowImage.color = Color.black;
-            rightArrowText.color = Color.white;
+            if(isRight == false)
+            {
+                rightArrowImage.color = Color.black;
+                rightArrowText.color = Color.white;
 
-            leftArrowImage.color = Color.white;
-            leftArrowText.color = Color.black;
-            pressNum++;
-            isRight = true;
-            hitNumBackImage.transform.localScale = new Vector3(1.5f, 1.5f, 0);
+                leftArrowImage.color = Color.white;
+                leftArrowText.color = Color.black;
+                pressNum++;
+                isRight = true;
+                hitNumBackImage.transform.localScale = new Vector3(1.5f, 1.5f, 0);
+            }
         }
-        if (Input.GetKeyDown(KeyCode.RightArrow) && isRight == true)
+        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
-            leftArrowImage.color = Color.black;
-            leftArrowText.color = Color.white;
+            if(isRight == true)
+            {
+                leftArrowImage.color = Color.black;
+                leftArrowText.color = Color.white;
 
-            rightArrowImage.color = Color.white;
-            rightArrowText.color = Color.black;
-            pressNum++;
-            isRight = false;
-            hitNumBackImage.transform.localScale = new Vector3(1.5f, 1.5f, 0);
+                rightArrowImage.color = Color.white;
+                rightArrowText.color = Color.black;
+                pressNum++;
+                isRight = false;
+                hitNumBackImage.transform.localScale = new Vector3(1.5f, 1.5f, 0);
+            }
         }
     }
 

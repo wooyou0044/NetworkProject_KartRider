@@ -31,23 +31,6 @@ public class ItemNetController : MonoBehaviour
         items.Add(itemPreab);
     }
 
-    //public void RequestBarricade(int kartViewID)
-    //{
-    //    PhotonView photonView = PhotonView.Find(kartViewID);
-    //    if (photonView != null)
-    //    {
-    //        GameObject kartObject = photonView.gameObject;
-
-    //        GameObject firstKart = rankCtrl.GetKartObjectByRank(1);
-    //        TestCHMKart firstKartCtrl = firstKart.GetComponent<TestCHMKart>();
-    //        if (firstKart != kartObject && firstKartCtrl.isUsingShield == false)
-    //        {
-    //            PhotonView view = firstKart.GetPhotonView();
-    //            view.RPC("MakeBarricade", RpcTarget.MasterClient, firstKart.GetPhotonView().ViewID);
-    //        }
-    //    }
-    //}
-
     public void RequestBarricade(int kartViewID)
     {
         PhotonView photonView = PhotonView.Find(kartViewID);
@@ -70,10 +53,38 @@ public class ItemNetController : MonoBehaviour
         }
     }
 
-    public GameObject GetFirstKartObject()
+    public void MakeBarricadeSink(float sinkTime)
     {
-        return rankCtrl.GetKartObjectByRank(1);
+        StartCoroutine(StartSinkBarricade(sinkTime));
     }
+
+    IEnumerator StartSinkBarricade(float destroyTime)
+    {
+        yield return new WaitForSeconds(destroyTime);
+        curPhotonView.RPC("GoDownBarricadeRPC", RpcTarget.All);
+    }
+
+    [PunRPC]
+    void GoDownBarricadeRPC()
+    {
+        int count = 0;
+
+        foreach(GameObject item in items)
+        {
+            BarricadeController barricadeCtrl = item.GetComponent<BarricadeController>();
+            if(barricadeCtrl != null)
+            {
+                barricadeCtrl.GoDownBarricade();
+                count++;
+
+                if(count >= 3)
+                {
+                    return;
+                }
+            }
+        }
+    }
+
 
     public void RequestWaterFly(int kartViewID, int kartRank, float waterFlyBombTime)
     {
