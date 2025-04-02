@@ -2152,7 +2152,7 @@ MonoBehaviour:
   rankUIController: {fileID: 730230611}
   mapManager: {fileID: 1236464623}
   kartPrefab: {fileID: 6750277665416376479, guid: b1aff00853afc7641ae0d58aebea703b, type: 3}
-  characterSo: {fileID: 11400000, guid: eae26d33f65aa4ab9aca6616671e50b3, type: 2}
+  characterSo: {fileID: 11400000, guid: 4cfb9d39133d34d01a0c012d58c6fafd, type: 2}
   startCountDownSeconds: 3
   retireCountDownSeconds: 10
   kartCtrl: {fileID: 0}
@@ -4696,6 +4696,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 563824173}
+    - target: {fileID: 4233034106606218083, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 4321304283887046782, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -4739,7 +4743,7 @@ PrefabInstance:
     - target: {fileID: 6438435344010182558, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 639827328}
+      objectReference: {fileID: 5852538266753120782, guid: c6b259f322c8f40ba900e1f2406f4469, type: 3}
     - target: {fileID: 6537956450808752792, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Icon
       value: 
@@ -4755,6 +4759,10 @@ PrefabInstance:
     - target: {fileID: 6652509482926748351, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_VersionIndex
       value: 81
+      objectReference: {fileID: 0}
+    - target: {fileID: 6811690171683263937, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 365.9
       objectReference: {fileID: 0}
     - target: {fileID: 6946997691870794536, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh

@@ -165,7 +165,7 @@ public partial class TestCHMKart : MonoBehaviour
         {
             wasAirborne = true;
             ApplyAirborneLandingForce();
-            rigid.angularDrag = 0f;
+            rigid.angularDrag = 20f;
         }
         else
         {
@@ -209,9 +209,7 @@ public partial class TestCHMKart : MonoBehaviour
 
         // 부스트 입력 처리
         HandleItemInput();
-
         playerCharAni.SetBool("IsBoosting", isBoostTriggered);
-
 
         if (isUsingShield == false)
         {
@@ -511,8 +509,7 @@ public partial class TestCHMKart : MonoBehaviour
         kartBodyCtrl.SetBoostEffectActive(true);
         kartBodyCtrl.SetBoostWindEffectActive(true);
 
-        totalBoostDuration = momentboostDuration;
-
+        totalBoostDuration = momentboostDuration;        
         // 가속 소리 설정
         PlayBoostEffectSound();
         StartCoroutine(InstantBoostCoroutine()); // 순간 부스터 실행
@@ -629,8 +626,7 @@ public partial class TestCHMKart : MonoBehaviour
         // 램프 TrailRenderer 끄기
         kartBodyCtrl.SetLampTrailActive(false);
         kartBodyCtrl.SetBoostEffectActive(false);
-        kartBodyCtrl.SetBoostWindEffectActive(false);
-
+        kartBodyCtrl.SetBoostWindEffectActive(false);        
         audioSource.Stop();
         audioSource.loop = false;
 
@@ -769,13 +765,13 @@ public partial class TestCHMKart : MonoBehaviour
             float LSteer = Mathf.Clamp01(-steerInput); // 왼쪽 조향
             float RSteer = Mathf.Clamp01(steerInput);  // 오른쪽 조향
 
-            if (LSteer < 0.3f && RSteer < 0.3f)
+            if (LSteer < 0.5f && RSteer < 0.5f)
             {
                 LSteer = 0;
                 RSteer = 0;
-            }
-            playerCharAni.SetFloat("LSteer", LSteer);
-            playerCharAni.SetFloat("RSteer", RSteer);
+            }           
+            playerCharAni.SetFloat("LSteer", LSteer );
+            playerCharAni.SetFloat("RSteer", RSteer );
 
         }
 
@@ -963,6 +959,7 @@ public partial class TestCHMKart : MonoBehaviour
             if (((1 << hitLayer) & wallLayer.value) != 0)
             {
                 ProcessWallCollision();
+                playerCharAni.SetBool("IsCollsion", false);
             }
             else if (((1 << hitLayer) & boosterLayer.value) != 0)
             {
@@ -1014,7 +1011,9 @@ public partial class TestCHMKart : MonoBehaviour
             Debug.Log($"벽 충돌 후 처리: 새 속도 = {rigid.velocity}");
 
             kartBodyCtrl.SetCollisonSparkActive(true);
-        }
+            playerCharAni.SetBool("IsCollsion", true);
+        }     
+
     }
 
 
