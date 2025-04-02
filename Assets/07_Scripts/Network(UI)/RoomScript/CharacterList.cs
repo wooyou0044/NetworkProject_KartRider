@@ -9,7 +9,7 @@ public class CharacterList : MonoBehaviourPun
     public CharacterSo[] characters;
     public GameObject kartPrefab;
     public RawImage characterImage;
-
+    public Camera cam;
     private PhotonView pv;
     private int currentIndex = 0;
     public TestCHMKart testCHMKart;
