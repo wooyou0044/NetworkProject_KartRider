@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Photon.Pun;
+using Photon.Realtime;
 
 /// <summary>
 /// 플레이어 오브젝트 스크립트
@@ -12,22 +13,23 @@ using Photon.Pun;
 public class PlayerPanel : MonoBehaviourPun
 {
     [Header("Player 정보")]
-    public Image playerImg;
+    public RawImage playerImg;
     public TMP_Text PlayerNameText;
     public Image playerIcon;
-    public CharacterSo character;
 
     [Header("준비 완료 이미지")]
     public Image readyImage;
 
     [SerializeField] private RoomManager roomManager;
+    [SerializeField] private CharacterList characterList;
     private void Start()
     {
-        roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>();
+        roomManager = GameObject.FindObjectOfType<RoomManager>();
+        characterList = GameObject.FindObjectOfType<CharacterList>();
         if (photonView.IsMine)
         {
             //이후에 들어온 사람도 확인을 해야하기 때문에 RpcTarget.AllBuffered사용
-            GetComponent<PhotonView>().RPC("SetOwnInfo", RpcTarget.AllBuffered);
+            GetComponent<PhotonView>().RPC("SetOwnInfo", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer);
         }
     }
 
@@ -39,20 +41,19 @@ public class PlayerPanel : MonoBehaviourPun
     /// 저장이 완료 되면 위치 값과 크기를 조정함
     /// </summary>
     [PunRPC]
-    public void SetOwnInfo()
+    public void SetOwnInfo(Player player)
     {
         if(roomManager == null)
         {            
             roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>();
         }
         PlayerNameText.text = photonView.Controller.NickName;
-        //playerImg.sprite = character.characterIcon;
         for (int i = 0; i < roomManager.playerSlots.Length; i++)
         {
             if (roomManager.playerSlots[i].playerPanel == null)
-            {
+            {                
                 roomManager.playerSlots[i].playerPanel = GetComponent<PlayerPanel>();
-                roomManager.playerSlots[i].actorNumber = photonView.Owner.ActorNumber;
+                roomManager.playerSlots[i].actorNumber = player.ActorNumber;
                 roomManager.roomUIManger.startBtn.onClick.AddListener(roomManager.playerSlots[i].playerPanel.StartBtnClickTrigger);
                 roomManager.playerSlots[i].isReady = false;
                 transform.SetParent(roomManager.playerSlots[i].transform);
@@ -63,6 +64,7 @@ public class PlayerPanel : MonoBehaviourPun
         GetComponent<RectTransform>().anchorMin = Vector3.zero;
         GetComponent<RectTransform>().anchorMax = Vector3.one;
         GetComponent<RectTransform>().localPosition = Vector3.zero;
+        
     }
     /// <summary>
     /// 스타트 버튼
@@ -87,7 +89,10 @@ public class PlayerPanel : MonoBehaviourPun
     {
         //부모객체에서 찾기
         Transform parentTransform = transform.parent;
-        RoomManager roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>();
+        if (roomManager == null)
+        {
+            roomManager = GameObject.Find("RoomManager").GetComponent<RoomManager>();
+        }
         if (parentTransform != null)
         {
             //부모의 컴포넌트 가져오기
@@ -108,5 +113,16 @@ public class PlayerPanel : MonoBehaviourPun
                 }
             }
         }
+    }
+    public void CharacterSelectBtn()
+    {
+        if( photonView.IsMine)
+        {
+            
+        }
+    }
+    public void CharacterSelect()
+    {
+
     }
 }

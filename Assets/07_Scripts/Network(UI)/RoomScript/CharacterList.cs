@@ -1,15 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
+using UnityEngine.UI;
 
 public class CharacterList : MonoBehaviour
 {
     public List<CharacterManager> characterManager;
+    public RawImage characterImage;
 
-    private int currentIndex = 0;    
+    private int currentIndex = 0;
     private void Start()
     {
         characterManager = new List<CharacterManager>();
