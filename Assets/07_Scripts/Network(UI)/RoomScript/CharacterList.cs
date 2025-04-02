@@ -2,34 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Photon.Pun;
 
-public class CharacterList : MonoBehaviourPun
+public class CharacterList : MonoBehaviour
 {
     public CharacterSo[] characters;
     public GameObject kartPrefab;
     public RawImage characterImage;
-    public Camera cam;
-    private PhotonView pv;
-    private int currentIndex = 0;
-    public TestCHMKart testCHMKart;
-
+    //public Camera cam;
+    public List<GameObject> characterListPrefab;
+    public int currentIndex = 0;
+    public Button characterSelectBtnButton;
     private void Awake()
     {
-        
-        pv = GetComponent<PhotonView>();
         characters = Resources.LoadAll<CharacterSo>("Character");
+        characterListPrefab = new List<GameObject>();
 
-        DefaultPool pool = PhotonNetwork.PrefabPool as DefaultPool;
-        if (pool != null)
-        {
-            //pool.ResourceCache.Add(kartPrefab.name, kartPrefab);
-            foreach (var character in characters)
-            {
-                pool.ResourceCache.Add(character.characterName, character.characterPrefab);
-            }
-        }
         SetCharacterResources();
+        SelectedCharacter(characterListPrefab[currentIndex]);
+        characterSelectBtnButton.onClick.AddListener(() =>
+        {
+            SelectedCharacter(characterListPrefab[currentIndex]);
+        });
     }
 
     public void SetCharacterResources()
@@ -40,21 +33,37 @@ public class CharacterList : MonoBehaviourPun
 
         foreach (var character in characters)
         {
-            var createCharacter = PhotonNetwork.Instantiate(character.characterName, Vector3.zero, Quaternion.Euler(-90, -90, 0));
+            var characterObj = Instantiate(character.characterPrefab, Vector3.zero, Quaternion.Euler(-90, -90, 0));
+            characterObj.gameObject.SetActive(false);
+            characterListPrefab.Add(characterObj);            
         }
-
+        characterListPrefab[currentIndex].gameObject.SetActive(true);
     }
 
-    //public void CharacterChangeNextBtn()
-    //{
-    //    characters[currentIndex].characterPrefab.gameObject.SetActive(false);
-    //    currentIndex = (currentIndex + 1) % characters.Length;
-    //    characters[currentIndex].characterPrefab.gameObject.SetActive(true);
-    //}
-    //public void PreviousCharacterBtn()
-    //{
-    //    characters[currentIndex].characterPrefab.gameObject.SetActive(false);
-    //    currentIndex = (currentIndex - 1 + characters.Length) % characters.Length; // 첫 번째
-    //    characters[currentIndex].characterPrefab.gameObject.SetActive(true);
-    //}
+    public void CharacterChangeNextBtn()
+    {
+        characterListPrefab[currentIndex].gameObject.SetActive(false);
+        currentIndex = (currentIndex + 1) % characterListPrefab.Count;
+        characterListPrefab[currentIndex].gameObject.SetActive(true);
+        characterSelectBtnButton.onClick.RemoveAllListeners();
+        characterSelectBtnButton.onClick.AddListener(() =>
+        {
+            SelectedCharacter(characterListPrefab[currentIndex]);
+        });
+    }
+    public void PreviousCharacterBtn()
+    {
+        characterListPrefab[currentIndex].gameObject.SetActive(false);
+        currentIndex = (currentIndex - 1 + characterListPrefab.Count) % characterListPrefab.Count;
+        characterListPrefab[currentIndex].gameObject.SetActive(true);
+        characterSelectBtnButton.onClick.RemoveAllListeners();
+        characterSelectBtnButton.onClick.AddListener(() =>
+        {
+            SelectedCharacter(characterListPrefab[currentIndex]);
+        });
+    }
+    public void SelectedCharacter(GameObject gameObject)
+    {
+        Debug.Log(gameObject.name + "선택한 오브젝트 이름");
+    }
 }

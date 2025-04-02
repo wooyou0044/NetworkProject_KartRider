@@ -401,12 +401,8 @@ MonoBehaviour:
   PlayerNameText: {fileID: 8147758119063562579}
   playerIcon: {fileID: 7201783258846162909}
   readyImage: {fileID: 584092730331894908}
-  myTaggedObjects: []
   roomManager: {fileID: 0}
   characterList: {fileID: 0}
-  rightBtn: {fileID: 0}
-  leftBtn: {fileID: 0}
-  characterSelectBtn: {fileID: 0}
 --- !u!1 &6715583621705140422
 GameObject:
   m_ObjectHideFlags: 0
