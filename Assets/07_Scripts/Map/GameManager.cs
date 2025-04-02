@@ -62,7 +62,11 @@ public class GameManager : MonoBehaviour
         DefaultPool pool = PhotonNetwork.PrefabPool as DefaultPool;
         if (pool != null)
         {
-            pool.ResourceCache.Add(kartPrefab.name, kartPrefab);
+            if (!pool.ResourceCache.ContainsKey(kartPrefab.name))
+            {
+                pool.ResourceCache.Add(kartPrefab.name, kartPrefab);
+            }
+
             foreach (var soCharacter in _characterSoArray)
             {
                 if (pool.ResourceCache.ContainsKey(soCharacter.characterName))
@@ -232,7 +236,10 @@ public class GameManager : MonoBehaviour
         float elapsedTime = timeUIController.GetElapsedTime();
         
         // 내 기록 저장
-        finishedPlayerTime.Add(kartPv.Owner, elapsedTime);        
+        if (!finishedPlayerTime.ContainsKey(kartPv.Owner))
+        {
+            finishedPlayerTime.Add(kartPv.Owner, elapsedTime);                    
+        }
         
         // Rank 매니저 나와 다른 사람들에게 업데이트, 내꺼는 미리 업데이트함
         rankManager.SetFinish(true);
