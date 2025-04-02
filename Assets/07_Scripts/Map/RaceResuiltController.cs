@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using Photon.Pun;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,19 +16,34 @@ public class RaceResultController : MonoBehaviour
     private MapManager _mapManager;
     private RankUIController _rankUIController;
 
+    private Dictionary<GameObject, RankUIComponent> _rankDict;
+
     private float _totalLength;
+    
+    // 실제 결승점 0,0,0 보다 트리거 영역이 넓어서 오차보정 값
+    private float _collisionDiffrence = 8f;
     
     public void Awake()
     {
         _gameManager = FindObjectOfType<GameManager>();
         _mapManager = FindObjectOfType<MapManager>();
         _rankUIController = _gameManager.rankUIController;
+
+        _rankDict = new Dictionary<GameObject, RankUIComponent>();
     }
 
     public void OnEnable()
     {
+        _totalLength = _mapManager.totalLap * _mapManager.dollyPath.PathLength - _collisionDiffrence;
         InitRankUI();
-        _totalLength = _mapManager.totalLap * _mapManager.dollyPath.PathLength;
+    }
+
+    public void OnDisable()
+    {
+        foreach (Transform child in gridRoot.transform)
+        {
+            Destroy(child.gameObject);
+        }
     }
 
     // 전체 유저의 랭크 UI 그려주기
@@ -36,27 +54,25 @@ public class RaceResultController : MonoBehaviour
         for (int i = 0; i < playersTr.childCount; i++)
         {;
             GameObject kart = _rankUIController.GetKartObjectByRank(i+1);
-            RankManager rankManager = kart.GetComponent<RankManager>();
-
-            string timeOrPosStr = "";
-            
-            if (rankManager.IsFinish())
-            {
-                timeOrPosStr = _gameManager.finishedPlayerTime[kart.GetPhotonView().Owner].ToString();                
-            }
-            else
-            {
-                timeOrPosStr = (_totalLength - rankManager.GetTotalPos()).ToString();
-            }
-            
             GameObject rankElement = Instantiate(raceResultPrefab, gridRoot.transform);
-            SetPlayerRankUI(rankElement, kart, timeOrPosStr);
+            RankUIComponent rankUIComponent = rankElement.GetComponent<RankUIComponent>();
+            SetPlayerRankUI(rankElement, kart);
+
+            // Player와 rankElement를 연결해주는 딕셔너리에 저장
+            if (!_rankDict.ContainsKey(kart))
+            {
+                _rankDict.Add(kart, rankUIComponent);
+            }
         }
 
-        StartCoroutine(RankUpdate());
+        for (int i = 0; i < playersTr.childCount; i++)
+        {
+            GameObject kart = playersTr.GetChild(i).GameObject();
+            StartCoroutine(RankElementUpdate(_rankDict[kart]));            
+        }
     }
 
-    private void SetPlayerRankUI(GameObject rankElement, GameObject kart, string timeOrPosStr)
+    private void SetPlayerRankUI(GameObject rankElement, GameObject kart)
     {
         RankUIComponent rankUIComponent = rankElement.GetComponent<RankUIComponent>();
         RankManager manager = kart.GetComponent<RankManager>();
@@ -80,40 +96,78 @@ public class RaceResultController : MonoBehaviour
 
         rankUIComponent.rankText.text = manager.GetRank().ToString();
         rankUIComponent.namePlate.text = pv.Owner.NickName;
-        rankUIComponent.timeOrPosText.text = timeOrPosStr;
+            
+        if (manager.IsFinish())
+        {
+            float finishedTime = _gameManager.finishedPlayerTime[kart.GetPhotonView().Owner];
+            TimeSpan timeSpan = TimeSpan.FromMilliseconds(finishedTime);
+            string finishedTimeStr = string.Format("{0:00}:{1:00}:{2:000}", timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
+            
+            rankUIComponent.timeOrPosText.color = Color.white;
+            rankUIComponent.timeOrPosText.text = finishedTimeStr;
+        }
+        else
+        {
+            string leftPos = " - " + Math.Floor(_totalLength - manager.GetTotalPos()) + " M";
+            rankUIComponent.timeOrPosText.color = Color.red;
+            rankUIComponent.timeOrPosText.text = leftPos;
+        }
+
+        rankUIComponent.RankManager = manager;
     }
     
     // 리타이어 될때까지 랭크 갱신
-    private IEnumerator RankUpdate()
+    private IEnumerator RankElementUpdate(RankUIComponent rankUIComponent)
     {
         while (_gameManager.retireCountDownSeconds > 0)
         {
-            yield return new WaitForSeconds(0.5f);            
-        }
-    }
-
-    // 랭크 UI 부드럽게 이동
-    private IEnumerator UpdateRankUI(RankUIComponent kartRank, int bfRank, int rank)
-    {
-        RectTransform rankElementTransform = kartRank.rectTransform;
-
-        float duration = 0.25f;
-        float elapsedTime = 0f;
-
-        Vector2 currentPos = GetRankElementPos(bfRank);
-        Vector2 toChangePos = GetRankElementPos(rank);        
-        
-        // Debug.Log("Player : " + kartRank.namePlate.text + "Rank :" + bfRank + " -> " + rank);
-        
-        while (elapsedTime < duration)
-        {
-            rankElementTransform.anchoredPosition = Vector2.Lerp(currentPos, toChangePos, elapsedTime / duration);
-            elapsedTime += Time.deltaTime;
+            UpdateRankUI(rankUIComponent);
             yield return new WaitForFixedUpdate();
         }
-        
-        rankElementTransform.anchoredPosition = toChangePos;
     }
+
+    // 랭크 UI 갱신
+    private void UpdateRankUI(RankUIComponent rankUIComponent)
+    {
+        RankManager manager = rankUIComponent.RankManager;
+        
+        if (rankUIComponent.RankManager.IsFinish())
+        {
+            return;
+        }
+
+        string leftPos = " - " + Math.Floor(_totalLength - manager.GetTotalPos()) + " M";
+        rankUIComponent.timeOrPosText.color = Color.red;
+        rankUIComponent.timeOrPosText.text = leftPos;
+    }
+
+    private void UpdateFinished(RankUIComponent rankUIComponent)
+    {
+        
+    }
+
+    // 순위 변경시 이동
+    // private IEnumerator MoveRankElement(RankUIComponent rankUIComponent)
+    // {
+    //     RectTransform rankElementTransform = rankUIComponent.rectTransform;
+    //     
+    //     float duration = 0.25f;
+    //     float elapsedTime = 0f;
+    //
+    //     Vector2 currentPos = GetRankElementPos(bfRank);
+    //     Vector2 toChangePos = GetRankElementPos(rank);        
+    //     
+    //     // Debug.Log("Player : " + rankUIComponent.namePlate.text + "Rank :" + bfRank + " -> " + rank);
+    //     
+    //     while (elapsedTime < duration)
+    //     {
+    //         rankElementTransform.anchoredPosition = Vector2.Lerp(currentPos, toChangePos, elapsedTime / duration);
+    //         elapsedTime += Time.deltaTime;
+    //         yield return new WaitForFixedUpdate();
+    //     }
+    //     
+    //     rankElementTransform.anchoredPosition = toChangePos;        
+    // }
     
     private Vector2 GetRankElementPos(int rank)
     {

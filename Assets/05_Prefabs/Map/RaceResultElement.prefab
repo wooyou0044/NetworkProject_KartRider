@@ -186,8 +186,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 350, y: 35}
+  m_AnchoredPosition: {x: 50, y: 0}
+  m_SizeDelta: {x: 300, y: 35}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &8640224848730500043
 CanvasRenderer:
@@ -265,8 +265,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 30, y: 0}
-  m_SizeDelta: {x: 30, y: -60}
+  m_AnchoredPosition: {x: 5, y: -5}
+  m_SizeDelta: {x: 50, y: -20}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &3338273194302099154
 CanvasRenderer:
@@ -451,7 +451,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 3aeaaf24f5dfe0a48a895e9422d721e5, type: 3}
+    m_Font: {fileID: 12800000, guid: 3c398974099defd498e46501b2a4532e, type: 3}
     m_FontSize: 25
     m_FontStyle: 0
     m_BestFit: 0
@@ -638,4 +638,5 @@ MonoBehaviour:
   rankText: {fileID: 7644446860015565077}
   namePlateBg: {fileID: 4376809667647957488}
   namePlate: {fileID: 52894899560535131}
+  timeOrPosText: {fileID: 8767660938257586450}
   Icon: {fileID: 6957980118044601755}

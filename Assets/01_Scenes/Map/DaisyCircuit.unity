@@ -2380,7 +2380,7 @@ MonoBehaviour:
   kartPrefab: {fileID: 6750277665416376479, guid: b1aff00853afc7641ae0d58aebea703b, type: 3}
   characterSo: {fileID: 11400000, guid: eae26d33f65aa4ab9aca6616671e50b3, type: 2}
   startCountDownSeconds: 3
-  retireCountDownSeconds: 10
+  retireCountDownSeconds: 50
   kartCtrl: {fileID: 0}
 --- !u!114 &880665176
 MonoBehaviour:

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Cinemachine;
 using Photon.Pun;
 using Photon.Realtime;
+using TMPro;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -43,18 +44,17 @@ public class GameManager : MonoBehaviour
     
     // 방장이 가지고 있는 준비된 참가자들 리스트
     private List<Player> _readyPlayers;
-    
     // 결과창 위한 플레이어 리스트 & 딕셔너리
-    public List<Player> finishedPlayerRanks;
     public Dictionary<Player, float> finishedPlayerTime;
+
+    private Coroutine retireCorutine;
     
     private void Awake()
     {
         _readyPlayers = new List<Player>();
         _characterSoArray = Resources.LoadAll<CharacterSo>("Character");
         _gameManagerView = GetComponent<PhotonView>();
-
-        finishedPlayerRanks = new List<Player>();
+        
         finishedPlayerTime = new Dictionary<Player, float>();
     }
     
@@ -171,11 +171,14 @@ public class GameManager : MonoBehaviour
         if (_winner == null)
         {
             _winner = player;
-            StartCoroutine(RetireCountDown());
+            retireCorutine = StartCoroutine(RetireCountDown());
         }
-        
-        finishedPlayerRanks.Add(player);
-        finishedPlayerTime.Add(player, elapsedTime);
+
+        // 다른 사람들거 추가로 저장
+        if (!PhotonNetwork.LocalPlayer.Equals(player))
+        {
+            finishedPlayerTime.Add(player, elapsedTime);
+        }
     }
 
     public IEnumerator RetireCountDown()
@@ -202,15 +205,20 @@ public class GameManager : MonoBehaviour
     // 들어왔을떄 전달
     public void OnFinished()
     {
+        RankManager rankManager = kartCtrl.gameObject.GetComponent<RankManager>();
+        PhotonView kartPv = kartCtrl.gameObject.GetPhotonView();
+        
         timeUIController.StopTimer();
         float elapsedTime = timeUIController.GetElapsedTime();
         
-        if (_winner == null)
-        {
-            _winner = PhotonNetwork.LocalPlayer;
-            _gameManagerView.RPC("OnSomePlayerFinish", RpcTarget.AllViaServer, _winner, elapsedTime);
-        }
-
+        // 내 기록 저장
+        finishedPlayerTime.Add(kartPv.Owner, elapsedTime);        
+        
+        // Rank 매니저 나와 다른 사람들에게 업데이트, 내꺼는 미리 업데이트함
+        rankManager.SetFinish(true);
+        kartPv.RPC("SetFinish", RpcTarget.Others, true);
+        _gameManagerView.RPC("OnSomePlayerFinish", RpcTarget.AllViaServer, PhotonNetwork.LocalPlayer, elapsedTime);
+        
         TurnOffInGameUI();
         ShowFinalResult();
     }
@@ -221,8 +229,6 @@ public class GameManager : MonoBehaviour
         inventoryUI.gameObject.SetActive(false);
         mnMapController.gameObject.SetActive(false);
         rankUIController.gridRoot.gameObject.SetActive(false);
-        
-        StartCoroutine(RetireCountDown());
     }
     
     public void ShowFinalResult()
