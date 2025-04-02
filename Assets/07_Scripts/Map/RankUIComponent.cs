@@ -17,7 +17,8 @@ public class RankUIComponent : MonoBehaviour
     [Header("플레이어 이름 표시")] 
     public Image namePlateBg;
     public Text namePlate;
-
+    public Text timeOrPosText;
+    
     [Header("캐릭터 아이콘 표시")]
     public Image Icon;
 

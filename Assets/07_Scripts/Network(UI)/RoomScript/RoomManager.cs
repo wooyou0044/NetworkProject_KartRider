@@ -168,7 +168,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            if (PhotonNetwork.CurrentRoom.PlayerCount < 2)
+            if (PhotonNetwork.CurrentRoom.PlayerCount < 0)
             {
                 if (!isCorRunning)
                 {

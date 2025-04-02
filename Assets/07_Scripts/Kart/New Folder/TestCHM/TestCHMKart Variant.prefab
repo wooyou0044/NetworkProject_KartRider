@@ -108,6 +108,18 @@ PrefabInstance:
       propertyPath: m_ExcludeLayers.m_Bits
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1825449415365886185, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: m_Color.b
+      value: 0.9019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 1825449415365886185, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 1825449415365886185, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: m_Color.r
+      value: 0.9019608
+      objectReference: {fileID: 0}
     - target: {fileID: 2057374414605327396, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
