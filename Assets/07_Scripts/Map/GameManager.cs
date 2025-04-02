@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using Cinemachine;
 using Photon.Pun;
 using Photon.Realtime;
@@ -34,6 +35,7 @@ public class GameManager : MonoBehaviour
     [Header("게임 진행과 관련한 변수")]
     public int startCountDownSeconds = 3;
     public int retireCountDownSeconds = 10;
+    public int backToRoomCountDownSeconds = 3;
     
     private PhotonView _gameManagerView;
     private Player _winner;
@@ -47,7 +49,7 @@ public class GameManager : MonoBehaviour
     // 결과창 위한 플레이어 리스트 & 딕셔너리
     public Dictionary<Player, float> finishedPlayerTime;
 
-    private Coroutine retireCorutine;
+    private Coroutine retireCountDown;
     
     private void Awake()
     {
@@ -171,13 +173,14 @@ public class GameManager : MonoBehaviour
         if (_winner == null)
         {
             _winner = player;
-            retireCorutine = StartCoroutine(RetireCountDown());
+            retireCountDown = StartCoroutine(RetireCountDown());
         }
 
         // 다른 사람들거 추가로 저장
         if (!PhotonNetwork.LocalPlayer.Equals(player))
         {
             finishedPlayerTime.Add(player, elapsedTime);
+            raceResultController.UpdateFinished(player);
         }
     }
 
@@ -196,10 +199,25 @@ public class GameManager : MonoBehaviour
             timeUIController.StopTimer();
             mainTextController.SetColor(Color.white);
             mainTextController.mainText.alignment = TextAnchor.MiddleLeft;
-            mainTextController.ShowMainText("RETIRE..");
+            mainTextController.ShowMainText("RETIRE");
         }
-        
+
+        TurnOffMyKartControl();
         ShowFinalResult();
+        
+        // ToDo 방으로 돌아가기
+        while (backToRoomCountDownSeconds > 0)
+        {
+            string defaultTxt = "게임 완료, 방으로 돌아갑니다.. ";
+            raceResultController.backToRoomText.text = defaultTxt + backToRoomCountDownSeconds;
+            backToRoomCountDownSeconds--;
+            yield return new WaitForSeconds(1f);
+        }
+
+        if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+        {
+            PhotonNetwork.LoadLevel("RoomScene");            
+        }
     }
 
     // 들어왔을떄 전달
@@ -220,6 +238,7 @@ public class GameManager : MonoBehaviour
         _gameManagerView.RPC("OnSomePlayerFinish", RpcTarget.AllViaServer, PhotonNetwork.LocalPlayer, elapsedTime);
         
         TurnOffInGameUI();
+        TurnOffMyKartControl();
         ShowFinalResult();
     }
 
@@ -234,5 +253,13 @@ public class GameManager : MonoBehaviour
     public void ShowFinalResult()
     {
         raceResultController.gameObject.SetActive(true);
+        PhotonNetwork.LoadLevel("RoomScene");
+    }
+
+    // 조작 안되게 하고 더 할 처리 필요한것 있는지 확인
+    public void TurnOffMyKartControl()
+    {
+        kartCtrl.isRacingStart = false;
+        StartCoroutine(kartCtrl.DecelerateOverTime(1f));                
     }
 }

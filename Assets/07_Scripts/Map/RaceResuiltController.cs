@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
+using Photon.Realtime;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +12,7 @@ public class RaceResultController : MonoBehaviour
     public GameObject raceResultPrefab;
     public GameObject playersObject;
     public GridLayoutGroup gridRoot;
+    public Text backToRoomText;
     
     private GameManager _gameManager;
     private MapManager _mapManager;
@@ -135,15 +137,43 @@ public class RaceResultController : MonoBehaviour
         {
             return;
         }
-
+        
         string leftPos = " - " + Math.Floor(_totalLength - manager.GetTotalPos()) + " M";
         rankUIComponent.timeOrPosText.color = Color.red;
         rankUIComponent.timeOrPosText.text = leftPos;
     }
 
-    private void UpdateFinished(RankUIComponent rankUIComponent)
+    public void UpdateFinished(Player player)
     {
+        Transform playersTr = playersObject.transform;
+        GameObject targetKart = null;
         
+        for (int i = 0; i < playersTr.childCount; i++)
+        {
+            Player kartPlayer = playersTr.GetChild(i).gameObject.GetPhotonView().Owner;
+
+            if (player.Equals(kartPlayer))
+            {
+                targetKart = playersTr.GetChild(i).gameObject;
+                break;
+            }
+        }
+
+        if (targetKart == null)
+        {
+            Debug.LogError("타겟이 없습니다~~~~ 에러 발생~~~~");
+            return;
+        }
+        
+        RankUIComponent rankUIComponent  = _rankDict[targetKart];
+        RankManager manager = rankUIComponent.RankManager;
+        
+        float finishedTime = _gameManager.finishedPlayerTime[player];
+        TimeSpan timeSpan = TimeSpan.FromMilliseconds(finishedTime);
+        string finishedTimeStr = string.Format("{0:00}:{1:00}:{2:000}", timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
+        
+        rankUIComponent.timeOrPosText.color = Color.white;
+        rankUIComponent.timeOrPosText.text = finishedTimeStr;
     }
 
     // 순위 변경시 이동
