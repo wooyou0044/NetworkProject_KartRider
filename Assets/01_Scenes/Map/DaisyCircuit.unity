@@ -2379,7 +2379,7 @@ MonoBehaviour:
   mnMapController: {fileID: 500467822}
   rankUIController: {fileID: 730230611}
   mapManager: {fileID: 1236464623}
-  raceResultController: {fileID: 0}
+  raceResultController: {fileID: 528795426}
   kartPrefab: {fileID: 6750277665416376479, guid: b1aff00853afc7641ae0d58aebea703b, type: 3}
   characterSo: {fileID: 11400000, guid: eae26d33f65aa4ab9aca6616671e50b3, type: 2}
   startCountDownSeconds: 3
