@@ -14,6 +14,9 @@ public partial class TestCHMKart : MonoBehaviour
     [SerializeField] float shieldDuration;
     [SerializeField] float exitWaterFlyTime;
     [SerializeField] GameObject waterBombParticle;
+    [SerializeField] AudioClip waterFlyWarningSound;
+    [SerializeField] AudioClip stuckInWaterFlySound;
+    [SerializeField] AudioClip barricadeDownSound;
 
     GameObject damage;
 
@@ -108,7 +111,7 @@ public partial class TestCHMKart : MonoBehaviour
             case ItemType.waterFly:
                 // 임시로
                 //StuckInWaterFly();
-                itemNetCtrl.RequestWaterFly(_photonView.ViewID, rankManager.GetRank(), exitWaterFlyTime);
+                itemNetCtrl.RequestWaterFly(_photonView.ViewID, rankManager.GetRank());
                 break;
         }
     }
@@ -245,6 +248,8 @@ public partial class TestCHMKart : MonoBehaviour
         }
 
         itemNetCtrl.MakeBarricadeSink(barricadePrefab[0].GetComponent<BarricadeController>().destoryTime);
+
+        audioSource.PlayOneShot(barricadeDownSound);
     }
 
     [PunRPC]
@@ -283,6 +288,8 @@ public partial class TestCHMKart : MonoBehaviour
         transform.localPosition = Vector3.zero;
         rigid.isKinematic = true;
         isRacingStart = false;
+
+        audioSource.PlayOneShot(stuckInWaterFlySound);
     }
 
     [PunRPC]
@@ -304,6 +311,28 @@ public partial class TestCHMKart : MonoBehaviour
         itemNetCtrl.RequestDisableItem(waterFlyObject);
 
         waterFlyObject = null;
+
+        audioSource.Stop();
+    }
+
+    [PunRPC]
+    void ActiveWaterFlyUI()
+    {
+        waterFlyCtrl.gameObject.SetActive(true);
+        waterFlyCtrl.getExitPhotonViewID = _photonView.ViewID;
+        waterFlyCtrl.ResetTimer();
+    }
+
+    [PunRPC]
+    void InActiveInWaterFlyUI()
+    {
+        waterFlyCtrl.gameObject.SetActive(false);
+    }
+
+    [PunRPC]
+    void PlayWaterFlyWaringSound()
+    {
+        audioSource.PlayOneShot(waterFlyWarningSound);
     }
 
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

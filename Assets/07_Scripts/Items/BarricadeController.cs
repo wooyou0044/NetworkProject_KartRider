@@ -43,6 +43,11 @@ public class BarricadeController : MonoBehaviour
         col.isTrigger = true;
     }
 
+    public void TurnOnIsTrigger()
+    {
+        col.isTrigger = true;
+    }
+
     void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.CompareTag("Wall"))

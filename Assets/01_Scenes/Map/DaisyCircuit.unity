@@ -2187,7 +2187,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rankCtrl: {fileID: 730230611}
-  mapManager: {fileID: 1236464623}
+  waterFlyCtrl: {fileID: 1136275564}
 --- !u!1 &880665173
 GameObject:
   m_ObjectHideFlags: 0
@@ -5983,6 +5983,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1814992196}
     m_Modifications:
+    - target: {fileID: 2296835433772533066, guid: b39f8f7bf423d3d42b18990cf36eb614, type: 3}
+      propertyPath: itemNetCtrl
+      value: 
+      objectReference: {fileID: 836991806}
     - target: {fileID: 3403721863966997486, guid: b39f8f7bf423d3d42b18990cf36eb614, type: 3}
       propertyPath: m_Name
       value: WaterFlyPanel

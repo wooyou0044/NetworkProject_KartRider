@@ -169,6 +169,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3223031359271505891, guid: 155410a7086d1d34ca48c448dfc33156, type: 3}
     - target: {fileID: 2115428642982953309, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: barricadeDownSound
+      value: 
+      objectReference: {fileID: 8300000, guid: c7d79950547809f42983c235f1c6715a, type: 3}
+    - target: {fileID: 2115428642982953309, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: maxSteerMultiplier
       value: 10
       objectReference: {fileID: 0}
@@ -180,6 +184,14 @@ PrefabInstance:
       propertyPath: momentboostDuration
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 2115428642982953309, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: stuckInWaterFlySound
+      value: 
+      objectReference: {fileID: 8300000, guid: 760dd31218f2bea40a5bd58babfe8190, type: 3}
+    - target: {fileID: 2115428642982953309, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
+      propertyPath: waterFlyWarningSound
+      value: 
+      objectReference: {fileID: 8300000, guid: fecb09269e285f54f854baba067a155e, type: 3}
     - target: {fileID: 2115428642982953309, guid: 0dd498c7409496045bca31c055cf62d2, type: 3}
       propertyPath: maxDriftForceMultiplier
       value: 300
