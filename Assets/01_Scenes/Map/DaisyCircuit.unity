@@ -2270,7 +2270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d2d3020ebef3477190c96b78fb71182, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  totalLap: 1
+  totalLap: 3
   startPos:
   - {fileID: 1244250876}
   - {fileID: 498531552}
