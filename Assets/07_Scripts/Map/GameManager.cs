@@ -4,6 +4,7 @@ using Cinemachine;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -33,7 +34,7 @@ public class GameManager : MonoBehaviour
     [Header("게임 진행과 관련한 변수")]
     public int startCountDownSeconds = 3;
     public int retireCountDownSeconds = 10;
-    public int backToRoomCountDownSeconds = 3;
+    public int backToRoomCountDownSeconds = 5;
     
     private Player _winner;
 
@@ -210,20 +211,7 @@ public class GameManager : MonoBehaviour
 
         TurnOffMyKartControl();
         ShowFinalResult();
-        
-        // ToDo 방으로 돌아가기
-        while (backToRoomCountDownSeconds > 0)
-        {
-            string defaultTxt = "게임 완료, 방으로 돌아갑니다.. ";
-            raceResultController.backToRoomText.text = defaultTxt + backToRoomCountDownSeconds;
-            backToRoomCountDownSeconds--;
-            yield return new WaitForSeconds(1f);
-        }
-
-        if (PhotonNetwork.LocalPlayer.Equals(PhotonNetwork.MasterClient))
-        {
-            PhotonNetwork.LoadLevel("RoomScene");            
-        }
+        StartCoroutine(MoveToRoom());
     }
 
     // 들어왔을떄 전달
@@ -270,5 +258,29 @@ public class GameManager : MonoBehaviour
         kartCtrl.isRacingStart = false;
         StartCoroutine(kartCtrl.DecelerateOverTime(1f));
         kartCtrl.camerCtrl.ActivateFinishCamera();
-    }    
+    }
+
+    IEnumerator MoveToRoom()
+    {
+        while (backToRoomCountDownSeconds > 0)
+        {
+            string defaultTxt = "게임 완료, 방으로 돌아갑니다.. ";
+            raceResultController.backToRoomText.text = defaultTxt + backToRoomCountDownSeconds;
+            backToRoomCountDownSeconds--;
+            yield return new WaitForSeconds(1f);
+        }
+
+        string sceneName = "RoomScene";
+        Scene scene = SceneManager.GetSceneByName(sceneName);
+
+        if (!scene.IsValid())
+        {
+            PhotonNetwork.LoadLevel(MapEnum.DaisyCircuit.ToString());
+        }
+        
+        if (scene.IsValid() && PhotonNetwork.LocalPlayer.Equals(PhotonNetwork.MasterClient))
+        {
+            PhotonNetwork.LoadLevel(sceneName);
+        }
+    }
 }

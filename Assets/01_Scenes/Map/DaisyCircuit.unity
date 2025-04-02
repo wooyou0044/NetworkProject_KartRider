@@ -1756,7 +1756,7 @@ MonoBehaviour:
   characterSo: {fileID: 11400000, guid: 4cfb9d39133d34d01a0c012d58c6fafd, type: 2}
   startCountDownSeconds: 3
   retireCountDownSeconds: 10
-  backToRoomCountDownSeconds: 3
+  backToRoomCountDownSeconds: 5
   kartCtrl: {fileID: 0}
 --- !u!114 &880665176
 MonoBehaviour:
@@ -2357,7 +2357,7 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 12800000, guid: 3c398974099defd498e46501b2a4532e, type: 3}
     m_FontSize: 30
-    m_FontStyle: 0
+    m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 3
     m_MaxSize: 40

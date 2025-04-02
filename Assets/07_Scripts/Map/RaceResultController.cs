@@ -141,6 +141,12 @@ public class RaceResultController : MonoBehaviour
         string leftPos = " - " + Math.Floor(_totalLength - manager.GetTotalPos()) + " M";
         rankUIComponent.timeOrPosText.color = Color.red;
         rankUIComponent.timeOrPosText.text = leftPos;
+        rankUIComponent.rankText.text = manager.GetRank().ToString();
+
+        if (manager.GetBfRank() != manager.GetRank())
+        {
+            StartCoroutine(MoveRankElement(rankUIComponent));
+        }
     }
 
     public void UpdateFinished(Player player)
@@ -174,30 +180,37 @@ public class RaceResultController : MonoBehaviour
         
         rankUIComponent.timeOrPosText.color = Color.white;
         rankUIComponent.timeOrPosText.text = finishedTimeStr;
+        rankUIComponent.rankText.text = manager.GetRank().ToString();
+
+        if (manager.GetBfRank() != manager.GetRank())
+        {
+            StartCoroutine(MoveRankElement(rankUIComponent));
+        }        
     }
 
     // 순위 변경시 이동
-    // private IEnumerator MoveRankElement(RankUIComponent rankUIComponent)
-    // {
-    //     RectTransform rankElementTransform = rankUIComponent.rectTransform;
-    //     
-    //     float duration = 0.25f;
-    //     float elapsedTime = 0f;
-    //
-    //     Vector2 currentPos = GetRankElementPos(bfRank);
-    //     Vector2 toChangePos = GetRankElementPos(rank);        
-    //     
-    //     // Debug.Log("Player : " + rankUIComponent.namePlate.text + "Rank :" + bfRank + " -> " + rank);
-    //     
-    //     while (elapsedTime < duration)
-    //     {
-    //         rankElementTransform.anchoredPosition = Vector2.Lerp(currentPos, toChangePos, elapsedTime / duration);
-    //         elapsedTime += Time.deltaTime;
-    //         yield return new WaitForFixedUpdate();
-    //     }
-    //     
-    //     rankElementTransform.anchoredPosition = toChangePos;        
-    // }
+    private IEnumerator MoveRankElement(RankUIComponent rankUIComponent)
+    {
+        RectTransform rankElementTransform = rankUIComponent.rectTransform;
+        RankManager manager = rankUIComponent.RankManager;
+        
+        float duration = 0.25f;
+        float elapsedTime = 0f;
+    
+        Vector2 currentPos = GetRankElementPos(manager.GetBfRank());
+        Vector2 toChangePos = GetRankElementPos(manager.GetRank());        
+        
+        // Debug.Log("Player : " + rankUIComponent.namePlate.text + "Rank :" + bfRank + " -> " + rank);
+        
+        while (elapsedTime < duration)
+        {
+            rankElementTransform.anchoredPosition = Vector2.Lerp(currentPos, toChangePos, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+        
+        rankElementTransform.anchoredPosition = toChangePos;        
+    }
     
     private Vector2 GetRankElementPos(int rank)
     {
