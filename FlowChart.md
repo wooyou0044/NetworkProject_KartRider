@@ -128,12 +128,16 @@ User4GameManager --> 게임종료
 ```mermaid
 flowchart LR
 
-User1
+subgraph User1["User 1"]
+User1ItemManager("**ItemMng1**<br>PhotonView")
+end
+
 User2
 
 subgraph User3["User 3"]
 User3Kart("**Kart3**<br>PhotonView<br>Transform<br>Rigidbody")
-User3ItemManager("**ItemMng1**<br>PhotonView")
+User3ItemManager("**ItemMng3**<br>PhotonView")
+User3SoundManager
 end
 
 subgraph User4["User 4"]
@@ -143,10 +147,12 @@ end
 
 User4ItemManager -- 3등이 누구야? --> User4RankManager
 User4RankManager -- 유저 3번 이야 --> User4ItemManager
-User4 -- 3번한테 물파리 날려라 --> Server(("Pun2 Server"))
-Server -- 물파리 맞으세요 --> User3ItemManager
-User3ItemManager -- 쉴드 있음? --> User3Kart
-User3Kart -- 쉴드 없음, 나 맞았다? --> Server
+User4 -- 방장한테 3번에<br>물파리 날리라고해 --> Server(("Pun2 Server"))
+Server -- 3번한테 쏘랍니다 --> User1ItemManager
+User1ItemManager -- 묿파리 받아라<br>소리도 재생해 --> User3ItemManager
+User3ItemManager -- 2초후, 쉴드 있음? --> User3Kart
+User3ItemManager -- 물파리 사운드 재생 --> User3SoundManager
+User3Kart -- 쉴드 없음<br>나 맞았다? --> Server
 Server -- 3번 물파리 맞았대 --> User1
 Server -- 3번 물파리 맞았대 --> User2
 Server -- 3번 물파리 맞았대 --> User4
