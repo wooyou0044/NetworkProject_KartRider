@@ -48,18 +48,23 @@ public class GameManager : MonoBehaviour
     public Dictionary<Player, float> finishedPlayerTime;
 
     private Coroutine retireCountDown;
+    private CharacterSo _selectedChar;
     
     private void Awake()
     {
         _readyPlayers = new List<Player>();
         _characterSoArray = Resources.LoadAll<CharacterSo>("Character");
-        
         finishedPlayerTime = new Dictionary<Player, float>();
     }
     
     private void Start()
     {
-        // ToDo 실제 네트워크 연결하면 네트워크 상 캐릭터, 카트 정보로 바꿀 것
+        if (SceneCont.Instance != null)
+        {
+            _selectedChar = SceneCont.Instance.SelectedCharacter;
+            characterSo = _selectedChar;
+        }
+
         DefaultPool pool = PhotonNetwork.PrefabPool as DefaultPool;
         if (pool != null)
         {
@@ -92,7 +97,7 @@ public class GameManager : MonoBehaviour
         kartCtrl = kart.GetComponent<TestCHMKart>();
         TestCHMCamer cameraCtrl = virtualCamera.GetComponent<TestCHMCamer>();
         kartCtrl.camerCtrl = cameraCtrl;
-        //PhotonNetwork.Instantiate(characterPrefab.name, Vector3.zero, Quaternion.identity);
+        // 캐릭터 세팅
         GameObject playerChar = PhotonNetwork.Instantiate(characterSo.characterName, Vector3.zero, Quaternion.identity);
         kartCtrl.playerCharAni = playerChar.GetComponent<Animator>();
         StartCoroutine(PlaceToMap(kart));
@@ -262,6 +267,9 @@ public class GameManager : MonoBehaviour
 
     IEnumerator MoveToRoom()
     {
+        string sceneName = "RoomScene";
+        Scene scene = SceneManager.GetSceneByName(sceneName);
+        
         while (backToRoomCountDownSeconds > 0)
         {
             string defaultTxt = "게임 완료, 방으로 돌아갑니다.. ";
@@ -269,9 +277,6 @@ public class GameManager : MonoBehaviour
             backToRoomCountDownSeconds--;
             yield return new WaitForSeconds(1f);
         }
-
-        string sceneName = "RoomScene";
-        Scene scene = SceneManager.GetSceneByName(sceneName);
 
         if (!scene.IsValid())
         {

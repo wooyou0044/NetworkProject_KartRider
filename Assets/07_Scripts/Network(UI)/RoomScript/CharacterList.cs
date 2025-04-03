@@ -49,6 +49,10 @@ public class CharacterList : MonoBehaviour
     }
     public CharacterSo SelectedCharacter()
     {
+        if (SceneCont.Instance != null)
+        {
+            SceneCont.Instance.SelectedCharacter = characters[currentIndex];
+        }
         Debug.Log(characterListPrefab[currentIndex].gameObject.name + "선택한 오브젝트 이름");
         return characters[currentIndex];
     }
