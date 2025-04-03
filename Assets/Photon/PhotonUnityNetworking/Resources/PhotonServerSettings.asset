@@ -55,6 +55,10 @@ MonoBehaviour:
   - RequestExitWaterFly
   - SetShieldState
   - RemoveItemBox
+  - SetCharacterResources
+  - PlayerCharacterLoad
+  - CharacterSelect
+  - GameObjSelect
   - SetFinish
   - OnSomePlayerFinished
   DisableAutoOpenWizard: 1

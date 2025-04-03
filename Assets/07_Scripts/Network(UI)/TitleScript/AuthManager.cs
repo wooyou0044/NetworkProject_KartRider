@@ -5,14 +5,14 @@ using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
 using System;
+using System.Linq;
 
 public class AuthManager : MonoBehaviour
 {
     public TitleUI titleUI;
     public ServerConnect serverCon;
-
-    //시작과 동시에 파이어베이스의 어스의 정보와 데이터베이스 정보를
-    //만든 게임서버 파이어베이스 정보와 연결함
+    private WaitForSeconds wait = new WaitForSeconds(1f);
+    //시작과 동시에 파이어베이스의 어스의 정보와 데이터베이스 정보를 만든 게임서버 파이어베이스 정보와 연결함
     private void Awake()
     {
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
@@ -22,6 +22,7 @@ public class AuthManager : MonoBehaviour
             {
                 FirebaseDBManager.Instance.Auth = FirebaseAuth.DefaultInstance;
                 FirebaseDBManager.Instance.DbRef = FirebaseDatabase.DefaultInstance.RootReference;
+
             }
             else
             {
@@ -135,9 +136,12 @@ public class AuthManager : MonoBehaviour
     }
     IEnumerator PostLogin(FirebaseUser user)
     {
-        //로그인 성공 후 닉네임 확인, 닉네임이 없다면 생성될 때 까지 대기        
         titleUI.ResetField(titleUI.loginEmailField, titleUI.loginpasswordField);
-        titleUI.ToggleCreateNickNamePanel(true);
+        //로그인 성공 후 닉네임 확인, 닉네임이 없다면 생성될 때 까지 대기        
+        if (string.IsNullOrEmpty(user.DisplayName))
+        {
+            titleUI.ToggleCreateNickNamePanel(true);
+        }
         yield return new WaitUntil(predicate: () => !string.IsNullOrEmpty(user.DisplayName));
         titleUI.ToggleCreateNickNamePanel(false);//닉네임이 있다면 통과
         titleUI.ShowMessage(titleUI.successMessage, "로그인 성공!", true);
@@ -233,6 +237,7 @@ public class AuthManager : MonoBehaviour
         /// <remarks>
         /// - users/UserId/UserNickName 경로로 이동
         /// - 해당 경로의 "UserNickName" 필드에 닉네임 값을 저장
+        
         /// - SetValueAsync() 메서드를 호출하여 데이터를 비동기로 저장하고 저장이 완료 되면 Task로 반환
         /// </remarks>
         /// <param name="nickName"> 저장할 닉네임 </param>            
@@ -345,31 +350,45 @@ public class AuthManager : MonoBehaviour
         var setPrfileTask = FirebaseDBManager.Instance.DbRef.Child("users")
             .Child(FirebaseDBManager.Instance.User.UserId).Child("isLoggedIn")
             .SetValueAsync(false);
-        
         float timer = 5f;
         float elapsedTime = 0;
         bool toggle = true;
-        WaitForSeconds wait = new WaitForSeconds(1f);
         while (!setPrfileTask.IsCompleted)
         {            
             elapsedTime += 1f;
             if (elapsedTime >= timer)
             {
-                titleUI.ShowMessage(titleUI.errorMessage, "유저 데이터 생성 실패 관리자에게 문의하세요.", true);
-                yield break;
+                break;
             }
             string message = toggle ? "계정 생성중." : "계정 생성중..";
             titleUI.ShowMessage(titleUI.successMessage, message, true);
             toggle = !toggle;
-            yield return wait;            
+            yield return wait;
         }
-        yield return new WaitUntil(() => setPrfileTask.IsCompleted);
         if(setPrfileTask.Exception != null)
         {
             titleUI.ShowMessage(titleUI.errorMessage, "유저 데이터 생성 실패 관리자에게 문의하세요.", true);
             yield return new WaitForSeconds(2);
+            titleUI.InitializeLogin();
             yield break;
         }
+
+        //리소스폴더에 있는 캐릭터들의 이름을 파이어베이스의 데이터 베이스에 저장함
+        //List<CharacterSo> characters = Resources.LoadAll<CharacterSo>("Character").ToList();
+        //List<string> jsonList = characters.Select(p => p.characterName).ToList();
+                
+        //var saveTask = FirebaseDBManager.Instance.DbRef.Child("users")
+        //    .Child(FirebaseDBManager.Instance.User.UserId)
+        //    .Child("CharacterList")
+        //    .SetValueAsync(jsonList);
+        //yield return new WaitUntil(() => saveTask.IsCompleted);
+        //if (!saveTask.IsCompleted)
+        //{            
+        //    titleUI.ShowMessage(titleUI.errorMessage, "초기 캐릭터 리스트 저장 실패!관리자에게 문의하세요.", true);
+        //    yield return new WaitForSeconds(2);
+        //    yield break;
+        //}
+        //Debug.Log("초기 캐릭터 셋팅 완료");
         titleUI.ToggleSignUpPanel(false);
         //회원가입 완료 메세지
         titleUI.ShowMessage(titleUI.successMessage, "회원가입 완료!", true);
