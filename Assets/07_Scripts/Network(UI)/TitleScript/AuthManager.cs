@@ -11,6 +11,7 @@ public class AuthManager : MonoBehaviour
 {
     public TitleUI titleUI;
     public ServerConnect serverCon;
+    private WaitForSeconds wait = new WaitForSeconds(1f);
     //시작과 동시에 파이어베이스의 어스의 정보와 데이터베이스 정보를 만든 게임서버 파이어베이스 정보와 연결함
     private void Awake()
     {
@@ -236,6 +237,7 @@ public class AuthManager : MonoBehaviour
         /// <remarks>
         /// - users/UserId/UserNickName 경로로 이동
         /// - 해당 경로의 "UserNickName" 필드에 닉네임 값을 저장
+        
         /// - SetValueAsync() 메서드를 호출하여 데이터를 비동기로 저장하고 저장이 완료 되면 Task로 반환
         /// </remarks>
         /// <param name="nickName"> 저장할 닉네임 </param>            
@@ -351,7 +353,6 @@ public class AuthManager : MonoBehaviour
         float timer = 5f;
         float elapsedTime = 0;
         bool toggle = true;
-        WaitForSeconds wait = new WaitForSeconds(1f);
         while (!setPrfileTask.IsCompleted)
         {            
             elapsedTime += 1f;

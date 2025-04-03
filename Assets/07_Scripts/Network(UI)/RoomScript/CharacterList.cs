@@ -1,47 +1,56 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CharacterList : MonoBehaviour
 {
-    public List<CharacterManager> characterManager;
+    public CharacterSo[] characters;
+    public GameObject kartPrefab;
     public RawImage characterImage;
-
-    private int currentIndex = 0;
-    private void Start()
+    
+    public List<GameObject> characterListPrefab;
+    public int currentIndex = 0;
+    private void Awake()
     {
-        characterManager = new List<CharacterManager>();
+        characters = Resources.LoadAll<CharacterSo>("Character");
+        characterListPrefab = new List<GameObject>();
+
         SetCharacterResources();
+        
     }
+
     public void SetCharacterResources()
     {
-        List<CharacterSo> characters = Resources.LoadAll<CharacterSo>("Character").ToList();
+        //GameObject kart = PhotonNetwork.Instantiate(kartPrefab.name, Vector3.zero, Quaternion.identity);
+        // kart에 붙어 있는 Controller 가져오기
+        //testCHMKart = kart.GetComponent<TestCHMKart>();
 
-        for (int i = 0; i < characters.Count; i++)
+        foreach (var character in characters)
         {
-            var createCharacter = Instantiate(characters[i].characterPrefab, Vector3.zero, Quaternion.Euler(-90, -90, 0));
-            characterManager.Add(createCharacter.GetComponent<CharacterManager>());
-            createCharacter.gameObject.SetActive(false);
+            var characterObj = Instantiate(character.characterPrefab, Vector3.zero, Quaternion.Euler(-90, -90, 0));
+            characterObj.gameObject.SetActive(false);
+            characterListPrefab.Add(characterObj);            
         }
-        characterManager[3].transform.rotation = Quaternion.Euler(0, 0, 0);
-        characterManager[currentIndex].gameObject.SetActive(true);
+        characterListPrefab[currentIndex].gameObject.SetActive(true);
     }
+
     public void CharacterChangeNextBtn()
     {
-
-        characterManager[currentIndex].gameObject.SetActive(false);
-        currentIndex = (currentIndex + 1) % characterManager.Count;
-        characterManager[currentIndex].gameObject.SetActive(true);
-
+        characterListPrefab[currentIndex].gameObject.SetActive(false);
+        currentIndex = (currentIndex + 1) % characterListPrefab.Count;
+        characterListPrefab[currentIndex].gameObject.SetActive(true);
     }
     public void PreviousCharacterBtn()
     {
-
-        characterManager[currentIndex].gameObject.SetActive(false);
-        currentIndex = (currentIndex - 1 + characterManager.Count) % characterManager.Count; // 첫 번째
-        characterManager[currentIndex].gameObject.SetActive(true);
-
+        characterListPrefab[currentIndex].gameObject.SetActive(false);
+        currentIndex = (currentIndex - 1 + characterListPrefab.Count) % characterListPrefab.Count;
+        characterListPrefab[currentIndex].gameObject.SetActive(true);
     }
+    public CharacterSo SelectedCharacter()
+    {
+        Debug.Log(characterListPrefab[currentIndex].gameObject.name + "선택한 오브젝트 이름");
+        return characters[currentIndex];
+    }
+
 }
