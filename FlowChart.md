@@ -128,7 +128,7 @@ User4GameManager --> 게임종료
 ```mermaid
 flowchart LR
 
-subgraph User1["User 1"]
+subgraph User1["User 1(방장))"]
 User1ItemManager("**ItemMng1**<br>PhotonView")
 end
 
