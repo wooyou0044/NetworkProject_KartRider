@@ -14,24 +14,20 @@ using System.Linq;
 public class PlayerPanel : MonoBehaviourPun
 {
     [Header("Player 정보")]
-
-    public TMP_Text playerText;
     public TMP_Text PlayerNameText;
     public Image playerIcon;
 
     [Header("준비 완료 이미지")]
     public Image readyImage;
-
-    private string targetTag = "Player";
-    private int currentIndex = 0;
-
+        
     [SerializeField] private RoomManager roomManager;
     [SerializeField] private CharacterList characterList;
     private void Start()
     {
         roomManager = GameObject.FindObjectOfType<RoomManager>();
         characterList = GameObject.FindObjectOfType<CharacterList>();
-        
+        characterList.SelectedCharacter();
+        characterList.characterSelectBtnButton.onClick.AddListener(OnClickGameObjSelectBtn);
         if (photonView.IsMine)
         {
             //이후에 들어온 사람도 확인을 해야하기 때문에 RpcTarget.AllBuffered사용
@@ -70,7 +66,6 @@ public class PlayerPanel : MonoBehaviourPun
         GetComponent<RectTransform>().anchorMin = Vector3.zero;
         GetComponent<RectTransform>().anchorMax = Vector3.one;
         GetComponent<RectTransform>().localPosition = Vector3.zero;
-        //GetComponent<PhotonView>().RPC("PlayerCharacterLoad", RpcTarget.AllBuffered);
     }
     /// <summary>
     /// 스타트 버튼
@@ -122,6 +117,23 @@ public class PlayerPanel : MonoBehaviourPun
     }
     public void OnClickGameObjSelectBtn()
     {
-        characterList.SelectedCharacter(characterList.kartPrefab);
+        if (photonView.IsMine)
+        {
+            GetComponent<PhotonView>().RPC("GameObjSelect", RpcTarget.AllBuffered);
+        }
+    }
+    [PunRPC]
+    public void GameObjSelect()
+    {
+        Transform parentTransform = transform.parent;
+        if (parentTransform != null)
+        {
+            //부모의 컴포넌트 가져오기
+            PlayerSlot parentSlot = parentTransform.GetComponent<PlayerSlot>();
+            if (parentSlot != null)
+            {
+                parentSlot.playerPanel.playerIcon.sprite = characterList.SelectedCharacter().characterIcon;
+            }
+        }
     }
 }

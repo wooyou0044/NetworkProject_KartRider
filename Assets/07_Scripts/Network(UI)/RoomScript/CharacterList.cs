@@ -8,7 +8,7 @@ public class CharacterList : MonoBehaviour
     public CharacterSo[] characters;
     public GameObject kartPrefab;
     public RawImage characterImage;
-    //public Camera cam;
+    
     public List<GameObject> characterListPrefab;
     public int currentIndex = 0;
     public Button characterSelectBtnButton;
@@ -18,11 +18,7 @@ public class CharacterList : MonoBehaviour
         characterListPrefab = new List<GameObject>();
 
         SetCharacterResources();
-        SelectedCharacter(characterListPrefab[currentIndex]);
-        characterSelectBtnButton.onClick.AddListener(() =>
-        {
-            SelectedCharacter(characterListPrefab[currentIndex]);
-        });
+        
     }
 
     public void SetCharacterResources()
@@ -45,25 +41,17 @@ public class CharacterList : MonoBehaviour
         characterListPrefab[currentIndex].gameObject.SetActive(false);
         currentIndex = (currentIndex + 1) % characterListPrefab.Count;
         characterListPrefab[currentIndex].gameObject.SetActive(true);
-        characterSelectBtnButton.onClick.RemoveAllListeners();
-        characterSelectBtnButton.onClick.AddListener(() =>
-        {
-            SelectedCharacter(characterListPrefab[currentIndex]);
-        });
+        
     }
     public void PreviousCharacterBtn()
     {
         characterListPrefab[currentIndex].gameObject.SetActive(false);
         currentIndex = (currentIndex - 1 + characterListPrefab.Count) % characterListPrefab.Count;
-        characterListPrefab[currentIndex].gameObject.SetActive(true);
-        characterSelectBtnButton.onClick.RemoveAllListeners();
-        characterSelectBtnButton.onClick.AddListener(() =>
-        {
-            SelectedCharacter(characterListPrefab[currentIndex]);
-        });
+        characterListPrefab[currentIndex].gameObject.SetActive(true);        
     }
-    public void SelectedCharacter(GameObject gameObject)
+    public CharacterSo SelectedCharacter()
     {
-        Debug.Log(gameObject.name + "선택한 오브젝트 이름");
+        Debug.Log(characterListPrefab[currentIndex].gameObject.name + "선택한 오브젝트 이름");
+        return characters[currentIndex];
     }
 }

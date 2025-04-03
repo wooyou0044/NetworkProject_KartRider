@@ -52,6 +52,7 @@ MonoBehaviour:
   - SetCharacterResources
   - PlayerCharacterLoad
   - CharacterSelect
+  - GameObjSelect
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
