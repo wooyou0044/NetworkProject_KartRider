@@ -39,14 +39,16 @@ public class WaterFlyController : MonoBehaviour
     {
         elapsedTime += Time.deltaTime;
         timeGageImage.fillAmount = 1 - (elapsedTime / exitTimer);
-        currentDigit = ((int)elapsedTime % 10) + pressNum;
+        //currentDigit = ((int)elapsedTime % 10) + pressNum;
+        currentDigit = (int)elapsedTime + pressNum;
+
         hitGageImge.fillAmount = 1 - (currentDigit / exitTimer);
         // 물파리에서 빠져나왔을 때도 초기화 필요
         if(currentDigit >= exitTimer)
         {
             hitNumBackImage.transform.localScale = new Vector3(1, 1, 1);
 
-            hitNumText.text = (0).ToString();
+            hitNumText.text = "0";
             //ResetTimer();
             //ItemNetController에 보내야 함
             itemNetCtrl.ExitWaterFlyForAll(getExitPhotonViewID);
