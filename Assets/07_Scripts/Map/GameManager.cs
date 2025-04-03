@@ -310,6 +310,9 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
-        SoundManager.instance.PlayBGM(3);
+        if (SoundManager.instance != null)
+        {
+            SoundManager.instance.PlayBGM(3);            
+        }
     }
 }

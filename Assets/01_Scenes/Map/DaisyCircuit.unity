@@ -350,11 +350,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 146840599}
   m_CullTransparentMesh: 1
---- !u!4 &245630931 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1153194683150361802, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
-  m_PrefabInstance: {fileID: 1653789468}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &316224400
 GameObject:
   m_ObjectHideFlags: 0
@@ -601,17 +596,6 @@ MonoBehaviour:
   mapManager: {fileID: 1236464623}
   lapTime: {fileID: 1656261892}
   currentLapTime: {fileID: 316224402}
---- !u!114 &384235275 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4282419239461627813, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
-  m_PrefabInstance: {fileID: 1653789468}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31c2012e0d5d04fe28d91bcb0421a941, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &410550824
 GameObject:
   m_ObjectHideFlags: 0
@@ -1542,17 +1526,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!114 &641652360 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6024906038600320356, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
-  m_PrefabInstance: {fileID: 1653789468}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31c2012e0d5d04fe28d91bcb0421a941, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &693573299 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6239328576350901702, guid: c41c01bc589fbac42a0d7b163bf9d50f, type: 3}
@@ -2299,12 +2272,12 @@ MonoBehaviour:
   - {fileID: 1491506840}
   - {fileID: 2095229097}
   - {fileID: 1906771881}
-  finishLine: {fileID: 245630931}
+  finishLine: {fileID: 0}
   essentialCheckPoints:
-  - {fileID: 641652360}
+  - {fileID: 1653789470}
   - {fileID: 1876878096}
   - {fileID: 324082779}
-  - {fileID: 384235275}
+  - {fileID: 1653789469}
   checkPoints: {fileID: 2105477886}
   dollyPath: {fileID: 1679446658}
   myLastcheckPoint: {fileID: 0}
@@ -3945,13 +3918,53 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 208130455856222279, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 208130455856222279, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 208130455856222279, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 208130455856222279, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 208130455856222279, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 208130455856222279, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 310522797066755875, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 310522797066755875, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 310522797066755875, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 310522797066755875, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 310522797066755875, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 310522797066755875, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 384148919242409787, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Name
       value: DaisyCircuit
@@ -3965,9 +3978,29 @@ PrefabInstance:
       value: 293
       objectReference: {fileID: 0}
     - target: {fileID: 771956926284279609, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 771956926284279609, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 771956926284279609, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 771956926284279609, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 771956926284279609, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 771956926284279609, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 826246028779263452, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -3993,21 +4026,81 @@ PrefabInstance:
       value: 1525
       objectReference: {fileID: 0}
     - target: {fileID: 1569939635163493899, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1569939635163493899, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 1569939635163493899, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1569939635163493899, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 1569939635163493899, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 1569939635163493899, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 1704414430982049082, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1704414430982049082, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 1704414430982049082, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1704414430982049082, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 1704414430982049082, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 1704414430982049082, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 1818458926644797653, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1506052153}
     - target: {fileID: 1900340116249803540, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1900340116249803540, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 1900340116249803540, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1900340116249803540, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 1900340116249803540, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 1900340116249803540, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 2037194522670939501, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -4021,21 +4114,101 @@ PrefabInstance:
       value: 99
       objectReference: {fileID: 0}
     - target: {fileID: 2601809759472392430, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2601809759472392430, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 2601809759472392430, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2601809759472392430, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 2601809759472392430, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2601809759472392430, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 2932825825610264605, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2932825825610264605, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 2932825825610264605, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2932825825610264605, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 2932825825610264605, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2932825825610264605, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 2933806790374336855, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2933806790374336855, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 2933806790374336855, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2933806790374336855, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 2933806790374336855, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2933806790374336855, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3047580847592713381, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3047580847592713381, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 3047580847592713381, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3047580847592713381, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 3047580847592713381, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3047580847592713381, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 3302465539884685215, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -4053,9 +4226,29 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1493446732}
     - target: {fileID: 3809643135223463839, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3809643135223463839, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 3809643135223463839, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3809643135223463839, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 3809643135223463839, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3809643135223463839, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4086715932085412280, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: sceneViewId
       value: 4
@@ -4065,25 +4258,105 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 563824173}
     - target: {fileID: 4321304283887046782, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4321304283887046782, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 4321304283887046782, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4321304283887046782, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchFinishLine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4321304283887046782, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4321304283887046782, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4326970646888926936, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4326970646888926936, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 4326970646888926936, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4326970646888926936, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 4326970646888926936, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4326970646888926936, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4456001976358300986, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4456001976358300986, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 4456001976358300986, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4456001976358300986, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 4456001976358300986, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4456001976358300986, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4711219999405775651, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1506052153}
     - target: {fileID: 5104552909707676888, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5104552909707676888, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 5104552909707676888, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5104552909707676888, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchDeadZone
+      objectReference: {fileID: 0}
+    - target: {fileID: 5104552909707676888, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5104552909707676888, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 5139030256535982128, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -4093,9 +4366,29 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5235655853316588612, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5235655853316588612, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 5235655853316588612, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5235655853316588612, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 5235655853316588612, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5235655853316588612, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 5332625253606434460, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -4105,21 +4398,81 @@ PrefabInstance:
       value: 99
       objectReference: {fileID: 0}
     - target: {fileID: 5434636246146895294, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5434636246146895294, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 5434636246146895294, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5434636246146895294, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 5434636246146895294, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5434636246146895294, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 5723351329520659310, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5723351329520659310, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 5723351329520659310, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5723351329520659310, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 5723351329520659310, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5723351329520659310, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 5904408691437580322, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_LocalPosition.y
       value: 825
       objectReference: {fileID: 0}
     - target: {fileID: 6124488011587726361, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6124488011587726361, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 6124488011587726361, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6124488011587726361, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 6124488011587726361, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6124488011587726361, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 6438435344010182558, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -4165,9 +4518,29 @@ PrefabInstance:
       value: 293
       objectReference: {fileID: 0}
     - target: {fileID: 7205276012555325446, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7205276012555325446, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 7205276012555325446, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7205276012555325446, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 7205276012555325446, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 7205276012555325446, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 7220970919036286728, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -4209,9 +4582,29 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7417689167419807543, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7417689167419807543, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 7417689167419807543, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7417689167419807543, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 7417689167419807543, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 7417689167419807543, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 7759012094888450764, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -4232,14 +4625,58 @@ PrefabInstance:
       propertyPath: m_Convex
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8235297092961525005, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8235297092961525005, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1236464623}
+    - target: {fileID: 8235297092961525005, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8235297092961525005, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 8235297092961525005, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8235297092961525005, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 8521575400497405164, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Icon
       value: 
-      objectReference: {fileID: 1236464623}
+      objectReference: {fileID: 0}
+    - target: {fileID: 8777449942633595583, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8777449942633595583, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 8777449942633595583, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8777449942633595583, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 8777449942633595583, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8777449942633595583, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 8785421060121175133, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -4249,17 +4686,77 @@ PrefabInstance:
       value: 103
       objectReference: {fileID: 0}
     - target: {fileID: 8995373135430448816, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8995373135430448816, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 8995373135430448816, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8995373135430448816, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 8995373135430448816, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8995373135430448816, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074365759701102073, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9074365759701102073, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 9074365759701102073, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074365759701102073, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074365759701102073, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074365759701102073, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 9167458656683035808, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9167458656683035808, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1236464623}
+    - target: {fileID: 9167458656683035808, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9167458656683035808, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTouchCheckPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 9167458656683035808, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MapManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 9167458656683035808, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 9187729977095021358, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -4269,6 +4766,28 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+--- !u!114 &1653789469 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3446573955569664042, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+  m_PrefabInstance: {fileID: 1653789468}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31c2012e0d5d04fe28d91bcb0421a941, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1653789470 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3445593427820190048, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+  m_PrefabInstance: {fileID: 1653789468}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31c2012e0d5d04fe28d91bcb0421a941, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1656261890
 GameObject:
   m_ObjectHideFlags: 0
