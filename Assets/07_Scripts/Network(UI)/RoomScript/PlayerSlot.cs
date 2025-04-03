@@ -11,5 +11,4 @@ public class PlayerSlot : MonoBehaviour
     [SerializeField] public PlayerPanel playerPanel;
     public int actorNumber;
     public bool isReady = false;
-    public Image playerIcon;
 }

@@ -16,7 +16,7 @@ public class PlayerPanel : MonoBehaviourPun
 {
     [Header("Player 정보")]
     public TMP_Text PlayerNameText;
-    //public Image playerIcon;
+    public Image playerIcon;
 
     [Header("준비 완료 이미지")]
     public Image readyImage;
@@ -132,8 +132,7 @@ public class PlayerPanel : MonoBehaviourPun
             if (parentSlot != null)
             {
                 Debug.Log(parentSlot + "의 슬롯");
-                //parentSlot.playerPanel.playerIcon.sprite = characterList.SelectedCharacter().characterIcon;
-                parentSlot.playerIcon.sprite = characterList.SelectedCharacter().characterIcon;
+                parentSlot.playerPanel.playerIcon.sprite = characterList.SelectedCharacter().characterIcon;                
             }
         }
     }
