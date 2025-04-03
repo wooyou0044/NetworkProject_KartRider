@@ -1,5 +1,4 @@
 using System.Collections;
-using Cinemachine;
 using Photon.Pun;
 using UnityEngine;
 
@@ -43,13 +42,13 @@ public partial class TestCHMKart : MonoBehaviour
     [SerializeField] public int maxBoostGauge = 100;                // 최대 부스트 게이지
     [SerializeField] private float boostChargeRate = 5f;             // 기본 부스트 충전 속도
     [SerializeField] private float driftBoostChargeRate = 10f;        // 드리프트 중 부스트 충전 속도
-                                                                    
+
     [Header("부스트 파워 설정")]
     [SerializeField] private float maxBoostSpeed = 82.5f;            // 부스트 활성화 시 최대 속도 속력 변환 해줘야함 지금 시속 300 = m/s 82.5 가 딱임 
     [SerializeField] private float boostMultiplier = 1.1f;          // 지속적인 부스터 효과 계수
 
     public TestCHMCamer camerCtrl { get; set; }
-    
+
     #endregion
 
     #region Private Fields
@@ -117,14 +116,13 @@ public partial class TestCHMKart : MonoBehaviour
         kartBodyCtrl = kartBody.GetComponent<KartBodyController>();
         inventory = GetComponent<KartInventory>();
         camerCtrl = GetComponent<TestCHMCamer>();
-        
+
         rankManager = GetComponent<RankManager>();
 
         rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
 
         camerCtrl = GetComponent<TestCHMCamer>();
->>>>>>>>> Temporary merge branch 2
-        
+
         rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
 
         /* TODO : 포톤 붙일때 수정해주기 */
@@ -242,7 +240,7 @@ public partial class TestCHMKart : MonoBehaviour
         // 부스트 입력 처리
         HandleItemInput();
         playerCharAni.SetBool("IsBoosting", isBoostTriggered);
-       
+
 
         if (isUsingShield == false)
         {
@@ -548,7 +546,7 @@ public partial class TestCHMKart : MonoBehaviour
         kartBodyCtrl.SetBoostEffectActive(true);
         kartBodyCtrl.SetBoostWindEffectActive(true);
 
-        totalBoostDuration = momentboostDuration;        
+        totalBoostDuration = momentboostDuration;
         // 가속 소리 설정
         PlayBoostEffectSound();
         StartCoroutine(InstantBoostCoroutine()); // 순간 부스터 실행
@@ -556,7 +554,7 @@ public partial class TestCHMKart : MonoBehaviour
 
     private IEnumerator InstantBoostCoroutine()//순간 부스트 함수 
     {
-        
+
         float timer = 0f;
 
         while (timer < momentboostDuration)
@@ -665,7 +663,7 @@ public partial class TestCHMKart : MonoBehaviour
         // 램프 TrailRenderer 끄기
         kartBodyCtrl.SetLampTrailActive(false);
         kartBodyCtrl.SetBoostEffectActive(false);
-        kartBodyCtrl.SetBoostWindEffectActive(false);        
+        kartBodyCtrl.SetBoostWindEffectActive(false);
         audioSource.Stop();
         audioSource.loop = false;
 
@@ -808,9 +806,9 @@ public partial class TestCHMKart : MonoBehaviour
             {
                 LSteer = 0;
                 RSteer = 0;
-            }           
-            playerCharAni.SetFloat("LSteer", LSteer );
-            playerCharAni.SetFloat("RSteer", RSteer );
+            }
+            playerCharAni.SetFloat("LSteer", LSteer);
+            playerCharAni.SetFloat("RSteer", RSteer);
 
         }
 
@@ -871,7 +869,7 @@ public partial class TestCHMKart : MonoBehaviour
             timer += Time.deltaTime;
             yield return null;
         }
-        
+
         //camerCtrl.ActivateFinishCamera(); //여기서하면 1초뒤에함
         // 최종적으로 전후진 입력 값을 완전히 0으로 설정
         currentMotorInput = 0f;
@@ -1051,14 +1049,11 @@ public partial class TestCHMKart : MonoBehaviour
             //playerCharAni.SetBool("IsCollsion", true);
             playerCharAni.SetTrigger("Collsion");
             isWallCollAniOn = true;
-           
+
         }
 
 
-            kartBodyCtrl.SetCollisonSparkActive(true);
-        }
-=========
->>>>>>>>> Temporary merge branch 2
+        kartBodyCtrl.SetCollisonSparkActive(true);
     }
 
 
@@ -1159,43 +1154,43 @@ public partial class TestCHMKart : MonoBehaviour
     }
     #endregion
     //기즈모 그리는거
-        #region [Gizmos 시각화: 고정된 방향(월드 기준)으로 표시]
-        private void OnDrawGizmos()
-        {
-            // Gizmo에서 기본 시작점은 차량의 현재 위치에 boxCastCenter 오프셋을 적용한 위치입니다.
-            Vector3 worldCenter = transform.position + boxCastCenter;
+    #region [Gizmos 시각화: 고정된 방향(월드 기준)으로 표시]
+    private void OnDrawGizmos()
+    {
+        // Gizmo에서 기본 시작점은 차량의 현재 위치에 boxCastCenter 오프셋을 적용한 위치입니다.
+        Vector3 worldCenter = transform.position + boxCastCenter;
 
-            // 기본 중심 박스 (녹색) - 선택 사항: 두 그룹의 박스 크기가 다르므로 기준을 표시
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireCube(worldCenter, frontBackBoxCastSize);
+        // 기본 중심 박스 (녹색) - 선택 사항: 두 그룹의 박스 크기가 다르므로 기준을 표시
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(worldCenter, frontBackBoxCastSize);
 
-            // 전면/후면 그룹
-            Gizmos.color = frontBackLineColor;
-            Vector3 frontEnd = worldCenter + Vector3.forward * frontBackBoxCastDistance;
-            Gizmos.DrawLine(worldCenter, frontEnd);
-            Gizmos.color = frontBackBoxColor;
-            Gizmos.DrawWireCube(frontEnd, frontBackBoxCastSize);
+        // 전면/후면 그룹
+        Gizmos.color = frontBackLineColor;
+        Vector3 frontEnd = worldCenter + Vector3.forward * frontBackBoxCastDistance;
+        Gizmos.DrawLine(worldCenter, frontEnd);
+        Gizmos.color = frontBackBoxColor;
+        Gizmos.DrawWireCube(frontEnd, frontBackBoxCastSize);
 
-            Gizmos.color = frontBackLineColor;
-            Vector3 backEnd = worldCenter + Vector3.back * frontBackBoxCastDistance;
-            Gizmos.DrawLine(worldCenter, backEnd);
-            Gizmos.color = frontBackBoxColor;
-            Gizmos.DrawWireCube(backEnd, frontBackBoxCastSize);
+        Gizmos.color = frontBackLineColor;
+        Vector3 backEnd = worldCenter + Vector3.back * frontBackBoxCastDistance;
+        Gizmos.DrawLine(worldCenter, backEnd);
+        Gizmos.color = frontBackBoxColor;
+        Gizmos.DrawWireCube(backEnd, frontBackBoxCastSize);
 
-            // 좌측/우측 그룹
-            Gizmos.color = leftRightLineColor;
-            Vector3 rightEnd = worldCenter + Vector3.right * leftRightBoxCastDistance;
-            Gizmos.DrawLine(worldCenter, rightEnd);
-            Gizmos.color = leftRightBoxColor;
-            Gizmos.DrawWireCube(rightEnd, leftRightBoxCastSize);
+        // 좌측/우측 그룹
+        Gizmos.color = leftRightLineColor;
+        Vector3 rightEnd = worldCenter + Vector3.right * leftRightBoxCastDistance;
+        Gizmos.DrawLine(worldCenter, rightEnd);
+        Gizmos.color = leftRightBoxColor;
+        Gizmos.DrawWireCube(rightEnd, leftRightBoxCastSize);
 
-            Gizmos.color = leftRightLineColor;
-            Vector3 leftEnd = worldCenter + Vector3.left * leftRightBoxCastDistance;
-            Gizmos.DrawLine(worldCenter, leftEnd);
-            Gizmos.color = leftRightBoxColor;
-            Gizmos.DrawWireCube(leftEnd, leftRightBoxCastSize);
-        }
-        #endregion
+        Gizmos.color = leftRightLineColor;
+        Vector3 leftEnd = worldCenter + Vector3.left * leftRightBoxCastDistance;
+        Gizmos.DrawLine(worldCenter, leftEnd);
+        Gizmos.color = leftRightBoxColor;
+        Gizmos.DrawWireCube(leftEnd, leftRightBoxCastSize);
+    }
+    #endregion
 
     //*/
 
