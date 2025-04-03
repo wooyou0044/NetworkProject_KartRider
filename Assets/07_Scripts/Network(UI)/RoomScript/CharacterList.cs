@@ -11,7 +11,6 @@ public class CharacterList : MonoBehaviour
     
     public List<GameObject> characterListPrefab;
     public int currentIndex = 0;
-    public Button characterSelectBtnButton;
     private void Awake()
     {
         characters = Resources.LoadAll<CharacterSo>("Character");
@@ -41,17 +40,17 @@ public class CharacterList : MonoBehaviour
         characterListPrefab[currentIndex].gameObject.SetActive(false);
         currentIndex = (currentIndex + 1) % characterListPrefab.Count;
         characterListPrefab[currentIndex].gameObject.SetActive(true);
-        
     }
     public void PreviousCharacterBtn()
     {
         characterListPrefab[currentIndex].gameObject.SetActive(false);
         currentIndex = (currentIndex - 1 + characterListPrefab.Count) % characterListPrefab.Count;
-        characterListPrefab[currentIndex].gameObject.SetActive(true);        
+        characterListPrefab[currentIndex].gameObject.SetActive(true);
     }
     public CharacterSo SelectedCharacter()
     {
         Debug.Log(characterListPrefab[currentIndex].gameObject.name + "선택한 오브젝트 이름");
         return characters[currentIndex];
     }
+
 }

@@ -6,6 +6,7 @@ using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Linq;
+using UnityEngine.ProBuilder.Shapes;
 
 /// <summary>
 /// 플레이어 오브젝트 스크립트
@@ -15,23 +16,21 @@ public class PlayerPanel : MonoBehaviourPun
 {
     [Header("Player 정보")]
     public TMP_Text PlayerNameText;
-    public Image playerIcon;
+    //public Image playerIcon;
 
     [Header("준비 완료 이미지")]
     public Image readyImage;
-        
+
     [SerializeField] private RoomManager roomManager;
     [SerializeField] private CharacterList characterList;
     private void Start()
     {
         roomManager = GameObject.FindObjectOfType<RoomManager>();
         characterList = GameObject.FindObjectOfType<CharacterList>();
-        characterList.SelectedCharacter();
-        characterList.characterSelectBtnButton.onClick.AddListener(OnClickGameObjSelectBtn);
         if (photonView.IsMine)
         {
             //이후에 들어온 사람도 확인을 해야하기 때문에 RpcTarget.AllBuffered사용
-            GetComponent<PhotonView>().RPC("SetOwnInfo", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer);            
+            GetComponent<PhotonView>().RPC("SetOwnInfo", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer);
         }
     }
 
@@ -58,6 +57,7 @@ public class PlayerPanel : MonoBehaviourPun
                 roomManager.playerSlots[i].actorNumber = player.ActorNumber;
                 roomManager.roomUIManger.startBtn.onClick.AddListener(roomManager.playerSlots[i].playerPanel.StartBtnClickTrigger);
                 roomManager.playerSlots[i].isReady = false;
+                roomManager.roomUIManger.characterSelectBtn.onClick.AddListener(roomManager.playerSlots[i].playerPanel.OnClickGameObjSelectBtn);
                 transform.SetParent(roomManager.playerSlots[i].transform);
                 roomManager.UpdateAllPlayersReady();
                 break;
@@ -128,11 +128,12 @@ public class PlayerPanel : MonoBehaviourPun
         Transform parentTransform = transform.parent;
         if (parentTransform != null)
         {
-            //부모의 컴포넌트 가져오기
             PlayerSlot parentSlot = parentTransform.GetComponent<PlayerSlot>();
             if (parentSlot != null)
             {
-                parentSlot.playerPanel.playerIcon.sprite = characterList.SelectedCharacter().characterIcon;
+                Debug.Log(parentSlot + "의 슬롯");
+                //parentSlot.playerPanel.playerIcon.sprite = characterList.SelectedCharacter().characterIcon;
+                parentSlot.playerIcon.sprite = characterList.SelectedCharacter().characterIcon;
             }
         }
     }
