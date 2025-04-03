@@ -181,7 +181,6 @@ public class TestCHMCamer : MonoBehaviour
 
         // 목표 위치를 설정한 오프셋 값으로 지정
         Vector3 targetOffset = finishCameraOffset;
-
         // 코루틴을 통해 서서히 Follow Offset 변경
         StartCoroutine(MoveCameraToOffset(transposer,targetOffset,2f,virtualCamera));        
     }
@@ -203,7 +202,7 @@ public class TestCHMCamer : MonoBehaviour
             float currentAngle = Mathf.Lerp(startAngle, endAngle, timer / duration);
 
             // X, Z 좌표를 원형 경로로 계산
-            float newX = (radius - 5f) * Mathf.Cos(currentAngle);
+            float newX = radius * Mathf.Cos(currentAngle) + 2f;
             float newZ = radius * Mathf.Sin(currentAngle);
 
             // Y 값은 설정된 목표 오프셋으로 직접 보간하여 이동
@@ -228,8 +227,8 @@ public class TestCHMCamer : MonoBehaviour
         transposer.m_FollowOffset = targetOffset;
         Debug.Log("카메라가 설정된 오프셋에 도달하고 멈췄습니다!");
 
-        // Cinemachine 제어 해제       
         virtualCamera.LookAt = null;
+        // Cinemachine 제어 해제       
         virtualCamera.m_Lens.FieldOfView = 70f;
 
 

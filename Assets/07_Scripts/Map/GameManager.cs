@@ -64,7 +64,6 @@ public class GameManager : MonoBehaviour
     
     private void Start()
     {
-        SoundManager.instance.PlayBGM(SceneManager.GetActiveScene().buildIndex + 2);
         if (SceneCont.Instance != null)
         {
             _selectedChar = SceneCont.Instance.SelectedCharacter;
@@ -307,5 +306,10 @@ public class GameManager : MonoBehaviour
         {
             PhotonNetwork.LoadLevel(sceneName);
         }
+    }
+
+    private void OnEnable()
+    {
+        SoundManager.instance.PlayBGM(3);
     }
 }
