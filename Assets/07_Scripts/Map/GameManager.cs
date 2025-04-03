@@ -227,7 +227,10 @@ public class GameManager : MonoBehaviour
             mainTextController.ShowMainText("RETIRE");
         }
 
-        TurnOffMyKartControl();
+        if (kartCtrl.isRacingStart)
+        {
+            TurnOffMyKartControl();            
+        }
         ShowFinalResult();
         StartCoroutine(MoveToRoom());
     }
