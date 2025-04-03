@@ -256,28 +256,6 @@ MonoBehaviour:
   - {fileID: 561741976}
   - {fileID: 1091426735}
   pv: {fileID: 0}
---- !u!114 &78301699 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3728095678300952290, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
-  m_PrefabInstance: {fileID: 1653789468}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31c2012e0d5d04fe28d91bcb0421a941, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &99204750 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1208374953293898823, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
-  m_PrefabInstance: {fileID: 1653789468}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31c2012e0d5d04fe28d91bcb0421a941, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &111472056
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,6 +371,7 @@ MonoBehaviour:
   kartController: {fileID: 0}
   maxPanAngleDelta: 10
   smoothTime: 0.5
+  finishCameraOffset: {x: -1.5, y: 2, z: 4}
   basePanAngleDelta: 50
   maxPanLimit: 40
   boostDistanceOffset: 5
@@ -2247,6 +2226,7 @@ MonoBehaviour:
   startCountDownSeconds: 3
   retireCountDownSeconds: 10
   kartCtrl: {fileID: 0}
+  playerAni: {fileID: 0}
 --- !u!114 &880665176
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3018,11 +2998,7 @@ MonoBehaviour:
   - {fileID: 2095229097}
   - {fileID: 1906771881}
   finishLine: {fileID: 245630931}
-  essentialCheckPoints:
-  - {fileID: 1005540868}
-  - {fileID: 78301699}
-  - {fileID: 99204750}
-  - {fileID: 1622042582}
+  essentialCheckPoints: []
   checkPoints: {fileID: 2105477886}
   dollyPath: {fileID: 1679446658}
   myLastcheckPoint: {fileID: 0}
@@ -4626,17 +4602,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3187579589590430198, guid: 520d140254f76e54b993b4a30aabd2f3, type: 3}
   m_PrefabInstance: {fileID: 176915541}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1622042582 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8672545747844982237, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
-  m_PrefabInstance: {fileID: 1653789468}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31c2012e0d5d04fe28d91bcb0421a941, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1645311907
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4894,6 +4859,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 563824173}
+    - target: {fileID: 4233034106606218083, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 4321304283887046782, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: collisionEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -4937,7 +4906,7 @@ PrefabInstance:
     - target: {fileID: 6438435344010182558, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 639827328}
+      objectReference: {fileID: 5852538266753120782, guid: c6b259f322c8f40ba900e1f2406f4469, type: 3}
     - target: {fileID: 6537956450808752792, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Icon
       value: 
@@ -4953,6 +4922,10 @@ PrefabInstance:
     - target: {fileID: 6652509482926748351, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_VersionIndex
       value: 81
+      objectReference: {fileID: 0}
+    - target: {fileID: 6811690171683263937, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 365.9
       objectReference: {fileID: 0}
     - target: {fileID: 6946997691870794536, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Mesh
@@ -5025,6 +4998,10 @@ PrefabInstance:
     - target: {fileID: 7915059585089163573, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_VersionIndex
       value: 81
+      objectReference: {fileID: 0}
+    - target: {fileID: 7964763627015612923, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
+      propertyPath: m_Convex
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8521575400497405164, guid: b996aff6cebed4027b2c02a0bf0841ec, type: 3}
       propertyPath: m_Icon

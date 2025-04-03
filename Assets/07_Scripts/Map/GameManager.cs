@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using Photon.Pun;
+using Photon.Pun.Demo.PunBasics;
 using Photon.Realtime;
 using UnityEngine;
 
@@ -44,11 +45,13 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public TestCHMKart kartCtrl;
 
     public GameObject playerChar { get; private set; }
+    public Animator playerAni;
 
     private void Awake()
     {
         _readyPlayers = new List<Player>();
         _characterSoArray = Resources.LoadAll<CharacterSo>("Character");
+
     }
     
     private void Start()
@@ -80,9 +83,12 @@ public class GameManager : MonoBehaviour
         GameObject kart = PhotonNetwork.Instantiate(kartPrefab.name, Vector3.zero, Quaternion.identity);
         // kart에 붙어 있는 Controller 가져오기
         kartCtrl = kart.GetComponent<TestCHMKart>();
+        TestCHMCamer cameraCtrl = virtualCamera.GetComponent<TestCHMCamer>();
+        kartCtrl.camerCtrl = cameraCtrl;
         //PhotonNetwork.Instantiate(characterPrefab.name, Vector3.zero, Quaternion.identity);
         GameObject playerChar = PhotonNetwork.Instantiate(characterSo.characterName, Vector3.zero, Quaternion.identity);
         kartCtrl.playerCharAni = playerChar.GetComponent<Animator>();
+        playerAni = kartCtrl.playerCharAni;
         StartCoroutine(PlaceToMap(kart));
 
         kartCtrl.waterFlyCtrl = waterFlyCtrl;
@@ -182,6 +188,8 @@ public class GameManager : MonoBehaviour
         {
             _winner = PhotonNetwork.LocalPlayer;
             _gameManagerView.RPC("OnSomePlayerFinish", RpcTarget.AllViaServer, _winner);
+            kartCtrl.camerCtrl.ActivateFinishCamera();
+            playerAni.SetTrigger("IsVictory");
         }
     }
 }
