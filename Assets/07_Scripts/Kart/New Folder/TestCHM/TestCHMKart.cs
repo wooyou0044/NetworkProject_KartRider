@@ -21,10 +21,12 @@ public partial class TestCHMKart : MonoBehaviour
     [Header("드리프트 설정")]
     [SerializeField] private float minDriftAngle = 30f;       // 최소 드리프트 각도
     [SerializeField] public float maxDriftAngle = 180f;       // 최대 드리프트 각도
+
     [Header("드리프트 지속시간")]
     [SerializeField] private float minDriftDuration = 0.2f;     // 최소 드리프트 지속시간
     [SerializeField] private float maxDriftDuration = 2f;       // 최대판단 드리프트 지속시간
     [SerializeField] private float totalMaxDriftDuration = 2f;       // 최대판단 드리프트 지속시간
+
     [Header("드리프트 힘")]
     [SerializeField] private float minDriftForceMultiplier = 1f;// 최소 드리프트 힘 배수
     [SerializeField] private float maxDriftForceMultiplier = 5f;// 최대 드리프트 힘 배수
@@ -36,10 +38,12 @@ public partial class TestCHMKart : MonoBehaviour
     [Header("부스트 설정")]
     [SerializeField] public float boostDuration = 1.5f;              // 기본 부스트 지속시간
     [SerializeField] public float momentboostDuration = 0.5f;       // 순간 부스트 지속시간
+
     [Header("부스트 게이지 설정")]
     [SerializeField] public int maxBoostGauge = 100;                // 최대 부스트 게이지
     [SerializeField] private float boostChargeRate = 5f;             // 기본 부스트 충전 속도
-    [SerializeField] private float driftBoostChargeRate = 10f;        // 드리프트 중 부스트 충전 속도    
+    [SerializeField] private float driftBoostChargeRate = 10f;        // 드리프트 중 부스트 충전 속도
+                                                                    
     [Header("부스트 파워 설정")]
     [SerializeField] private float maxBoostSpeed = 82.5f;            // 부스트 활성화 시 최대 속도 속력 변환 해줘야함 지금 시속 300 = m/s 82.5 가 딱임 
     [SerializeField] private float boostMultiplier = 1.1f;          // 지속적인 부스터 효과 계수
@@ -54,7 +58,7 @@ public partial class TestCHMKart : MonoBehaviour
     public float speedKM { get; private set; }     // 현재 속력 (km/h 단위) 계기판 출력 속력
     public bool isBoostTriggered { get; set; } // 부스트 활성화 여부
     //public bool isBoostCreate { get; set; }    // 드리프트 아이템 생성 가능 여부
-    public float boostGauge { get; private set; }                // 현재 부스트 게이지
+    public float boostGauge { get; private set; } // 현재 부스트 게이지
     public bool isItemUsed { get; set; }
     public bool isRacingStart { get; set; } //시작 대기 변수
     public bool isGameFinished { get; set; } //결승선 변수
@@ -96,6 +100,7 @@ public partial class TestCHMKart : MonoBehaviour
     [SerializeField] AudioClip boostAudioClip;
 
     bool isSparkOn;
+    bool isWallCollAniOn;
     float inputKey;
 
     #endregion
@@ -176,7 +181,7 @@ public partial class TestCHMKart : MonoBehaviour
                 wasAirborne = false;
             }
         }
-
+        
     }
 
     private void Update()
@@ -210,6 +215,7 @@ public partial class TestCHMKart : MonoBehaviour
         // 부스트 입력 처리
         HandleItemInput();
         playerCharAni.SetBool("IsBoosting", isBoostTriggered);
+       
 
         if (isUsingShield == false)
         {
@@ -257,7 +263,7 @@ public partial class TestCHMKart : MonoBehaviour
         // 최대 지속 시간을 초과할 경우 바로 종료 예약
         if (totalDriftDuration >= totalMaxDriftDuration)
         {
-            Debug.Log("[StartDrift] 누적 지속 시간이 최대 지속 시간을 초과하여 즉시 종료 예약");
+            //Debug.Log("[StartDrift] 누적 지속 시간이 최대 지속 시간을 초과하여 즉시 종료 예약");
         }
 
         // 지정된 누적 지속시간 후 드리프트 종료 예약
@@ -959,7 +965,7 @@ public partial class TestCHMKart : MonoBehaviour
             if (((1 << hitLayer) & wallLayer.value) != 0)
             {
                 ProcessWallCollision();
-                playerCharAni.SetBool("IsCollsion", false);
+
             }
             else if (((1 << hitLayer) & boosterLayer.value) != 0)
             {
@@ -1008,11 +1014,22 @@ public partial class TestCHMKart : MonoBehaviour
             transform.position += lastHit.normal * separationDistance;
 
             rigid.velocity = newVelocity;
-            Debug.Log($"벽 충돌 후 처리: 새 속도 = {rigid.velocity}");
+            //Debug.Log($"벽 충돌 후 처리: 새 속도 = {rigid.velocity}");
 
             kartBodyCtrl.SetCollisonSparkActive(true);
-            playerCharAni.SetBool("IsCollsion", true);
-        }     
+
+            //playerCharAni.SetBool("IsCollsion", true);
+            playerCharAni.SetTrigger("Collsion");
+            isWallCollAniOn = true;
+           
+        }
+        //else if (isWallCollAniOn == true) 
+        //{
+        //    playerCharAni.SetBool("IsCollsion", false);
+        //    Debug.Log("벽 충돌 해제");
+        //    isWallCollAniOn = false;
+            
+        //}
 
     }
 

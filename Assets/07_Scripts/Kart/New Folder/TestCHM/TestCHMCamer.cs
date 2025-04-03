@@ -165,10 +165,10 @@ public class TestCHMCamer : MonoBehaviour
         Vector3 targetOffset = finishCameraOffset;
 
         // 코루틴을 통해 서서히 Follow Offset 변경
-        StartCoroutine(MoveCameraToOffset(transposer, targetOffset,2f));
+        StartCoroutine(MoveCameraToOffset(transposer,targetOffset,2f,virtualCamera));        
     }
 
-    private IEnumerator MoveCameraToOffset(CinemachineTransposer transposer, Vector3 targetOffset, float duration)
+    private IEnumerator MoveCameraToOffset(CinemachineTransposer transposer, Vector3 targetOffset, float duration, CinemachineVirtualCamera virtualCamera)
     {
         float timer = 0f;
 
@@ -208,8 +208,15 @@ public class TestCHMCamer : MonoBehaviour
 
         // 최종적으로 목표 오프셋 값 고정
         transposer.m_FollowOffset = targetOffset;
-
         Debug.Log("카메라가 설정된 오프셋에 도달하고 멈췄습니다!");
-    }
 
+        // Cinemachine 제어 해제       
+        virtualCamera.LookAt = null;        
+        virtualCamera.m_Lens.FieldOfView = 60f;
+        Debug.Log("Before : " +transposer.transform.eulerAngles.y);
+        transposer.transform.eulerAngles -= new Vector3 (0,45f,0);
+        Debug.Log(transposer.transform.eulerAngles.y  );
+
+
+    }
 }

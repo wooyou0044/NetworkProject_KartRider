@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a1b77897073c4a328092e70b028e371, type: 3}
   m_Name: Bazzi
   m_EditorClassIdentifier: 
-  characterPrefab: {fileID: 5854133612403955458, guid: af0c4a06942f049b6962b38a180323cb, type: 3}
+  characterPrefab: {fileID: 1059104267992635204, guid: e9029297092587f4c9dad0a372e6d620, type: 3}
   characterIcon: {fileID: 21300000, guid: f606eacb2167046e7901ffc451eb4dab, type: 3}
   mainColor: {r: 1, g: 0, b: 0, a: 1}
   subColor: {r: 1, g: 0.19607843, b: 0.19607843, a: 1}
