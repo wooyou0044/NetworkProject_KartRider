@@ -8,6 +8,7 @@ public class ItemNetController : MonoBehaviour
 {
     // 해당 순위 게임 오브젝트 반환하는 Script
     [SerializeField] RankUIController rankCtrl;
+    [SerializeField] WaterFlyController waterFlyCtrl;
 
     List<GameObject> items;
     PhotonView curPhotonView;
@@ -33,23 +34,87 @@ public class ItemNetController : MonoBehaviour
     public void RequestBarricade(int kartViewID)
     {
         PhotonView photonView = PhotonView.Find(kartViewID);
-        if(photonView != null)
+
+        if (photonView != null)
         {
             GameObject kartObject = photonView.gameObject;
 
             GameObject firstKart = rankCtrl.GetKartObjectByRank(1);
             TestCHMKart firstKartCtrl = firstKart.GetComponent<TestCHMKart>();
+            PhotonView firstKartView = firstKart.GetPhotonView();
+            if(firstKartView == null)
+            {
+                return;
+            }
             if (firstKart != kartObject && firstKartCtrl.isUsingShield == false)
             {
-                PhotonView view = firstKart.GetPhotonView();
-                view.RPC("MakeBarricade", RpcTarget.All);
+                firstKartView.RPC("SendCheckPointIndex", firstKartView.Owner);
+            }
+        }
+    }
+    
+    public void MakeBarricadeSink(float sinkTime)
+    {
+        StartCoroutine(StartSinkBarricade(sinkTime));
+    }
+
+    IEnumerator StartSinkBarricade(float destroyTime)
+    {
+        yield return new WaitForSeconds(destroyTime);
+        curPhotonView.RPC("GoDownBarricadeRPC", RpcTarget.All);
+    }
+
+    [PunRPC]
+    void GoDownBarricadeRPC()
+    {
+        int count = 0;
+
+        foreach(GameObject item in items)
+        {
+            BarricadeController barricadeCtrl = item.GetComponent<BarricadeController>();
+            if(barricadeCtrl != null)
+            {
+                barricadeCtrl.GoDownBarricade();
+                count++;
+
+                if(count >= 3)
+                {
+                    return;
+                }
             }
         }
     }
 
-    public void RequestWaterFly(int kartViewID, int kartRank, float waterFlyBombTime)
+    //public void RequestWaterFly(int kartViewID, int kartRank)
+    //{
+    //    if (kartRank <= 1)
+    //    {
+    //        return;
+    //    }
+    //    PhotonView photonView = PhotonView.Find(kartViewID);
+    //    if (photonView != null)
+    //    {
+    //        GameObject kartObject = photonView.gameObject;
+
+    //        GameObject frontKart = rankCtrl.GetKartObjectByRank(kartRank - 1);
+    //        TestCHMKart frontKartCtrl = frontKart.GetComponent<TestCHMKart>();
+    //        if (frontKart == null || frontKart == kartObject)
+    //        {
+    //            return;
+    //        }
+    //        if (frontKart != kartObject && frontKartCtrl.isUsingShield == false)
+    //        {
+    //            PhotonView view = frontKart.GetPhotonView();
+    //            view.RPC("StuckInWaterFly", RpcTarget.All);
+
+    //            view.RPC("ActiveWaterFlyUI", view.Owner);
+    //        }
+    //    }
+    //}
+
+    public void RequestWaterFly(int kartViewID, int kartRank, float delayTime = 2f)
     {
-        if(kartRank <= 1)
+        if (kartRank <= 1)
         {
             return;
         }
@@ -60,18 +125,52 @@ public class ItemNetController : MonoBehaviour
 
             GameObject frontKart = rankCtrl.GetKartObjectByRank(kartRank - 1);
             TestCHMKart frontKartCtrl = frontKart.GetComponent<TestCHMKart>();
-            if(frontKart == null || frontKart == kartObject)
+            if (frontKart == null || frontKart == kartObject)
             {
                 return;
             }
-            if(frontKart != kartObject && frontKartCtrl.isUsingShield == false)
+            if (frontKart != kartObject && frontKartCtrl.isUsingShield == false)
             {
                 PhotonView view = frontKart.GetPhotonView();
-                view.RPC("StuckInWaterFly", RpcTarget.All);
 
-                double exitTime = PhotonNetwork.Time + waterFlyBombTime;
-                StartExitWaterFlyForAll(view.ViewID, exitTime);
+                //view.RPC("StuckInWaterFly", RpcTarget.All);
+                //view.RPC("ActiveWaterFlyUI", view.Owner);
+
+                view.RPC("PlayWaterFlyWaringSound", view.Owner);
+
+                if(PhotonNetwork.IsMasterClient)
+                {
+                    double executeTime = PhotonNetwork.Time + delayTime;
+                    StartCoroutine(DelayWaterFly(view, executeTime));
+                }
+                else
+                {
+                    curPhotonView.RPC("RequestDelayedWaterFly", RpcTarget.MasterClient, view.ViewID, PhotonNetwork.Time + delayTime);
+                }
             }
+        }
+    }
+
+    [PunRPC]
+    void RequestDelayedWaterFly(int viewId, double executeTime)
+    {
+        PhotonView view = PhotonView.Find(viewId);
+        if(view != null)
+        {
+            StartCoroutine(DelayWaterFly(view, executeTime));
+        }
+    }
+
+    IEnumerator DelayWaterFly(PhotonView targetView, double executeTime)
+    {
+        while(PhotonNetwork.Time<executeTime)
+        {
+            yield return null;
+        }
+        if(targetView != null)
+        {
+            targetView.RPC("StuckInWaterFly", RpcTarget.All);
+            targetView.RPC("ActiveWaterFlyUI", targetView.Owner);
         }
     }
 
@@ -96,44 +195,18 @@ public class ItemNetController : MonoBehaviour
         }
     }
 
-    public void StartExitWaterFlyForAll(int kartViewID, double exitTime)
+    public void ExitWaterFlyForAll(int kartViewID)
     {
-        PhotonView photonView = PhotonView.Find(kartViewID);
-        if(photonView == null)
+        PhotonView view = PhotonView.Find(kartViewID);
+
+        if(view == null)
         {
             return;
         }
-        if (PhotonNetwork.IsMasterClient)
-        {
-            StartCoroutine(ExitWaterFlyForAll(photonView, exitTime));
-        }
-        else
-        {
-            curPhotonView.RPC("RequestExitWaterFly", RpcTarget.MasterClient, kartViewID, exitTime);
-        }
+        view.RPC("InActiveInWaterFlyUI", view.Owner);
+        view.RPC("ExitInWaterFly", RpcTarget.All);
     }
 
-    [PunRPC]
-    void RequestExitWaterFly(int kartViewID, double exitTime)
-    {
-        StartExitWaterFlyForAll(kartViewID, exitTime);
-    }
-
-    IEnumerator ExitWaterFlyForAll(PhotonView targetView, double exitTime)
-    {
-        double currentTime;
-        do
-        {
-            currentTime = PhotonNetwork.Time;
-            yield return null;
-        }
-        while (currentTime < exitTime);
-
-        if(targetView != null)
-        {
-            targetView.RPC("ExitInWaterFly", RpcTarget.All);
-        }
-    }
 
     public GameObject GetLastItem()
     {

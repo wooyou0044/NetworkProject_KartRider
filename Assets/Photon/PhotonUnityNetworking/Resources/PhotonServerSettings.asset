@@ -60,6 +60,23 @@ MonoBehaviour:
   - CharacterSelect
   - GameObjSelect
   - SetFinish
+  - MakeBarricadeWithPosition
+  - MakeBarricadeForFirstPlace
+  - MakeBarricadeFirstPlace
+  - FindAndSendCheckPointPosition
+  - SyncBarricadePosition
+  - SendCheckpointIndex
+  - MakeBarricadeAtCheckPoint
+  - SendCheckPointIndex
+  - UpdateBarricadePosition
+  - GetFirstKartObject
+  - StartBarricadeSink
+  - GoDownBarricadeRPC
+  - FindBarricades
+  - ActiveWaterFlyUI
+  - InActiveInWaterFlyUI
+  - PlayWaterFlyWaringSound
+  - RequestDelayedWaterFly
   - OnSomePlayerFinished
   DisableAutoOpenWizard: 1
   ShowSettings: 1

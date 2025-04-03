@@ -14,6 +14,9 @@ public partial class TestCHMKart : MonoBehaviour
     [SerializeField] float shieldDuration;
     [SerializeField] float exitWaterFlyTime;
     [SerializeField] GameObject waterBombParticle;
+    [SerializeField] AudioClip waterFlyWarningSound;
+    [SerializeField] AudioClip stuckInWaterFlySound;
+    [SerializeField] AudioClip barricadeDownSound;
 
     GameObject damage;
 
@@ -27,6 +30,7 @@ public partial class TestCHMKart : MonoBehaviour
     GameObject waterFlyObject;
 
     ItemNetController itemNetCtrl;
+    public WaterFlyController waterFlyCtrl { get; set; }
 
     public bool isKartRotating { get; set; }
 
@@ -37,6 +41,7 @@ public partial class TestCHMKart : MonoBehaviour
         {
             //StartBoost(boostDuration);
             MakeItemUseFunction(inventory.GetUsedItemType());
+
             inventory.RemoveItem();
             isItemUsed = true;
         }
@@ -107,7 +112,8 @@ public partial class TestCHMKart : MonoBehaviour
             case ItemType.waterFly:
                 // 임시로
                 //StuckInWaterFly();
-                itemNetCtrl.RequestWaterFly(_photonView.ViewID, rankManager.GetRank(), exitWaterFlyTime);
+                playerCharAni.SetTrigger("ItemUse");
+                itemNetCtrl.RequestWaterFly(_photonView.ViewID, rankManager.GetRank());
                 break;
         }
     }
@@ -136,6 +142,7 @@ public partial class TestCHMKart : MonoBehaviour
         isKartRotating = true;
         isRacingStart = false;
         rigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        Vector3 pastMass = rigid.centerOfMass;
         rigid.centerOfMass = new Vector3(0, -2.0f, 0);
         originAngularDrag = rigid.angularDrag;
         rigid.angularDrag = 0.05f;
@@ -151,6 +158,7 @@ public partial class TestCHMKart : MonoBehaviour
         yield return new WaitForSeconds(1f);
         isRacingStart = true;
         rigid.angularDrag = originAngularDrag;
+        rigid.centerOfMass = pastMass;
         rigid.constraints = RigidbodyConstraints.None;
         isKartRotating = false;
     }
@@ -199,26 +207,72 @@ public partial class TestCHMKart : MonoBehaviour
         SetActiveShield(isUsingShield);
     }
 
+    //[PunRPC]
+    //void MakeBarricade()
+    //{
+    //    GameObject barricade = Resources.Load<GameObject>("Items/Barricade");
+    //    GameObject barricadePrefab = Instantiate(barricade, frontBarricadePos.position, Quaternion.identity);
+
+    //    // ItemNetController에 바리케이드 등록
+    //    itemNetCtrl.RegisterItem(barricadePrefab);
+
+    //    Vector3 forwardDir = transform.forward;
+    //    barricadePrefab.transform.position += forwardDir * 7 + Vector3.up * 0.1f;
+    //    Vector3 direction = transform.position - barricadePrefab.transform.position;
+    //    direction.y = 0;
+    //    barricadePrefab.transform.rotation = Quaternion.LookRotation(direction);
+    //}
+
     [PunRPC]
-    void MakeBarricade()
+    void MakeBarricade(Vector3 position, Vector3 rotation)
     {
+        //GameObject firstKart = itemNetCtrl.GetFirstKartObject();
+        //Transform checkPointTrans = mapManager.GetNextCheckPointPos(checkPointIndex);
+        //Vector3 checkPointRot = checkPointTrans.eulerAngles;
+
         GameObject barricade = Resources.Load<GameObject>("Items/Barricade");
-        GameObject barricadePrefab = Instantiate(barricade, frontBarricadePos.position, Quaternion.identity);
+        GameObject[] barricadePrefab = new GameObject[3];
+        
+        for (int i = 0; i < 3; i++)
+        {
+            barricadePrefab[i] = Instantiate(barricade, position, Quaternion.identity);
+            itemNetCtrl.RegisterItem(barricadePrefab[i]);
 
-        // ItemNetController에 바리케이드 등록
-        itemNetCtrl.RegisterItem(barricadePrefab);
+            barricadePrefab[i].transform.eulerAngles = rotation + new Vector3(0, 90, 0);
+            barricadePrefab[i].GetComponent<BarricadeController>().itemCtrl = itemNetCtrl;
+        }
 
-        Vector3 forwardDir = transform.forward;
-        barricadePrefab.transform.position += forwardDir * 7 + Vector3.up * 0.1f;
-        Vector3 direction = transform.position - barricadePrefab.transform.position;
-        direction.y = 0;
-        barricadePrefab.transform.rotation = Quaternion.LookRotation(direction);
+        Vector3 forwardDir = Quaternion.Euler(rotation) * Vector3.forward;
+
+        for (int i = -1; i < 2; i++)
+        {
+            barricadePrefab[i + 1].transform.position += Vector3.up * 0.1f + forwardDir * (10 * i);
+        }
+
+        itemNetCtrl.MakeBarricadeSink(barricadePrefab[0].GetComponent<BarricadeController>().destoryTime);
+
+        audioSource.PlayOneShot(barricadeDownSound);
+    }
+
+    [PunRPC]
+    void SendCheckPointIndex()
+    {
+        //GameObject firstKart = itemNetCtrl.GetFirstKartObject();
+        Debug.Log(gameObject.name);
+        int firstPointIndex = mapManager.GetKartCheckPointIndex(gameObject);
+
+        Transform checkPointTrans = mapManager.GetNextCheckPointPos(firstPointIndex);
+        Vector3 checkPointPos = checkPointTrans.position;
+        Vector3 checkPointRot = checkPointTrans.eulerAngles;
+
+        _photonView.RPC("MakeBarricade", RpcTarget.AllViaServer, checkPointPos, checkPointRot);
     }
 
     public void MakeDisableBarricade(GameObject disableObject)
     {
         itemNetCtrl.RequestDisableItem(disableObject);
     }
+
 
     [PunRPC]
     public void StuckInWaterFly()
@@ -236,6 +290,8 @@ public partial class TestCHMKart : MonoBehaviour
         transform.localPosition = Vector3.zero;
         rigid.isKinematic = true;
         isRacingStart = false;
+
+        audioSource.PlayOneShot(stuckInWaterFlySound);
     }
 
     [PunRPC]
@@ -257,6 +313,28 @@ public partial class TestCHMKart : MonoBehaviour
         itemNetCtrl.RequestDisableItem(waterFlyObject);
 
         waterFlyObject = null;
+
+        audioSource.Stop();
+    }
+
+    [PunRPC]
+    void ActiveWaterFlyUI()
+    {
+        waterFlyCtrl.gameObject.SetActive(true);
+        waterFlyCtrl.getExitPhotonViewID = _photonView.ViewID;
+        waterFlyCtrl.ResetTimer();
+    }
+
+    [PunRPC]
+    void InActiveInWaterFlyUI()
+    {
+        waterFlyCtrl.gameObject.SetActive(false);
+    }
+
+    [PunRPC]
+    void PlayWaterFlyWaringSound()
+    {
+        audioSource.PlayOneShot(waterFlyWarningSound);
     }
 
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -270,6 +348,22 @@ public partial class TestCHMKart : MonoBehaviour
             isUsingShield = (bool)stream.ReceiveNext();
         }
     }
+
+    //void CheckAndDisableCollider()
+    //{
+    //    Collider[] hitColliders = Physics.OverlapSphere(transform.position, 4f);
+    //    foreach (Collider hitcollider in hitColliders)
+    //    {
+    //        BarricadeController barrricadeCtrl = hitcollider.GetComponent<BarricadeController>();
+    //        if (barrricadeCtrl != null && isUsingShield == true)
+    //        {
+    //            hitcollider.enabled = false;
+    //            isUsingShield = false;
+    //            SetActiveShield(isUsingShield);
+    //            break;
+    //        }
+    //    }
+    //}
 
     void OnTriggerEnter(Collider other)
     {

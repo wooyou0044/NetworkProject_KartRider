@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using Photon.Pun;
+using Photon.Pun.Demo.PunBasics;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,7 +19,9 @@ public class GameManager : MonoBehaviour
     public MainTextController mainTextController;
     public MiniMapController mnMapController;
     public RankUIController rankUIController;
-    
+    // 물파리 관련 UI
+    public WaterFlyController waterFlyCtrl;
+
     [Header("맵 요소들 매니저")]
     public MapManager mapManager;
     public RaceResultController raceResultController;
@@ -50,6 +53,8 @@ public class GameManager : MonoBehaviour
     private Coroutine retireCountDown;
     private CharacterSo _selectedChar;
     
+    public Animator playerAni;
+
     private void Awake()
     {
         _readyPlayers = new List<Player>();
@@ -88,6 +93,9 @@ public class GameManager : MonoBehaviour
         {
             InstantiateObject();
         }
+
+        // 물파리 UI 끄기
+        waterFlyCtrl.gameObject.SetActive(false);
     }
     
     public void InstantiateObject()
@@ -100,7 +108,11 @@ public class GameManager : MonoBehaviour
         // 캐릭터 세팅
         GameObject playerChar = PhotonNetwork.Instantiate(characterSo.characterName, Vector3.zero, Quaternion.identity);
         kartCtrl.playerCharAni = playerChar.GetComponent<Animator>();
+        playerAni = kartCtrl.playerCharAni;
         StartCoroutine(PlaceToMap(kart));
+
+        kartCtrl.waterFlyCtrl = waterFlyCtrl;
+        waterFlyCtrl.gameObject.SetActive(false);
     }
 
     IEnumerator PlaceToMap(GameObject kart)
@@ -263,6 +275,10 @@ public class GameManager : MonoBehaviour
         kartCtrl.isRacingStart = false;
         StartCoroutine(kartCtrl.DecelerateOverTime(1f));
         kartCtrl.camerCtrl.ActivateFinishCamera();
+        playerAni.SetTrigger("IsVictory");
+        // 카트 위에 축하하는 거 추가
+        kartCtrl.transform.GetChild(0).GetComponent<KartBodyController>().SetConfettiEffectActive(true);
+
     }
 
     IEnumerator MoveToRoom()

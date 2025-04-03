@@ -46,6 +46,7 @@ public class SceneCont : MonoBehaviour
     //씬 변경 시 로딩을 위한 AsyncOperation 리턴변수
     public AsyncOperation SceneAsync(string sceneName)
     {
+        SoundManager.instance.PlayBGM(SceneManager.GetActiveScene().buildIndex + 1);
         return SceneManager.LoadSceneAsync(sceneName);
     }
 }

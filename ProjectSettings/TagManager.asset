@@ -9,6 +9,8 @@ TagManager:
   - Deadzone
   - ItemBox
   - SkidMark
+  - Undefined
+  - ItemManager
   layers:
   - Default
   - TransparentFX

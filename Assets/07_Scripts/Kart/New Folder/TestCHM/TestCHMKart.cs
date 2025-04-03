@@ -21,10 +21,12 @@ public partial class TestCHMKart : MonoBehaviour
     [Header("드리프트 설정")]
     [SerializeField] private float minDriftAngle = 30f;       // 최소 드리프트 각도
     [SerializeField] public float maxDriftAngle = 180f;       // 최대 드리프트 각도
+
     [Header("드리프트 지속시간")]
     [SerializeField] private float minDriftDuration = 0.2f;     // 최소 드리프트 지속시간
     [SerializeField] private float maxDriftDuration = 2f;       // 최대판단 드리프트 지속시간
     [SerializeField] private float totalMaxDriftDuration = 2f;       // 최대판단 드리프트 지속시간
+
     [Header("드리프트 힘")]
     [SerializeField] private float minDriftForceMultiplier = 1f;// 최소 드리프트 힘 배수
     [SerializeField] private float maxDriftForceMultiplier = 5f;// 최대 드리프트 힘 배수
@@ -36,10 +38,12 @@ public partial class TestCHMKart : MonoBehaviour
     [Header("부스트 설정")]
     [SerializeField] public float boostDuration = 1.5f;              // 기본 부스트 지속시간
     [SerializeField] public float momentboostDuration = 0.5f;       // 순간 부스트 지속시간
+
     [Header("부스트 게이지 설정")]
     [SerializeField] public int maxBoostGauge = 100;                // 최대 부스트 게이지
     [SerializeField] private float boostChargeRate = 5f;             // 기본 부스트 충전 속도
-    [SerializeField] private float driftBoostChargeRate = 10f;        // 드리프트 중 부스트 충전 속도    
+    [SerializeField] private float driftBoostChargeRate = 10f;        // 드리프트 중 부스트 충전 속도
+                                                                    
     [Header("부스트 파워 설정")]
     [SerializeField] private float maxBoostSpeed = 82.5f;            // 부스트 활성화 시 최대 속도 속력 변환 해줘야함 지금 시속 300 = m/s 82.5 가 딱임 
     [SerializeField] private float boostMultiplier = 1.1f;          // 지속적인 부스터 효과 계수
@@ -54,7 +58,7 @@ public partial class TestCHMKart : MonoBehaviour
     public float speedKM { get; private set; }     // 현재 속력 (km/h 단위) 계기판 출력 속력
     public bool isBoostTriggered { get; set; } // 부스트 활성화 여부
     //public bool isBoostCreate { get; set; }    // 드리프트 아이템 생성 가능 여부
-    public float boostGauge { get; private set; }                // 현재 부스트 게이지
+    public float boostGauge { get; private set; } // 현재 부스트 게이지
     public bool isItemUsed { get; set; }
     public bool isRacingStart { get; set; } //시작 대기 변수
     public bool isGameFinished { get; set; } //결승선 변수
@@ -97,8 +101,10 @@ public partial class TestCHMKart : MonoBehaviour
 
     // 내 RankManager 추가
     RankManager rankManager;
+    public MapManager mapManager { get; private set; }
 
     bool isSparkOn;
+    bool isWallCollAniOn;
     float inputKey;
 
     #endregion
@@ -110,8 +116,15 @@ public partial class TestCHMKart : MonoBehaviour
         wheelCtrl = wheels.GetComponent<CHMTestWheelController>(); // 바퀴 컨트롤러 참조
         kartBodyCtrl = kartBody.GetComponent<KartBodyController>();
         inventory = GetComponent<KartInventory>();
-        rankManager = GetComponent<RankManager>();
         camerCtrl = GetComponent<TestCHMCamer>();
+        
+        rankManager = GetComponent<RankManager>();
+
+        rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
+
+        camerCtrl = GetComponent<TestCHMCamer>();
+>>>>>>>>> Temporary merge branch 2
+        
         rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
 
         /* TODO : 포톤 붙일때 수정해주기 */
@@ -123,7 +136,8 @@ public partial class TestCHMKart : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         // 임시
-        itemNetCtrl = GameObject.Find("ItemManager").GetComponent<ItemNetController>();
+        itemNetCtrl = GameObject.FindWithTag("ItemManager").GetComponent<ItemNetController>();
+        mapManager = GameObject.Find("MapManager").GetComponent<MapManager>();
     }
 
     private void Start()
@@ -228,6 +242,7 @@ public partial class TestCHMKart : MonoBehaviour
         // 부스트 입력 처리
         HandleItemInput();
         playerCharAni.SetBool("IsBoosting", isBoostTriggered);
+       
 
         if (isUsingShield == false)
         {
@@ -281,7 +296,7 @@ public partial class TestCHMKart : MonoBehaviour
         // 최대 지속 시간을 초과할 경우 바로 종료 예약
         if (totalDriftDuration >= totalMaxDriftDuration)
         {
-            Debug.Log("[StartDrift] 누적 지속 시간이 최대 지속 시간을 초과하여 즉시 종료 예약");
+            //Debug.Log("[StartDrift] 누적 지속 시간이 최대 지속 시간을 초과하여 즉시 종료 예약");
         }
 
         // 지정된 누적 지속시간 후 드리프트 종료 예약
@@ -983,7 +998,7 @@ public partial class TestCHMKart : MonoBehaviour
             if (((1 << hitLayer) & wallLayer.value) != 0)
             {
                 ProcessWallCollision();
-                playerCharAni.SetBool("IsCollsion", false);
+
             }
             else if (((1 << hitLayer) & boosterLayer.value) != 0)
             {
@@ -1031,14 +1046,19 @@ public partial class TestCHMKart : MonoBehaviour
             // 벽에 너무 박히지 않도록, 충돌면의 법선 방향으로 살짝 밀어냅니다.
             // 이 거리 값은 실험을 통해 적절한 수치(예: 0.1f ~ 0.2f 등)로 조정하면 됩니다.
             float separationDistance = 0.1f;
-            transform.position += lastHit.normal * separationDistance;
+            kartBodyCtrl.SetCollisonSparkActive(true);
 
-            rigid.velocity = newVelocity;
-            Debug.Log($"벽 충돌 후 처리: 새 속도 = {rigid.velocity}");
-
-            rigid.velocity = reflectedVelocity * bounceFactor;
-            Debug.Log($"벽 충돌: 반사된 속도 = {rigid.velocity}");
+            //playerCharAni.SetBool("IsCollsion", true);
+            playerCharAni.SetTrigger("Collsion");
+            isWallCollAniOn = true;
+           
         }
+
+
+            kartBodyCtrl.SetCollisonSparkActive(true);
+        }
+=========
+>>>>>>>>> Temporary merge branch 2
     }
 
 
@@ -1063,10 +1083,11 @@ public partial class TestCHMKart : MonoBehaviour
 
     #endregion
 
-    #region [정면(슬로프 체크) 캐스트 및 경사 보정 힘 적용]
+    #region [정면(슬로프 체크) 캐스트 및 경사 보정 힘 적용, 아이템 벽 체크]
 
     /// <summary>
     /// 정면으로 Raycast를 쏘아 지면의 경사를 체크하고, 경사각에 따라 추가 힘을 적용합니다.
+    /// 바리케이드 쉴드가 True일때 뚫음
     /// </summary>
     private void ProcessSlopeForce()
     {

@@ -502,9 +502,11 @@ MonoBehaviour:
   - {fileID: 3395335430761523191}
   - {fileID: 6374713261397151615}
   shieldEffectBodyPos: {fileID: 8887275532626141900}
+  confettiPos: {fileID: 0}
   driftSpark: {fileID: 4503612902121041701, guid: 5a936c83b1746f14f9100db745e94f04, type: 3}
   windEffect: {fileID: 6354686006975832417, guid: 8ba61049d6d48464d81e1c7030773377, type: 3}
   shieldEffect: {fileID: 7314526620251459061, guid: ccf28ea29cf499744ac31bab90073aba, type: 3}
+  confettiEffect: {fileID: 5700784828077083704, guid: ed962e35f7fa6f34f8d27aa6d19ea293, type: 3}
 --- !u!1 &1556149449001999350
 GameObject:
   m_ObjectHideFlags: 0
@@ -1780,6 +1782,9 @@ MonoBehaviour:
   shieldDuration: 0
   exitWaterFlyTime: 0
   waterBombParticle: {fileID: 0}
+  waterFlyWarningSound: {fileID: 0}
+  stuckInWaterFlySound: {fileID: 0}
+  barricadeDownSound: {fileID: 0}
 --- !u!114 &873466291264580667
 MonoBehaviour:
   m_ObjectHideFlags: 0
