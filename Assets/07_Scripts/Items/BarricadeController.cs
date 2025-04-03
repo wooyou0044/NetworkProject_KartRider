@@ -17,11 +17,13 @@ public class BarricadeController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
+
+        StartCoroutine(CheckShield());
     }
 
     void Update()
     {
-        
+
     }
 
     public void OffBarricade()
@@ -41,11 +43,30 @@ public class BarricadeController : MonoBehaviour
     {
         rb.constraints = RigidbodyConstraints.None;
         col.isTrigger = true;
+        StopCoroutine(CheckShield());
     }
 
-    public void TurnOnIsTrigger()
+    public void CheckAndDisableCollider()
     {
-        col.isTrigger = true;
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 2f);
+        foreach(Collider col in hitColliders)
+        {
+            TestCHMKart playerCtrl = col.GetComponent<TestCHMKart>();
+            if(playerCtrl != null && playerCtrl.isUsingShield == true)
+            {
+                col.isTrigger = true;
+                break;
+            }
+        }
+    }
+
+    IEnumerator CheckShield()
+    {
+        while(true)
+        {
+            CheckAndDisableCollider();
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 
     void OnCollisionEnter(Collision collision)

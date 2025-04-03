@@ -41,6 +41,7 @@ public partial class TestCHMKart : MonoBehaviour
         {
             //StartBoost(boostDuration);
             MakeItemUseFunction(inventory.GetUsedItemType());
+
             inventory.RemoveItem();
             isItemUsed = true;
         }
