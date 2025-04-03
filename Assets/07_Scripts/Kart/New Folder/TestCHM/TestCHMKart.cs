@@ -123,8 +123,6 @@ public partial class TestCHMKart : MonoBehaviour
         rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
 
         camerCtrl = GetComponent<TestCHMCamer>();
->>>>>>>>> Temporary merge branch 2
-        
         rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
 
         /* TODO : 포톤 붙일때 수정해주기 */
@@ -1053,12 +1051,7 @@ public partial class TestCHMKart : MonoBehaviour
             isWallCollAniOn = true;
            
         }
-
-
-            kartBodyCtrl.SetCollisonSparkActive(true);
-        }
-=========
->>>>>>>>> Temporary merge branch 2
+        kartBodyCtrl.SetCollisonSparkActive(true);
     }
 
 
