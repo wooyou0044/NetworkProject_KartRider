@@ -348,6 +348,22 @@ public partial class TestCHMKart : MonoBehaviour
         }
     }
 
+    //void CheckAndDisableCollider()
+    //{
+    //    Collider[] hitColliders = Physics.OverlapSphere(transform.position, 4f);
+    //    foreach (Collider hitcollider in hitColliders)
+    //    {
+    //        BarricadeController barrricadeCtrl = hitcollider.GetComponent<BarricadeController>();
+    //        if (barrricadeCtrl != null && isUsingShield == true)
+    //        {
+    //            hitcollider.enabled = false;
+    //            isUsingShield = false;
+    //            SetActiveShield(isUsingShield);
+    //            break;
+    //        }
+    //    }
+    //}
+
     void OnTriggerEnter(Collider other)
     {
         if(other == null)

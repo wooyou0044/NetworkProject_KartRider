@@ -184,6 +184,11 @@ public partial class TestCHMKart : MonoBehaviour
             }
         }
 
+        // 바리케이드 콜라이더 체크    
+        //if (isUsingShield)
+        //{
+        //    CheckAndDisableCollider();
+        //}
     }
 
     private void Update()
@@ -984,10 +989,11 @@ public partial class TestCHMKart : MonoBehaviour
 
     #endregion
 
-    #region [정면(슬로프 체크) 캐스트 및 경사 보정 힘 적용]
+    #region [정면(슬로프 체크) 캐스트 및 경사 보정 힘 적용, 아이템 벽 체크]
 
     /// <summary>
     /// 정면으로 Raycast를 쏘아 지면의 경사를 체크하고, 경사각에 따라 추가 힘을 적용합니다.
+    /// 바리케이드 쉴드가 True일때 뚫음
     /// </summary>
     private void ProcessSlopeForce()
     {
