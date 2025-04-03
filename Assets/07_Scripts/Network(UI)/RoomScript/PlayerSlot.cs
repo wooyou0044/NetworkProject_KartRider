@@ -7,5 +7,5 @@ public class PlayerSlot : MonoBehaviour
 {
     [SerializeField] public PlayerPanel playerPanel;
     public int actorNumber;
-    public string playerName;   
+    public bool isReady = false;
 }

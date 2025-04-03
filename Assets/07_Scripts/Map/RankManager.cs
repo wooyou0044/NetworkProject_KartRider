@@ -79,6 +79,7 @@ public class RankManager : MonoBehaviour, IPunObservable
         return kartRankData.isFinish;
     }
     
+    [PunRPC]
     public void SetFinish(bool isFinish)
     {
         kartRankData.isFinish = isFinish;

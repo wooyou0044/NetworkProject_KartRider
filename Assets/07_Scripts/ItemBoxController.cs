@@ -26,12 +26,16 @@ public class ItemBoxController : MonoBehaviour
         //int rand = Random.Range(0, count);
         //curItem = items[rand];
 
-        //curItem = items[3];
+        curItem = items[3];
 
         //int rand = Random.Range(0, 3);
         //curItem = items[2];
 
-        curItem = items[0];
+        //curItem = items[2];
+
+        //count = (int)ItemType.booster + 1;
+        //int rand = Random.Range(1, 3);
+        //curItem = items[rand];
     }
 
     public void InactiveItemBox()

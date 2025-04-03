@@ -44,10 +44,36 @@ MonoBehaviour:
   - ReceiveLoadFinished
   - StartCountDown
   - SetOwnInfo
+  - SetReady
   - SetLap
   - RemoveReadyPlayer
   - ThrowBanana
+  - MakeBarricade
+  - DisableItem
+  - OffBarricade
+  - StuckInWaterFly
+  - ExitInWaterFly
+  - RequestExitWaterFly
+  - SetShieldState
   - RemoveItemBox
+  - SetFinish
+  - MakeBarricadeWithPosition
+  - MakeBarricadeForFirstPlace
+  - MakeBarricadeFirstPlace
+  - FindAndSendCheckPointPosition
+  - SyncBarricadePosition
+  - SendCheckpointIndex
+  - MakeBarricadeAtCheckPoint
+  - SendCheckPointIndex
+  - UpdateBarricadePosition
+  - GetFirstKartObject
+  - StartBarricadeSink
+  - GoDownBarricadeRPC
+  - FindBarricades
+  - ActiveWaterFlyUI
+  - InActiveInWaterFlyUI
+  - PlayWaterFlyWaringSound
+  - RequestDelayedWaterFly
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

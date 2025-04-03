@@ -18,7 +18,9 @@ public class GameManager : MonoBehaviour
     public MainTextController mainTextController;
     public MiniMapController mnMapController;
     public RankUIController rankUIController;
-    
+    // 물파리 관련 UI
+    public WaterFlyController waterFlyCtrl;
+
     [Header("맵 요소들 매니저")]
     public MapManager mapManager;
 
@@ -71,6 +73,9 @@ public class GameManager : MonoBehaviour
         {
             InstantiateObject();
         }
+
+        // 물파리 UI 끄기
+        waterFlyCtrl.gameObject.SetActive(false);
     }
     
     public void InstantiateObject()
@@ -85,6 +90,9 @@ public class GameManager : MonoBehaviour
         kartCtrl.playerCharAni = playerChar.GetComponent<Animator>();
         playerAni = kartCtrl.playerCharAni;
         StartCoroutine(PlaceToMap(kart));
+
+        kartCtrl.waterFlyCtrl = waterFlyCtrl;
+        waterFlyCtrl.gameObject.SetActive(false);
     }
 
     IEnumerator PlaceToMap(GameObject kart)
@@ -182,6 +190,8 @@ public class GameManager : MonoBehaviour
             _gameManagerView.RPC("OnSomePlayerFinish", RpcTarget.AllViaServer, _winner);
             kartCtrl.camerCtrl.ActivateFinishCamera();
             playerAni.SetTrigger("IsVictory");
+            // 카트 위에 축하하는 거 추가
+            kartCtrl.transform.GetChild(0).GetComponent<KartBodyController>().SetConfettiEffectActive(true);
         }
     }
 }

@@ -8,6 +8,7 @@ public class RoomEntry : MonoBehaviour
 {
     [SerializeField] public TMP_Text roomNumberText;
     [SerializeField] public TMP_Text roomNameText;
+    [SerializeField] public TMP_Text roomPasswordText;
     [SerializeField] public TMP_Text playerCountText;
     [SerializeField] public TMP_Text MaxPlayersText;
     [SerializeField] public TMP_Text mapNameText;
@@ -33,23 +34,30 @@ public class RoomEntry : MonoBehaviour
 
         playerCountText.text = $"{roomInfo.PlayerCount}";
         MaxPlayersText.text = $"/ {roomInfo.MaxPlayers}";
-        
-        mapNameText.text = roomInfo.CustomProperties.ContainsKey("MapName")
-            ? (string)roomInfo.CustomProperties["MapName"]
+                
+        mapNameText.text = roomInfo.CustomProperties.ContainsKey("Map")
+            ? (string)roomInfo.CustomProperties["Map"]
             : "기본 맵";
-
+        
         // 맵 이미지 설정
         var mapSprite = Resources.Load<Sprite>($"Maps/{mapNameText.text}");
         mapImage.sprite = mapSprite != null ? mapSprite : Resources.Load<Sprite>("Maps/default");
+
         //패스워드가 있다면 패스워드 아이콘 생성
-        bool passwrod = roomInfo.CustomProperties.ContainsKey("Password") &&
-               !string.IsNullOrEmpty(roomInfo.CustomProperties["Password"] as string); // 비밀번호 확인
-        SetLockIcon(passwrod);
+        if (IsPasswrod(roomInfo))
+        {
+            roomPasswordText.text = roomInfo.CustomProperties.ContainsKey("Password")
+            ? (string)roomInfo.CustomProperties["Password"]
+            : "";
+        }
+        SetLockIcon(IsPasswrod(roomInfo));
     }
     //룸이 게임을 시작했는지를 반환하는 메서드
     public bool IsGameStarted(RoomInfo roomInfo)
     {
-        return roomInfo.IsOpen;
+        return roomInfo.CustomProperties.ContainsKey("IsGameStart") && 
+            (bool)roomInfo.CustomProperties["IsGameStart"];
+;
     }
     //룸에 사람이 가득 찼는지를 반환하는 메서드
     public bool IsRoomFull(RoomInfo roomInfo)
@@ -60,7 +68,7 @@ public class RoomEntry : MonoBehaviour
     public bool IsPasswrod(RoomInfo roomInfo)
     {
         return roomInfo.CustomProperties.ContainsKey("Password") &&
-                       !string.IsNullOrEmpty(roomInfo.CustomProperties["Password"] as string); ; // 비밀번호 확인
+            !string.IsNullOrEmpty(roomInfo.CustomProperties["Password"] as string); //비밀번호 확인
     }
    
     //룸에 패스워드가 있다면 패스워드 아이콘을 띄움

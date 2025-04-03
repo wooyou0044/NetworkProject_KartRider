@@ -99,6 +99,10 @@ public partial class TestCHMKart : MonoBehaviour
     [SerializeField] AudioClip driftAudioClip;
     [SerializeField] AudioClip boostAudioClip;
 
+    // 내 RankManager 추가
+    RankManager rankManager;
+    public MapManager mapManager { get; private set; }
+
     bool isSparkOn;
     bool isWallCollAniOn;
     float inputKey;
@@ -114,6 +118,8 @@ public partial class TestCHMKart : MonoBehaviour
         inventory = GetComponent<KartInventory>();
         camerCtrl = GetComponent<TestCHMCamer>();
         
+        rankManager = GetComponent<RankManager>();
+
         rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
 
         /* TODO : 포톤 붙일때 수정해주기 */
@@ -124,6 +130,22 @@ public partial class TestCHMKart : MonoBehaviour
 
         audioSource = GetComponent<AudioSource>();
 
+        // 임시
+        itemNetCtrl = GameObject.FindWithTag("ItemManager").GetComponent<ItemNetController>();
+        mapManager = GameObject.Find("MapManager").GetComponent<MapManager>();
+    }
+
+    private void Start()
+    {
+        // Player Marker Setting
+        if (_photonView.IsMine)
+        {
+            gameObject.transform.Find("Markers").GetChild(0).gameObject.SetActive(true);
+        }
+        else
+        {
+            gameObject.transform.Find("Markers").GetChild(1).gameObject.SetActive(true);
+        }
     }
 
     private void FixedUpdate()
@@ -181,7 +203,7 @@ public partial class TestCHMKart : MonoBehaviour
                 wasAirborne = false;
             }
         }
-        
+
     }
 
     private void Update()
@@ -224,6 +246,12 @@ public partial class TestCHMKart : MonoBehaviour
                 kartBodyCtrl.SetShieldEffectActive(false);
             }
         }
+
+        //if(isExitWaterFly == true)
+        //{
+        //    itemNetCtrl.RequestDisableItem(waterFlyObject);
+        //    isExitWaterFly = false;
+        //}
     }
     #endregion
 
@@ -999,7 +1027,9 @@ public partial class TestCHMKart : MonoBehaviour
             // 예: 아이템 박스 처리
             if (lastHit.collider.CompareTag("ItemBox"))
             {
-                lastHit.collider.gameObject.GetComponent<BarricadeController>().OffBarricade();
+                BarricadeController barricadeCtrl = lastHit.collider.gameObject.GetComponent<BarricadeController>();
+                barricadeCtrl.OffBarricade();
+                barricadeCtrl.kartCtrl = GetComponent<TestCHMKart>();
             }
 
             // 충돌 전 손실된 속도를 반사 처리: 현재 속도를 반사 및 감쇠
@@ -1055,10 +1085,11 @@ public partial class TestCHMKart : MonoBehaviour
 
     #endregion
 
-    #region [정면(슬로프 체크) 캐스트 및 경사 보정 힘 적용]
+    #region [정면(슬로프 체크) 캐스트 및 경사 보정 힘 적용, 아이템 벽 체크]
 
     /// <summary>
     /// 정면으로 Raycast를 쏘아 지면의 경사를 체크하고, 경사각에 따라 추가 힘을 적용합니다.
+    /// 바리케이드 쉴드가 True일때 뚫음
     /// </summary>
     private void ProcessSlopeForce()
     {

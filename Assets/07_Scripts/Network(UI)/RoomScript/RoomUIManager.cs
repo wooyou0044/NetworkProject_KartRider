@@ -3,46 +3,62 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 public class RoomUIManager : MonoBehaviour
 {
     [Header("방 인포메이션")]
-    [SerializeField] public Button roomTitleChangeBtn;
-    [SerializeField] public TMP_Text roomNumberText;
-    [SerializeField] public TMP_Text roomNameText;
-    [SerializeField] public TMP_Text roomPasswordText;
-    [SerializeField] public TMP_Text roomMapNameText;
-    [SerializeField] public Image roomMapeImg;
+    public Button roomTitleChangeBtn;
+    public TMP_Text roomNumberText;
+    public TMP_Text roomNameText;
+    public TMP_Text roomPasswordText;
+    public TMP_Text roomMapNameText;
+    public Image roomMapeImg;
        
     [Header("방 이름 변경")]
-    [SerializeField] public GameObject roomInfoChangePanel;
-    [SerializeField] public TMP_InputField roomNameChangeField;
-    [SerializeField] public TMP_InputField roomPasswordChangeField;
+    public GameObject roomInfoChangePanel;
+    public TMP_InputField roomNameChangeField;
+    public TMP_InputField roomPasswordChangeField;
+
+    [Header("준비 버튼")]
+    public Button startBtn;
+    public TMP_Text startBtnText;
 
     [Header("방 비밀번호 아이콘")]
-    [SerializeField] public Image passwordGroup;
+    public Image passwordGroup;
 
     [Header("맵(트랙변경) 버튼")]
-    [SerializeField] public Button MapChangeBtn;    
+    public Button MapChangeBtn;
 
     [Header("방 나가기 버튼")]
-    [SerializeField] public Button exitBtn;
+    public Button exitBtn;
 
     [Header("카트 판넬")]
-    [SerializeField] public GameObject kartPanel;
-    [SerializeField] public Button kartRightBtn;
-    [SerializeField] public Button kartLeftBtn;
-    [SerializeField] public Button kartSelectBtn;
-    [SerializeField] public Image kartImg;
-    [SerializeField] public Button kartPanelBtn;
+    public GameObject kartPanel;
+    public Button kartRightBtn;
+    public Button kartLeftBtn;
+    public Button kartSelectBtn;
+    public Image kartImg;
+    public Button kartPanelBtn;
 
     [Header("캐릭터 판넬")]
-    [SerializeField] public GameObject characterPanel;
-    [SerializeField] public Button characterRightBtn;
-    [SerializeField] public Button characterLeftBtn;
-    [SerializeField] public Button characterSelectBtn;
-    [SerializeField] public Image characterImg;
-    [SerializeField] public Button characterPanelBtn;
+    public GameObject characterPanel;
+    public Button characterRightBtn;
+    public Button characterLeftBtn;
+    public Button characterSelectBtn;
+    public Image characterImg;
+    public Button characterPanelBtn;
+
+    [Header("트랙 선택 판넬")]
+    public GameObject trackSelectPanel;
+    public MapList mapListPanel;
+    public Image selectMapImage;
+    public TMP_Text SelectMapName;
+    public Button trackSelectBtn;
+
+    [Header("안내메세지 판넬")]
+    public GameObject progressMessagePanel;
+    public TMP_Text progressMessageText;
 
     public void SetPasswordUI(bool hasPassword)
     {
@@ -57,11 +73,18 @@ public class RoomUIManager : MonoBehaviour
     {
         roomInfoChangePanel.gameObject.SetActive(false);
     }
-    public void SetRoominfoChangeBtn()
+    
+    public void TrackSelectPanelBtn()
     {
-        
+        trackSelectPanel.gameObject.SetActive(true);
+    }   
+    public void TrackSelectBtn()
+    {
+        trackSelectPanel.gameObject.SetActive(false);
     }
 
-
-
+    public void progressMessage(string massage)
+    {
+        progressMessageText.text = massage;
+    }
 }

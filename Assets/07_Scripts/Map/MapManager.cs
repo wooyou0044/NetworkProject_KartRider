@@ -40,9 +40,12 @@ public class MapManager : MonoBehaviourPunCallbacks
     
     // 디버깅용 내 마지막 체크포인트 보기
     [Header("디버그 필드")]
-    [SerializeField] private Transform myLastcheckPoint;
+    [SerializeField] public Transform myLastcheckPoint;
     [HideInInspector] public UnityEvent onFinishEvent;
-    
+
+    int currentCheckPointIndex;
+
+
     public int MyCurrentLap => _myCurrentLap;
 
     private void Awake()
@@ -229,5 +232,25 @@ public class MapManager : MonoBehaviourPunCallbacks
         {
             waypoints[index++].position = cp.transform.parent.localPosition - checkPointRoot;
         }
+    }
+
+    public Transform GetNextCheckPointPos(int currentCheckPointIndex)
+    {
+        int nextIndex = (currentCheckPointIndex + 1) % _allCheckPoints.Length;
+        return _allCheckPoints[nextIndex].transform.parent.transform;
+    }
+
+    public int GetKartCheckPointIndex(GameObject kart)
+    {
+        Transform lastCheckPoint = kart.GetComponent<TestCHMKart>().mapManager.myLastcheckPoint;
+        Debug.Log(lastCheckPoint.gameObject.name);
+        for (int i = 0; i < _allCheckPoints.Length; i++)
+        {
+            if (_allCheckPoints[i].transform.parent == lastCheckPoint)
+            {
+                return i;
+            }
+        }
+        return 0;
     }
 }
