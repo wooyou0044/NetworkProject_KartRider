@@ -9,6 +9,8 @@ TagManager:
   - Deadzone
   - ItemBox
   - SkidMark
+  - Undefined
+  - ItemManager
   layers:
   - Default
   - TransparentFX
@@ -21,8 +23,8 @@ TagManager:
   - Booster
   - Jump
   - Wall
-  - 
-  - 
+  - Marker
+  - MapObject
   - 
   - 
   - 

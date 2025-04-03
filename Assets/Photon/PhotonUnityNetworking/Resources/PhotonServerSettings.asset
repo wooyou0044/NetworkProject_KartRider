@@ -39,11 +39,45 @@ MonoBehaviour:
   - DestroySpaceship
   - Fire
   - RespawnSpaceship
-  - OnSomePlayerFinish
   - StartTimer
   - ReceiveLoadFinished
   - StartCountDown
   - SetOwnInfo
+  - SetReady
+  - SetLap
+  - RemoveReadyPlayer
+  - ThrowBanana
+  - MakeBarricade
+  - DisableItem
+  - OffBarricade
+  - StuckInWaterFly
+  - ExitInWaterFly
+  - RequestExitWaterFly
+  - SetShieldState
+  - RemoveItemBox
+  - SetCharacterResources
+  - PlayerCharacterLoad
+  - CharacterSelect
+  - GameObjSelect
+  - SetFinish
+  - MakeBarricadeWithPosition
+  - MakeBarricadeForFirstPlace
+  - MakeBarricadeFirstPlace
+  - FindAndSendCheckPointPosition
+  - SyncBarricadePosition
+  - SendCheckpointIndex
+  - MakeBarricadeAtCheckPoint
+  - SendCheckPointIndex
+  - UpdateBarricadePosition
+  - GetFirstKartObject
+  - StartBarricadeSink
+  - GoDownBarricadeRPC
+  - FindBarricades
+  - ActiveWaterFlyUI
+  - InActiveInWaterFlyUI
+  - PlayWaterFlyWaringSound
+  - RequestDelayedWaterFly
+  - OnSomePlayerFinished
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

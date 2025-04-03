@@ -64,6 +64,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: mesh_lena
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f1c8604d73b3b4a25b5e9beb2d941267, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f1c8604d73b3b4a25b5e9beb2d941267, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -113,7 +121,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: -1054738021840252842}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0

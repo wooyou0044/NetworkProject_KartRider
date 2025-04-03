@@ -10,11 +10,18 @@ public class KartBodyController : MonoBehaviour
     [SerializeField] GameObject collisionSpark;
     [SerializeField] Transform collisionTransform;
     [SerializeField] Transform[] driftSparkWheelPos;
+    [SerializeField] Transform shieldEffectBodyPos;
+    [SerializeField] Transform confettiPos;
     [SerializeField] GameObject driftSpark;
-    [SerializeField] TestCHMKart kart;
+    [SerializeField] GameObject windEffect;
+    [SerializeField] GameObject shieldEffect;
+    [SerializeField] GameObject confettiEffect;
 
     GameObject spark;
+    GameObject wind;
+    public GameObject shield { get; set; }
     GameObject[] driftSparkObject;
+    GameObject confetti;
 
     int input;
 
@@ -28,15 +35,24 @@ public class KartBodyController : MonoBehaviour
             boost.transform.eulerAngles += new Vector3(0, 0, -90);
         }
         spark = Instantiate(collisionSpark, collisionTransform);
+        wind = Instantiate(windEffect, collisionTransform);
+        wind.transform.eulerAngles += new Vector3(0, -90, 0);
         for(int i=0; i< driftSparkWheelPos.Length; i++)
         {
             driftSparkObject[i] = Instantiate(driftSpark, driftSparkWheelPos[i]);
             driftSparkObject[i].SetActive(false);
         }
+        shield = Instantiate(shieldEffect, shieldEffectBodyPos);
+        //shield.transform.position -= new Vector3(0, 0.05f, 0);
+        confetti = Instantiate(confettiEffect, confettiPos);
+        confetti.transform.eulerAngles += new Vector3(0, 90, 0);
 
         SetLampTrailActive(false);
         SetBoostEffectActive(false);
         SetCollisonSparkActive(false);
+        SetBoostWindEffectActive(false);
+        SetShieldEffectActive(false);
+        SetConfettiEffectActive(false);
     }
 
     void Update()
@@ -103,4 +119,18 @@ public class KartBodyController : MonoBehaviour
         }
     }
 
+    public void SetBoostWindEffectActive(bool isActive)
+    {
+        wind.SetActive(isActive);
+    }
+
+    public void SetShieldEffectActive(bool isActive)
+    {
+        shield.SetActive(isActive);
+    }
+
+    public void SetConfettiEffectActive(bool isActive)
+    {
+        confetti.SetActive(isActive);  
+    }
 }
