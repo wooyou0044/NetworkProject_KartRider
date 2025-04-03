@@ -38,4 +38,14 @@ public class SoundManager : MonoBehaviour
             audioSource.Play();
         }
     }
+
+    public void PlayBGM(string sceneName)
+    {
+        //if (sceneIndex >= 0 && sceneIndex < audioClips.Length)
+        //{
+        //    audioSource.clip = audioClips[sceneIndex];
+        //    audioSource.Play();
+        //}
+
+    }
 }

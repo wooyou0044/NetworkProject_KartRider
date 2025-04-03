@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviour
     
     private void Start()
     {
+        SoundManager.instance.PlayBGM(SceneManager.GetActiveScene().buildIndex + 2);
         if (SceneCont.Instance != null)
         {
             _selectedChar = SceneCont.Instance.SelectedCharacter;
