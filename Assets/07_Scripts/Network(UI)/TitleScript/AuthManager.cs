@@ -31,14 +31,6 @@ public class AuthManager : MonoBehaviour
         });
     }
     
-    //유저프로파일 삭제하는 버튼 테스트 때만 사용하고 삭제할 예정
-    public void DeletuserProfile()
-    {//프로파일에 저장한 유저 닉네임 초기화하기
-        var nickNameTask = FirebaseDBManager.Instance.DbRef.Child("users")
-            .Child(FirebaseDBManager.Instance.User.UserId)
-            .Child("isLoggedIn").SetValueAsync(false);
-    }
-
     /// <summary>
     /// 로그인 정보를 입력 받아 로그인 코루틴 실행
     /// 로그인 성공 또는 실패전 까지 버튼을 비활성화
@@ -389,6 +381,7 @@ public class AuthManager : MonoBehaviour
         //    yield break;
         //}
         //Debug.Log("초기 캐릭터 셋팅 완료");
+
         titleUI.ToggleSignUpPanel(false);
         //회원가입 완료 메세지
         titleUI.ShowMessage(titleUI.successMessage, "회원가입 완료!", true);
