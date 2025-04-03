@@ -203,7 +203,7 @@ public class TestCHMCamer : MonoBehaviour
             float currentAngle = Mathf.Lerp(startAngle, endAngle, timer / duration);
 
             // X, Z 좌표를 원형 경로로 계산
-            float newX = radius * Mathf.Cos(currentAngle);
+            float newX = (radius - 5f) * Mathf.Cos(currentAngle);
             float newZ = radius * Mathf.Sin(currentAngle);
 
             // Y 값은 설정된 목표 오프셋으로 직접 보간하여 이동
@@ -229,11 +229,8 @@ public class TestCHMCamer : MonoBehaviour
         Debug.Log("카메라가 설정된 오프셋에 도달하고 멈췄습니다!");
 
         // Cinemachine 제어 해제       
-        virtualCamera.LookAt = null;        
-        virtualCamera.m_Lens.FieldOfView = 60f;
-        Debug.Log("Before : " +transposer.transform.eulerAngles.y);
-        transposer.transform.eulerAngles -= new Vector3 (0,45f,0);
-        Debug.Log(transposer.transform.eulerAngles.y  );
+        virtualCamera.LookAt = null;
+        virtualCamera.m_Lens.FieldOfView = 70f;
 
 
     }

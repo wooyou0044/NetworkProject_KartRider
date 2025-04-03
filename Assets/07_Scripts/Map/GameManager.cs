@@ -190,6 +190,8 @@ public class GameManager : MonoBehaviour
             _gameManagerView.RPC("OnSomePlayerFinish", RpcTarget.AllViaServer, _winner);
             kartCtrl.camerCtrl.ActivateFinishCamera();
             playerAni.SetTrigger("IsVictory");
+            // 카트 위에 축하하는 거 추가
+            kartCtrl.transform.GetChild(0).GetComponent<KartBodyController>().SetConfettiEffectActive(true);
         }
     }
 }

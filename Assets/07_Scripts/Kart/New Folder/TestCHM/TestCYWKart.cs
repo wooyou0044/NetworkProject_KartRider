@@ -112,6 +112,7 @@ public partial class TestCHMKart : MonoBehaviour
             case ItemType.waterFly:
                 // 임시로
                 //StuckInWaterFly();
+                playerCharAni.SetTrigger("ItemUse");
                 itemNetCtrl.RequestWaterFly(_photonView.ViewID, rankManager.GetRank());
                 break;
         }
