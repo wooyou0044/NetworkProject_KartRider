@@ -287,7 +287,6 @@ public class GameManager : MonoBehaviour
     IEnumerator MoveToRoom()
     {
         string sceneName = "RoomScene";
-        Scene scene = SceneManager.GetSceneByName(sceneName);
         
         while (backToRoomCountDownSeconds > 0)
         {
@@ -296,15 +295,11 @@ public class GameManager : MonoBehaviour
             backToRoomCountDownSeconds--;
             yield return new WaitForSeconds(1f);
         }
-
-        if (!scene.IsValid())
-        {
-            PhotonNetwork.LoadLevel(MapEnum.DaisyCircuit.ToString());
-        }
         
-        if (scene.IsValid() && PhotonNetwork.LocalPlayer.Equals(PhotonNetwork.MasterClient))
+        // ToDo : DaisyScene만 로딩하고싶다면 주석처리 해줄것 (오류날수있음)
+        if (PhotonNetwork.LocalPlayer.Equals(PhotonNetwork.MasterClient))
         {
-            PhotonNetwork.LoadLevel(sceneName);
+            PhotonNetwork.LoadLevel(sceneName);            
         }
     }
 
