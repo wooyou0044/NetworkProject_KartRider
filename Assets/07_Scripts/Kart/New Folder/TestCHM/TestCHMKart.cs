@@ -122,6 +122,11 @@ public partial class TestCHMKart : MonoBehaviour
 
         rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
 
+        camerCtrl = GetComponent<TestCHMCamer>();
+>>>>>>>>> Temporary merge branch 2
+        
+        rigid = GetComponent<Rigidbody>();                         // 리지드바디 참조
+
         /* TODO : 포톤 붙일때 수정해주기 */
         _tr = gameObject.transform;
         _photonView = GetComponent<PhotonView>();
@@ -1041,11 +1046,6 @@ public partial class TestCHMKart : MonoBehaviour
             // 벽에 너무 박히지 않도록, 충돌면의 법선 방향으로 살짝 밀어냅니다.
             // 이 거리 값은 실험을 통해 적절한 수치(예: 0.1f ~ 0.2f 등)로 조정하면 됩니다.
             float separationDistance = 0.1f;
-            transform.position += lastHit.normal * separationDistance;
-
-            rigid.velocity = newVelocity;
-            //Debug.Log($"벽 충돌 후 처리: 새 속도 = {rigid.velocity}");
-
             kartBodyCtrl.SetCollisonSparkActive(true);
 
             //playerCharAni.SetBool("IsCollsion", true);
@@ -1053,14 +1053,12 @@ public partial class TestCHMKart : MonoBehaviour
             isWallCollAniOn = true;
            
         }
-        //else if (isWallCollAniOn == true) 
-        //{
-        //    playerCharAni.SetBool("IsCollsion", false);
-        //    Debug.Log("벽 충돌 해제");
-        //    isWallCollAniOn = false;
-            
-        //}
 
+
+            kartBodyCtrl.SetCollisonSparkActive(true);
+        }
+=========
+>>>>>>>>> Temporary merge branch 2
     }
 
 

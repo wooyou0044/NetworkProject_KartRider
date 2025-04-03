@@ -39,7 +39,6 @@ MonoBehaviour:
   - DestroySpaceship
   - Fire
   - RespawnSpaceship
-  - OnSomePlayerFinish
   - StartTimer
   - ReceiveLoadFinished
   - StartCountDown
@@ -56,6 +55,10 @@ MonoBehaviour:
   - RequestExitWaterFly
   - SetShieldState
   - RemoveItemBox
+  - SetCharacterResources
+  - PlayerCharacterLoad
+  - CharacterSelect
+  - GameObjSelect
   - SetFinish
   - MakeBarricadeWithPosition
   - MakeBarricadeForFirstPlace
@@ -74,6 +77,7 @@ MonoBehaviour:
   - InActiveInWaterFlyUI
   - PlayWaterFlyWaringSound
   - RequestDelayedWaterFly
+  - OnSomePlayerFinished
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

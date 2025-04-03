@@ -82,9 +82,12 @@ public class PhotonConnectManager : MonoBehaviourPunCallbacks
         {
             _gameManager.RemoveReadyPlayer(otherPlayer);
         }
-        
-        ((GameObject)otherPlayer.TagObject).SetActive(false);
-        Destroy((GameObject)otherPlayer.TagObject);
+
+        if (otherPlayer.TagObject != null)
+        {
+            ((GameObject)otherPlayer.TagObject).SetActive(false);
+            Destroy((GameObject)otherPlayer.TagObject);            
+        }
     }
 
     /* 테스트용 방 곧바로 입장시, 바로 카트 생성해준다. */

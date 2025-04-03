@@ -111,6 +111,17 @@ public class RankUIController : MonoBehaviour
     {
         _sortedKartList.Sort((kart1, kart2) =>
         {
+            // 이미 끝난 카트는 정렬에서 제외
+            if (_kartDict[kart1].RankManager.IsFinish() && !_kartDict[kart2].RankManager.IsFinish())
+            {
+                return -1;
+            }
+            
+            if (!_kartDict[kart1].RankManager.IsFinish() && _kartDict[kart2].RankManager.IsFinish())
+            {
+                return 1;
+            }
+            
             float kartPos1 = _kartDict[kart1].RankManager.GetTotalPos();
             float kartPos2 = _kartDict[kart2].RankManager.GetTotalPos();
             return kartPos2.CompareTo(kartPos1);

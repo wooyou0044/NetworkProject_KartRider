@@ -11,8 +11,7 @@ using System.Threading;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
-    [SerializeField] private LobbyUIManager lobbyUiMgr;
-
+    [SerializeField]private LobbyUIManager lobbyUiMgr;
     private List<RoomInfo> roomInfos = new List<RoomInfo>();
     private Dictionary<string, RoomEntry> roomEntryMap = new Dictionary<string, RoomEntry>();
     private Queue<string> availableRoomNumbers = new Queue<string>(); // 방 번호 관리 Queue
@@ -28,6 +27,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         yield return new WaitUntil(() => PhotonNetwork.IsConnectedAndReady);
         PhotonNetwork.JoinLobby();
+        lobbyUiMgr.ClickOffPanelActive(false);//로비에 들어오면 일단 끔
         InitializeRoomNumber(); //방 번호 초기화
     }
 
@@ -85,6 +85,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     /// 
     public void CreateRoomBtnClick()
     {
+        lobbyUiMgr.ClickOffPanelActive(true);
         string roomName = lobbyUiMgr.roomNameInputField.text;
         string password = string.IsNullOrEmpty(lobbyUiMgr.roomPasswordInputField.text) ? null : lobbyUiMgr.roomPasswordInputField.text;
         string roomNumber = GetRoomNumber();
@@ -99,7 +100,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     /// 랜덤한 방 입장 버튼과 연결, 방이 없으면 랜덤한 방을 생성함
     /// </summary>
     public void JoinRandomRoomBtn()
-    {       
+    {
+        lobbyUiMgr.ClickOffPanelActive(true);
         PhotonNetwork.JoinRandomRoom();
     }
 
@@ -111,6 +113,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     /// </summary>
     public void RoomNumberJoinBtn()
     {
+        lobbyUiMgr.ClickOffPanelActive(true);
         PhotonNetwork.JoinRoom(lobbyUiMgr.roomNumberInputField.text);
     }
 
@@ -124,7 +127,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     /// <param name="password"></param>
     /// <param name="roomNumber"></param>
     public void CreateRoom(string roomName, string password, string roomNumber)
-    {
+    {       
         Hashtable custom = new Hashtable
         {
             { "RoomName", roomName },
@@ -137,7 +140,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         RoomOptions roomOptions = new RoomOptions
         {
             MaxPlayers = 8, //최대 입장 플레이어 제한
-            EmptyRoomTtl = 0, //방에 사람이 없다면 바로 방을 삭제하도록 지정     
+            EmptyRoomTtl = 0, //방에 사람이 없다면 바로 방을 삭제하도록 지정
             CustomRoomProperties = custom,
             CustomRoomPropertiesForLobby = new string[] { "RoomName", "Password", "RoomNumber","Map","IsGameStart" }
         };
@@ -380,7 +383,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         {
             string enteredPassword = lobbyUiMgr.lockRoomPasswordInputField.text;
             lobbyUiMgr.LockRoomPasswrodPanelActive(false);
-
+            lobbyUiMgr.lockRoomPasswordInputField.text = "";
             if (enteredPassword == correctPassword)
             {
                 JoinRoom(roomName);

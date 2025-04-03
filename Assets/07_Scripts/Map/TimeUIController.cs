@@ -38,6 +38,16 @@ public class TimeUIController : MonoBehaviour
         _stopWatch.Start();
     }
 
+    public void StopTimer()
+    {
+        _stopWatch.Stop();
+    }
+
+    public float GetElapsedTime()
+    {
+        return _stopWatch.ElapsedMilliseconds;
+    }
+
     public void AddLapTime()
     {
         // 처음 피니시 라인 지나갔을때 예외처리
