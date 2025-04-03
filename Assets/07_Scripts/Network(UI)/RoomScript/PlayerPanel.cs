@@ -7,6 +7,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Linq;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEngine.TextCore.Text;
 
 /// <summary>
 /// 플레이어 오브젝트 스크립트
@@ -31,6 +32,7 @@ public class PlayerPanel : MonoBehaviourPun
         {
             //이후에 들어온 사람도 확인을 해야하기 때문에 RpcTarget.AllBuffered사용
             GetComponent<PhotonView>().RPC("SetOwnInfo", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer);
+            OnClickGameObjSelectBtn();
         }
     }
 
@@ -118,13 +120,23 @@ public class PlayerPanel : MonoBehaviourPun
     public void OnClickGameObjSelectBtn()
     {
         if (photonView.IsMine)
-        {
-            GetComponent<PhotonView>().RPC("GameObjSelect", RpcTarget.AllBuffered);
+        {            
+            GetComponent<PhotonView>().RPC("GameObjSelect", RpcTarget.AllBuffered, characterList.SelectedCharacter().name);
         }
     }
     [PunRPC]
-    public void GameObjSelect()
+    public void GameObjSelect(string characterName)
     {
+        CharacterSo[] characters = Resources.LoadAll<CharacterSo>("Character");
+        CharacterSo selectedChar = null;
+        foreach (var charac in characters)
+        {
+            if (charac.name.Equals(characterName))
+            {
+                selectedChar = charac;
+            }
+        } 
+            
         Transform parentTransform = transform.parent;
         if (parentTransform != null)
         {
@@ -132,7 +144,7 @@ public class PlayerPanel : MonoBehaviourPun
             if (parentSlot != null)
             {
                 Debug.Log(parentSlot + "의 슬롯");
-                parentSlot.playerPanel.playerIcon.sprite = characterList.SelectedCharacter().characterIcon;                
+                parentSlot.playerPanel.playerIcon.sprite = selectedChar.characterIcon;   
             }
         }
     }
