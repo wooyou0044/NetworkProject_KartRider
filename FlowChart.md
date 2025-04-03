@@ -1,4 +1,5 @@
 ## 인게임씬에 4명이 접속했다는 가정
+
 ```mermaid
 flowchart LR
 
@@ -40,6 +41,47 @@ User3 <--> Server
 User4 <--> Server
 ```
 
+## 인게임 입장시 플로우 차트
+
+```mermaid
+flowchart TB
+
+subgraph PhotonRoom["PUN2 서버"]
+RoomScene("RoomScene")
+DaisyCircuit("DaisyCircuit")
+end
+
+GameManager
+MapManager
+SoundManager
+ItemManager
+UIManager("UI 객체들")
+
+RoomScene -- 씬 전환 --> DaisyCircuit
+DaisyCircuit -- 초기화 --> GameManager
+DaisyCircuit -- 초기화 --> MapManager
+DaisyCircuit -- 초기화 --> SoundManager
+DaisyCircuit -- 초기화 --> ItemManager
+DaisyCircuit -- 초기화 --> UIManager
+```
+
+## GameManager 실행시 플로우
+```mermaid
+flowchart TB
+
+GameManager
+GameObject("Kart")
+Character
+Camera
+MapManager
+
+GameManager -- 1.Instantiate --> GameObject
+GameManager -- 1.Instantiate --> Character
+Camera --> GameObject
+GameObject -- 2.맵에 배치해줘 --> MapManager
+MapManager -- 3.배치 다됐음 --> GameObject
+GameObject -- 4.준비 다 됐음 --> GameManager
+```
 ## 게임 매니저 게임 시작시 실행 과정
 ```mermaid
 flowchart LR
@@ -77,7 +119,6 @@ User2GameManager -- 레디됨 --> User1GameManager
 User3GameManager -- 레디됨 --> User1GameManager 
 User4GameManager -- 레디됨 --> User1GameManager 
 ```
-
 ## 게임 종료시 실행 과정 (ex : 유저 3번이 골인했다)
 ```mermaid
 flowchart LR
@@ -128,7 +169,7 @@ User4GameManager --> 게임종료
 ```mermaid
 flowchart LR
 
-subgraph User1["User 1(방장))"]
+subgraph User1["User 1 (방장)"]
 User1ItemManager("**ItemMng1**<br>PhotonView")
 end
 
