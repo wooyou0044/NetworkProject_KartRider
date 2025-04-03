@@ -11,14 +11,17 @@ public class KartBodyController : MonoBehaviour
     [SerializeField] Transform collisionTransform;
     [SerializeField] Transform[] driftSparkWheelPos;
     [SerializeField] Transform shieldEffectBodyPos;
+    [SerializeField] Transform confettiPos;
     [SerializeField] GameObject driftSpark;
     [SerializeField] GameObject windEffect;
     [SerializeField] GameObject shieldEffect;
+    [SerializeField] GameObject confettiEffect;
 
     GameObject spark;
     GameObject wind;
     public GameObject shield { get; set; }
     GameObject[] driftSparkObject;
+    GameObject confetti;
 
     int input;
 
@@ -41,12 +44,15 @@ public class KartBodyController : MonoBehaviour
         }
         shield = Instantiate(shieldEffect, shieldEffectBodyPos);
         //shield.transform.position -= new Vector3(0, 0.05f, 0);
+        confetti = Instantiate(confettiEffect, confettiPos);
+        confetti.transform.eulerAngles += new Vector3(0, 90, 0);
 
         SetLampTrailActive(false);
         SetBoostEffectActive(false);
         SetCollisonSparkActive(false);
         SetBoostWindEffectActive(false);
         SetShieldEffectActive(false);
+        SetConfettiEffectActive(false);
     }
 
     void Update()
@@ -123,4 +129,8 @@ public class KartBodyController : MonoBehaviour
         shield.SetActive(isActive);
     }
 
+    public void SetConfettiEffectActive(bool isActive)
+    {
+        confetti.SetActive(isActive);  
+    }
 }
